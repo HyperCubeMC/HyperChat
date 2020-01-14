@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>HyperChat</title>
+  <link rel="stylesheet" href="/chat.css">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#00adff">
+  <meta name="msapplication-TileColor" content="#00adff">
+  <meta name="theme-color" content="#00adff">
+  <link rel="manifest" href="/manifest.json">
+  <script src="/jquery-3.4.1.min.js"></script>
+  <link rel="stylesheet" href="/jquery-ui.min.css">
+  <script src="/jquery-ui.min.js"></script>
+  <script src="/popper.min.js"></script>
+  <link rel="stylesheet" href="/bootstrap.min.css">
+  <script src="/bootstrap.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/showdown.min.js"></script>
+  <script src="/cheet.min.js"></script>
+  <script src="/chat.js"></script>
+</head>
+<body>
+  <ul class="pages">
+    <li class="chat page">
+      <div class="chatArea">
+        <ul class="messages"></ul>
+      </div>
+      <div class="userList">
+        <h3>User List</h3>
+      </div>
+      <input class="inputMessage" placeholder="Type here..."/>
+      <img class="notificationBell" src="/NotificationBell.png" alt="Notification Bell" onclick="notificationPermissionPrompt()">
+    </li>
+    <li class="login page">
+      <div class="form">
+        <h3 class="title">Login or Register (Main room is General)</h3>
+        <form class=loginForm>
+          <input class="usernameInput" type="text" autocomplete="username" placeholder="Username" maxlength="14"/>
+          <input class="passwordInput" type="password" autocomplete="current-password" placeholder="Password" maxlength="14"/>
+          <input class="roomInput" type="text" placeholder="Chat Room" maxlength="14"/>
+        </form>
+      </div>
+    </li>
+  </ul>
+</body>
+</html>
