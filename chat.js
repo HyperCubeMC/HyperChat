@@ -1,18 +1,20 @@
-if (!navigator.serviceWorker.controller) {
-  // Register the ServiceWorker
-  navigator.serviceWorker.register('service-worker.js', {
-    scope: './'
-  });
-}
+if ('serviceWorker' in navigator) {
+  if (!navigator.serviceWorker.controller) {
+    // Register the ServiceWorker
+    navigator.serviceWorker.register('service-worker.js', {
+      scope: './'
+    });
+  }
 
-var notificationPermission = Notification.permission;
+  var notificationPermission = Notification.permission;
 
-function notificationPermissionPrompt() {
-  Notification.requestPermission(function(result) {
-    if (result === 'granted') {
-      notificationPermission = 'granted';
-    }
-  });
+  function notificationPermissionPrompt() {
+    Notification.requestPermission(function(result) {
+      if (result === 'granted') {
+        notificationPermission = 'granted';
+      }
+    });
+  }
 }
 
 $(function() {
@@ -383,7 +385,7 @@ $(function() {
       addChatMessage(data);
       var newMessageSound = new Audio('ChatMessageSound.mp3');
       newMessageSound.play();
-      if (notificationPermission === "granted") {
+      if ('serviceWorker' in navigator && notificationPermission === "granted") {
         navigator.serviceWorker.ready.then(function(registration) {
           registration.showNotification(data.username, {
             body: data.message,
@@ -391,7 +393,7 @@ $(function() {
             vibrate: [200, 100, 200, 100, 200, 100, 200],
             tag: 'pingNotification',
             actions: [
-              {action: 'reply-in-class', title: 'Reply \'In Class\''},
+              {action: 'reply', title: 'Reply', type: 'text', placeholder: 'Type your reply.'},
               {action: 'close', title: 'Close notification'}
             ]
           });
