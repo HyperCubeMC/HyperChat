@@ -48,20 +48,20 @@ self.addEventListener('notificationclick', function(event) {
     }).then(function(clientList) {
       for (var i = 0; i < clientList.length; i++) {
         var client = clientList[i];
-        if (client.url === '/chat' && 'focus' in client) {
+        if (client.url === '/' && 'focus' in client) {
           return client.focus();
         }
       }
       if (clients.openWindow) {
-        return clients.openWindow('/chat');
+        return clients.openWindow('/');
       }
     }));
     return;
   }
 
   switch (event.action) {
-    case 'reply-in-class':
-      console.log('Reply in class');
+    case 'reply':
+      console.log('Reply');
       event.notification.close();
       break;
     case 'close':
