@@ -158,8 +158,7 @@ $(function() {
   });
 
   // Sends a chat message
-  const sendMessage = () => {
-    var message = $inputMessage.val();
+  const sendMessage = (message) => {
     // Prevent markup from being injected into the message
     // message = cleanInput(message);
     if (message && connected && !cheatActivated) {
@@ -342,7 +341,7 @@ $(function() {
     // When the client hits ENTER on their keyboard
     if (event.which === 13) {
       if (username) {
-        sendMessage();
+        sendMessage($inputMessage.val())
         socket.emit('stop typing');
         typing = false;
       } else {
