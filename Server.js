@@ -26,7 +26,6 @@ function server (req, res) {
 		filePath = './chat.html';
 
 	var extname = String(path.extname(filePath)).toLowerCase();
-	var contentType = 'text/html';
 	var mimeTypes = {
 		'': 'text/html',
 		'.txt': 'text/plain',
@@ -51,7 +50,7 @@ function server (req, res) {
 		'.pdf': 'application/pdf',
 	};
 
-	contentType = mimeTypes[extname] || 'application/octet-stream';
+	var contentType = mimeTypes[extname] || 'application/octet-stream';
 
 	fs.readFile(filePath, function (error, content) {
 		if (error) {
