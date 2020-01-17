@@ -12,6 +12,14 @@ if ('serviceWorker' in navigator) {
     console.log("Service worker registered on the site.")
   }
 
+  function notificationPermissionPrompt() {
+    Notification.requestPermission(function(result) {
+      if (result === 'granted') {
+        notificationPermission = 'granted';
+      }
+    });
+  }
+
   var notificationPermission = Notification.permission;
 }
 

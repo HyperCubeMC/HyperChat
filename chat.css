@@ -121,6 +121,7 @@ ul {
 /* Messages */
 
 .chatArea {
+  position: absolute;
   height: 93%;
   width: 85%
 }
