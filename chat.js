@@ -117,7 +117,7 @@ $(function() {
 
   socket.on('flip', (data) => {
     if (data.affectedUsername == username) {
-      ['', '-ms-', '-webkit-', '-o-', '-moz-'].map(function(prefix){
+      ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix){
       	document.body.style[prefix + 'transform'] = 'rotate(180deg)';
       });
     }
@@ -125,7 +125,7 @@ $(function() {
 
   socket.on('unflip', (data) => {
     if (data.affectedUsername == username) {
-      ['', '-ms-', '-webkit-', '-o-', '-moz-'].map(function(prefix){
+      ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix){
       	document.body.style[prefix + 'transform'] = 'rotate(0deg)';
       });
     }
@@ -152,7 +152,7 @@ $(function() {
 
   socket.on('smash', (data) => {
     if (data.affectedUsername == username) {
-      ['', '-ms-', '-webkit-', '-o-', '-moz-'].map(function(prefix){
+      ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix){
       	Array.prototype.slice.call(document.querySelectorAll('div,p,span,img,a,body')).map(function(el){
       		el.style[prefix + 'transform'] = 'rotate(' + (Math.floor(Math.random() * 10) - 1) + 'deg)';
       	});
@@ -185,7 +185,7 @@ $(function() {
   }
   const syncUserList = (userListContents) => {
     var usersToAddToUserList = $();
-    for(x = 0; x < 1000; x++) {
+    for(var x = 0; x < 1000; x++) {
       if (userListContents[x] !== undefined) {
         usersToAddToUserList = usersToAddToUserList.add('<li class="user">' + userListContents[x] + '</li>');
       }

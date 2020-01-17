@@ -2,14 +2,11 @@
   box-sizing: border-box;
 }
 
-html {
-  font-weight: 300;
-  -webkit-font-smoothing: antialiased;
-}
-
 html, body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  width: 100%;
 }
 
 ul {
@@ -20,15 +17,15 @@ ul {
 /* Pages */
 
 .pages {
-  height: 100%;
   margin: 0;
   padding: 0;
+  height: 100%;
   width: 100%;
 }
 
 .page {
-  height: 100%;
   position: absolute;
+  height: 100%;
   width: 100%;
 }
 
@@ -61,7 +58,6 @@ ul {
   padding-bottom: 15px;
   text-align: center;
   width: 400px;
-
   font-size: 200%;
   letter-spacing: 3px;
   font-weight: 100;
@@ -76,7 +72,6 @@ ul {
   padding-bottom: 15px;
   text-align: center;
   width: 400px;
-
   font-size: 200%;
   letter-spacing: 3px;
   color: #fff;
