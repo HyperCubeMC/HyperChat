@@ -1,20 +1,18 @@
 if ('serviceWorker' in navigator) {
-  if (!navigator.serviceWorker.controller) {
+  if (navigator.serviceWorker.controller) {
+    console.log("Service worker is controlling the site.");
+    console.log("Sent \"Initial message to service worker.\" to service worker.")
+    navigator.serviceWorker.controller.postMessage("Initial message to service worker.");
+  }
+  else {
     // Register the ServiceWorker
     navigator.serviceWorker.register('service-worker.js', {
       scope: './'
     });
+    console.log("Service worker registered on the site.")
   }
 
   var notificationPermission = Notification.permission;
-
-  function notificationPermissionPrompt() {
-    Notification.requestPermission(function(result) {
-      if (result === 'granted') {
-        notificationPermission = 'granted';
-      }
-    });
-  }
 }
 
 $(function() {
@@ -48,6 +46,7 @@ $(function() {
   var userListContents;
   var loggedIn;
   var cheatActivated;
+  var notificationReplyMessage;
 
   var sequences = {
     primary: 'up up down down left right left right b a',
@@ -60,10 +59,6 @@ $(function() {
       cheatActivated = true
     }
   });
-
-  if (cheatActivated) {
-
-  }
 
   var socket = io();
   // const addParticipantsMessage = (data) => {
@@ -157,6 +152,17 @@ $(function() {
     }
   });
 
+  if (navigator.serviceWorker.controller) {
+    navigator.serviceWorker.addEventListener('message', function(event) {
+      console.log("Got message from service worker: " + event.data);
+      if (event.data.startsWith("Notification Quick Reply:")) {
+        notificationReplyMessage = event.data;
+        notificationReplyMessage = notificationReplyMessage.replace(/^(Notification Quick Reply\: )/,"");
+        sendMessage(notificationReplyMessage);
+      }
+    });
+  }
+
   // Sends a chat message
   const sendMessage = (message) => {
     // Prevent markup from being injected into the message
@@ -168,25 +174,6 @@ $(function() {
     else if (message && connected && cheatActivated) {
       socket.emit('new message', message);
     }
-    // If there is a non-empty message and a socket connection
-    // if (message && connected && message.length <= 5000) {
-    //   $inputMessage.val('');
-    //   addChatMessage({
-    //     username: username,
-    //     message: message
-    //   });
-    //   // Tell the server to execute 'new message' and send along one parameter
-    //   socket.emit('new message', message);
-    // }
-    // else if (message && connected && message.length > 5000) {
-    //   $inputMessage.val('');
-    //   addChatMessage({
-    //     username: username,
-    //     message: "This message was removed because it was too long."
-    //   });
-      // Tell the server to execute 'new message' and send along one parameter
-    //   socket.emit('new message', message);
-    // }
   }
   const syncUserList = (userListContents) => {
     var usersToAddToUserList = $();
@@ -384,7 +371,7 @@ $(function() {
       addChatMessage(data);
       var newMessageSound = new Audio('ChatMessageSound.mp3');
       newMessageSound.play();
-      if ('serviceWorker' in navigator && notificationPermission === "granted") {
+      if ('navigator.serviceWorker.controller' && notificationPermission === 'granted') {
         navigator.serviceWorker.ready.then(function(registration) {
           registration.showNotification(data.username, {
             body: data.message,

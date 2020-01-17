@@ -36,11 +36,16 @@ self.addEventListener('fetch', function(event) {
   // request will be handled without the ServiceWorker.
 });
 
+self.addEventListener("message", function(event) {
+  mainCode = event.source
+  if (event.data === "Initial message to service worker.") {
+    event.source.postMessage("Initial message to main code.");
+  }
+});
+
 self.addEventListener('notificationclick', function(event) {
-  console.log('On notification click: ', event.notification.tag);
   if (!event.action) {
     event.notification.close();
-
     // This looks to see if the current is already open and
     // focuses if it is
     event.waitUntil(clients.matchAll({
@@ -61,7 +66,7 @@ self.addEventListener('notificationclick', function(event) {
 
   switch (event.action) {
     case 'reply':
-      console.log('Reply');
+      mainCode.postMessage("Notification Quick Reply: " + event.reply)
       event.notification.close();
       break;
     case 'close':
