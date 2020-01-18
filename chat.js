@@ -12,6 +12,8 @@ if ('serviceWorker' in navigator) {
     console.log("Service worker registered on the site.")
   }
 
+  var notificationPermission = Notification.permission;
+
   function notificationPermissionPrompt() {
     Notification.requestPermission(function(result) {
       if (result === 'granted') {
@@ -19,8 +21,18 @@ if ('serviceWorker' in navigator) {
       }
     });
   }
+}
 
-  var notificationPermission = Notification.permission;
+function showSettingsPage() {
+  $('.chat.page').fadeOut();
+  $('.settings.page').show();
+  $('.chat.page').off('click');
+}
+
+function hideSettingsPage() {
+  $('.settings.page').fadeOut();
+  $('.chat.page').show();
+  $('.settings.page').off('click');
 }
 
 $(function() {
@@ -44,6 +56,7 @@ $(function() {
 
   var $loginPage = $('.login.page'); // The login page
   var $chatPage = $('.chat.page'); // The chatroom page
+  var $settingsPage = $('.settings.page'); // The settings page
 
   var username;
   var password;
@@ -69,15 +82,6 @@ $(function() {
   });
 
   var socket = io();
-  // const addParticipantsMessage = (data) => {
-  //   var message = '';
-  //   if (data.numUsers === 1) {
-  //     message += "There's 1 participant";
-  //   } else {
-  //     message += "There are " + data.numUsers + " participants";
-  //   }
-  //   log(message);
-  // }
 
   // Submits the credentials to the server
   const submitLoginInfo = () => {
