@@ -352,13 +352,6 @@ $inputMessage.on('input', () => {
   updateTyping();
 });
 
-// Click events
-
-// Focus input when clicking anywhere on login page
-// $loginPage.click(() => {
-//  $currentInput.focus();
-// });
-
 // Set focus to username input when clicked
 $usernameInput.click(() => {
   $currentInput = $usernameInput.focus();

@@ -17,6 +17,7 @@ ul {
 /* Pages */
 
 .pages {
+  position: absolute
   margin: 0;
   padding: 0;
   height: 100%;
@@ -103,6 +104,12 @@ ul {
 
 .settings.page {
   display: none;
+}
+
+.settingsArea {
+  position: absolute;
+  height: 100%;
+  width: 100%
 }
 
 /* Font */
