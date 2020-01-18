@@ -99,8 +99,13 @@ ul {
   display: none;
 }
 
-/* Font */
+/* Settings page */
 
+.settings.page {
+  display: none;
+}
+
+/* Font */
 
 .inputMessage {
   font-size: 100%;
