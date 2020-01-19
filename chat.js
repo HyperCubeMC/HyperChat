@@ -71,9 +71,15 @@ cheet.done(function (seq) {
 
 var socket = io();
 
-$('#testSwitch').on('change.bootstrapSwitch', function (event) {
-  var testSwitchState = $('#testSwitch').prop('checked')
-  console.log(testSwitchState);
+$('#darkThemeSwitch').on('change.bootstrapSwitch', function (event) {
+  var darkThemeSwitchState = $('#darkThemeSwitch').prop('checked')
+  if (darkThemeSwitchState == true) {
+    $chatPage.css('background','#000000')
+  }
+
+  if (darkThemeSwitchState == false) {
+    $chatPage.css('background','#ffffff')
+  }
 });
 
 function showSettingsPage() {
