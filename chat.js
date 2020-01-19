@@ -72,18 +72,40 @@ cheet.done(function (seq) {
 
 var socket = io();
 
+if (store('darkTheme') == true) {
+  $('#darkThemeSwitch').prop('checked', 'true');
+  $('body').css({
+    "background-color": "rgb(30,34,39)",
+    "color": "#fff"
+  });
+  $('.settingsIcon').attr('src','SettingsIconLight.png');
+  $('.notificationBell').attr('src','NotificationBellLight.png');
+}
+
+if (store('darkTheme') == false) {
+  darkThemeSwitchState = $('#darkThemeSwitch').prop('checked', 'false');
+  $('body').css({
+    "background-color": "#fff",
+    "color": "#212529"
+  })
+  $('.settingsIcon').attr('src','SettingsIconDark.png');
+  $('.notificationBell').attr('src','NotificationBellDark.png');
+}
+
 $('#darkThemeSwitch').on('change.bootstrapSwitch', function (event) {
-  darkThemeSwitchState = $('#darkThemeSwitch').prop('checked')
+  darkThemeSwitchState = $('#darkThemeSwitch').prop('checked');
   if (darkThemeSwitchState == true) {
+    store('darkTheme', true);
     $('body').css({
       "background-color": "rgb(30,34,39)",
       "color": "#fff"
-    })
+    });
     $('.settingsIcon').attr('src','SettingsIconLight.png');
     $('.notificationBell').attr('src','NotificationBellLight.png');
   }
 
   if (darkThemeSwitchState == false) {
+    store('darkTheme', false);
     $('body').css({
       "background-color": "#fff",
       "color": "#212529"
