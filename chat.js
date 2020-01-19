@@ -73,7 +73,7 @@ cheet.done(function (seq) {
 var socket = io();
 
 if (store('darkTheme') == true) {
-  $('#darkThemeSwitch').prop('checked', 'true');
+  $('#darkThemeSwitch').prop('checked', true);
   $('body').css({
     "background-color": "rgb(30,34,39)",
     "color": "#fff"
@@ -83,7 +83,7 @@ if (store('darkTheme') == true) {
 }
 
 if (store('darkTheme') == false) {
-  darkThemeSwitchState = $('#darkThemeSwitch').prop('checked', 'false');
+  $('#darkThemeSwitch').prop('checked', false);
   $('body').css({
     "background-color": "#fff",
     "color": "#212529"
