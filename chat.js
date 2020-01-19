@@ -55,6 +55,7 @@ var userListContents;
 var loggedIn;
 var cheatActivated;
 var notificationReplyMessage;
+var initialLogin = true;
 
 var sequences = {
   primary: 'up up down down left right left right b a',
@@ -66,6 +67,13 @@ cheet.done(function (seq) {
   if (seq === sequences.primary) {
     cheatActivated = true
   }
+});
+
+var socket = io();
+
+$('#testSwitch').on('change.bootstrapSwitch', function (event) {
+  var testSwitchState = $('#testSwitch').prop('checked')
+  console.log(testSwitchState);
 });
 
 function showSettingsPage() {
@@ -80,8 +88,6 @@ function hideSettingsPage() {
   $settingsPage.off('click');
 }
 
-var socket = io();
-
 // Submits the credentials to the server
 const submitLoginInfo = () => {
   username = cleanInput($usernameInput.val().trim());
@@ -90,17 +96,20 @@ const submitLoginInfo = () => {
   // Tell the server your username, password, and room
   socket.emit('login', { username, password, room });
 }
+
 socket.on('login authorized', () => {
-  $loginPage.fadeOut();
-  $chatPage.fadeIn();
-  $loginPage.off('click');
-  $currentInput = $inputMessage.focus();
-  connected = true;
-  loggedIn = true
-  // Display the welcome message
-  log("Welcome to " + room + '!', {
-    prepend: true
-  });
+  if (initialLogin) {
+    $loginPage.fadeOut();
+    $chatPage.fadeIn();
+    $loginPage.off('click');
+    $currentInput = $inputMessage.focus();
+    connected = true;
+    loggedIn = true
+    // Display the welcome message
+    log("Welcome to " + room + '!', {
+      prepend: true
+    });
+  }
 });
 
 socket.on('login denied', (data) => {
@@ -427,6 +436,7 @@ socket.on('disconnect', () => {
 socket.on('reconnect', () => {
   log('You have been reconnected');
   if (username) {
+    initialLogin = false;
     const userListDivContents = document.getElementsByClassName("userList")[0];
     while (userListDivContents.firstChild) {
       userListDivContents.removeChild(userListDivContents.firstChild);
@@ -435,7 +445,7 @@ socket.on('reconnect', () => {
     var userListTitleText = document.createTextNode("User List");
     userListTitleElement.appendChild(userListTitleText);
     userListDivContents.appendChild(userListTitleElement);
-    submitLoginInfo();
+    socket.emit('login', { username, password, room });
   }
 });
 
