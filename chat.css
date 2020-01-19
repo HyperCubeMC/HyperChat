@@ -213,3 +213,7 @@ ul {
   width: 50px;
   cursor: pointer;
 }
+
+.custom-control.custom-switch {
+  width: fit-content;
+}

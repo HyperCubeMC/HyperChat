@@ -56,6 +56,7 @@ var loggedIn;
 var cheatActivated;
 var notificationReplyMessage;
 var initialLogin = true;
+var darkThemeSwitchState;
 
 var sequences = {
   primary: 'up up down down left right left right b a',
@@ -72,13 +73,23 @@ cheet.done(function (seq) {
 var socket = io();
 
 $('#darkThemeSwitch').on('change.bootstrapSwitch', function (event) {
-  var darkThemeSwitchState = $('#darkThemeSwitch').prop('checked')
+  darkThemeSwitchState = $('#darkThemeSwitch').prop('checked')
   if (darkThemeSwitchState == true) {
-    $chatPage.css('background','#000000')
+    $('body').css({
+      "background-color": "rgb(30,34,39)",
+      "color": "#fff"
+    })
+    $('.settingsIcon').attr('src','SettingsIconLight.png');
+    $('.notificationBell').attr('src','NotificationBellLight.png');
   }
 
   if (darkThemeSwitchState == false) {
-    $chatPage.css('background','#ffffff')
+    $('body').css({
+      "background-color": "#fff",
+      "color": "#212529"
+    })
+    $('.settingsIcon').attr('src','SettingsIconDark.png');
+    $('.notificationBell').attr('src','NotificationBellDark.png');
   }
 });
 
