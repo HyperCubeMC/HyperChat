@@ -264,7 +264,7 @@ const removeFromUserList = (data) => {
 // Adds the visual chat message to the message list
 const addChatMessage = (data, options) => {
   var converter = new showdown.Converter({tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, ghMentions: true, ghMentionsLink: '/chat'});
-  markdownMessage = converter.makeHtml(data.message);
+  var markdownMessage = converter.makeHtml(data.message);
   // Don't fade the message in if there is an 'X was typing'
   var $typingMessages = getTypingMessages(data);
   options = options || {};
