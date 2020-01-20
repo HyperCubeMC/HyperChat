@@ -12,14 +12,16 @@ if ('serviceWorker' in navigator) {
     console.log("Service worker registered on the site.")
   }
 
-  var notificationPermission = Notification.permission;
+  if ('Notification' in window) {
+    var notificationPermission = Notification.permission;
 
-  function notificationPermissionPrompt() {
-    Notification.requestPermission(function(result) {
-      if (result === 'granted') {
-        notificationPermission = 'granted';
-      }
-    });
+    function notificationPermissionPrompt() {
+      Notification.requestPermission(function(result) {
+        if (result === 'granted') {
+          notificationPermission = 'granted';
+        }
+      });
+    }
   }
 }
 
@@ -211,7 +213,7 @@ socket.on('smash', (data) => {
   }
 });
 
-if (navigator.serviceWorker.controller) {
+if (navigator.serviceWorker.controller && 'Notification' in window ) {
   navigator.serviceWorker.addEventListener('message', function(event) {
     console.log("Got message from service worker: " + event.data);
     if (event.data.startsWith("Notification Quick Reply:")) {
