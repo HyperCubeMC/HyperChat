@@ -263,7 +263,7 @@ io.on('connection', (socket) => {
   // when the user disconnects.. perform this
   socket.on('disconnect', () => {
     if (addedUser) {
-			userListContents = arrayRemove(userListContents, socket.username);
+			userListContents[socket.room] = arrayRemove(userListContents[socket.room], socket.username);
       // echo globally that this client has left
       socket.to(socket.room).emit('user left', {
         username: socket.username,
