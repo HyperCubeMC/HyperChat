@@ -114,10 +114,6 @@ ul {
 
 /* Font */
 
-.inputMessage {
-  font-size: 100%;
-}
-
 .log {
   color: gray;
   font-size: 70%;
@@ -158,9 +154,10 @@ ul {
 /* Input */
 
 .inputMessage {
+  font-size: 100%;
   border: 10px solid #000;
   bottom: 0;
-  height: 6.5%;
+  height: 5%;
   left: 0;
   outline: none;
   padding-left: 10px;
