@@ -117,8 +117,6 @@ $('#darkThemeSwitch').on('change.bootstrapSwitch', function (event) {
   }
 });
 
-autosize($('.inputMessage'));
-
 function showSettingsPage() {
   $chatPage.fadeOut();
   $settingsPage.fadeIn();
@@ -381,6 +379,21 @@ const getUsernameColor = (username) => {
 
 // Keyboard events
 
+function handleChatMessageInput(event) {
+  if(event.key=="Enter" && event.shiftKey) {
+    var inputMessageExpandHeight = $inputMessage[0].style.height;
+    inputMessageExpandHeight = parseInt(inputMessageExpandHeight.replace('%', ''), 10);
+    inputMessageExpandHeight += 1;
+    inputMessageExpandHeight = inputMessageExpandHeight+'%';
+    $inputMessage[0].style.height = inputMessageExpandHeight;
+  }
+  else if (event.key=="Enter") {
+    sendMessage($inputMessage.val())
+    socket.emit('stop typing');
+    typing = false;
+  }
+}
+
 $window.keydown(event => {
   if (loggedIn) {
     // Auto-focus the current input when a key is typed
@@ -389,15 +402,8 @@ $window.keydown(event => {
     }
   }
   // When the client hits ENTER on their keyboard
-  if (event.key == 'Enter' && !event.shiftKey) {
-    if (username) {
-      sendMessage($inputMessage.val())
-      socket.emit('stop typing');
-      typing = false;
-    } else {
-      event.preventDefault();
-      submitLoginInfo();
-    }
+  if (event.key == 'Enter' && !event.shiftKey && !username) {
+    submitLoginInfo();
   }
 });
 
