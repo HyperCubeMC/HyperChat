@@ -379,7 +379,7 @@ const getUsernameColor = (username) => {
 
 // Keyboard events
 
-function handleChatMessageInput(event) {
+$inputMessage.keydown(function(event) {
   if(event.key=="Enter" && event.shiftKey) {
     var inputMessageExpandHeight = $inputMessage[0].style.height;
     inputMessageExpandHeight = parseInt(inputMessageExpandHeight.replace('%', ''), 10);
@@ -392,7 +392,7 @@ function handleChatMessageInput(event) {
     socket.emit('stop typing');
     typing = false;
   }
-}
+});
 
 $window.keydown(event => {
   if (loggedIn) {
