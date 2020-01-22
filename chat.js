@@ -391,6 +391,7 @@ $inputMessage.keydown(function(event) {
     sendMessage($inputMessage.val())
     socket.emit('stop typing');
     typing = false;
+    $inputMessage[0].style.height = "5%";
   }
 });
 
