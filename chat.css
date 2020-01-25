@@ -164,7 +164,7 @@ ul {
   position: absolute;
   right: 0;
   width: 100%;
-  overflow-y: hidden;
+  overflow-y: auto
 }
 
 /* User List */
