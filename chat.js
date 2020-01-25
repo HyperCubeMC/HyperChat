@@ -386,9 +386,11 @@ $inputMessage.on('input', function (event) {
 
 $inputMessage.keydown(function (event) {
   if (event.key=="Enter" && !event.shiftKey) {
+    event.preventDefault()
     sendMessage($inputMessage.val())
     socket.emit('stop typing');
     typing = false;
+    this.style.height = "auto";
   }
 });
 

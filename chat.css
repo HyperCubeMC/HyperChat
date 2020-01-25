@@ -155,9 +155,8 @@ ul {
 
 .inputMessage {
   font-size: 100%;
-  border: 10px solid #000;
   bottom: 0;
-  height: 5%;
+  height: auto;
   left: 0;
   outline: none;
   padding-left: 10px;
