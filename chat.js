@@ -432,8 +432,8 @@ $inputMessage.click(() => {
 socket.on('new message', (data) => {
   if (data.username !== username) {
     addChatMessage(data);
-    var newMessageSound = new Audio('ChatMessageSound.mp3');
-    newMessageSound.play();
+    var chatMessageSound = new Audio('ChatMessageSound.mp3');
+    chatMessageSound.play();
     if ('navigator.serviceWorker.controller' && notificationPermission === 'granted') {
       navigator.serviceWorker.ready.then(function(registration) {
         registration.showNotification(data.username, {
@@ -457,14 +457,16 @@ socket.on('new message', (data) => {
 // Whenever the server emits 'user joined', log it in the chat body
 socket.on('user joined', (data) => {
   log(data.username + ' joined');
-  // addParticipantsMessage(data);
+  var userJoinedChat = new Audio('UserJoinedChat.mp3');
+  userJoinedChat.play();
   addToUserList(data.username);
 });
 
 // Whenever the server emits 'user left', log it in the chat body
 socket.on('user left', (data) => {
   log(data.username + ' left');
-  // addParticipantsMessage(data);
+  var userLeftChat = new Audio('UserLeftChat.mp3');
+  userLeftChat.play();
   removeChatTyping(data);
   removeFromUserList(data.username);
 });
