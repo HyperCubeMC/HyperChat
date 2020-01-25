@@ -379,19 +379,16 @@ const getUsernameColor = (username) => {
 
 // Keyboard events
 
-$inputMessage.keydown(function(event) {
-  if(event.key=="Enter" && event.shiftKey) {
-    var inputMessageExpandHeight = $inputMessage[0].style.height;
-    inputMessageExpandHeight = parseInt(inputMessageExpandHeight.replace('%', ''), 10);
-    inputMessageExpandHeight += 1;
-    inputMessageExpandHeight = inputMessageExpandHeight+'%';
-    $inputMessage[0].style.height = inputMessageExpandHeight;
-  }
-  else if (event.key=="Enter") {
+$inputMessage.on('input', function (event) {
+  this.style.height = 'auto';
+  this.style.height = (this.scrollHeight) + 'px';
+});
+
+$inputMessage.keydown(function (event) {
+  if (event.key=="Enter" && !event.shiftKey) {
     sendMessage($inputMessage.val())
     socket.emit('stop typing');
     typing = false;
-    $inputMessage[0].style.height = "5%";
   }
 });
 
