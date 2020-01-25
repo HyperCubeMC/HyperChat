@@ -80,6 +80,10 @@ if (store('darkTheme') == true) {
     "background-color": "rgb(30,34,39)",
     "color": "#fff"
   });
+  $('.inputMessage').css({
+    "background-color": "rgb(30,34,39)",
+    "color": "#fff"
+  });
   $('.settingsIcon').attr('src','WhiteSettingsIcon.png');
   $('.notificationBell').attr('src','WhiteNotificationBell.png');
 }
@@ -87,6 +91,10 @@ if (store('darkTheme') == true) {
 if (store('darkTheme') == false) {
   $('#darkThemeSwitch').prop('checked', false);
   $('body').css({
+    "background-color": "#fff",
+    "color": "#212529"
+  })
+  $('.inputMessage').css({
     "background-color": "#fff",
     "color": "#212529"
   })
