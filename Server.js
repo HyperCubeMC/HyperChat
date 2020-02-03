@@ -1,26 +1,22 @@
 const url = require('url')
 const path = require('path')
 const fs = require('fs')
-const morgan = require('morgan')
 const mongoose = require('mongoose');
 var Filter = require('bad-words'),
     filter = new Filter();
 
 	// options for SSL certificate
 	const options = {
-	cert: fs.readFileSync('/Users/Ev Local/Desktop/Certificates/chain.pem'),
-	key: fs.readFileSync('/Users/Ev Local/Desktop/Certificates/key.pem'),
+	cert: fs.readFileSync('/Users/evere/Servers/Certificates/chain.pem'),
+	key: fs.readFileSync('/Users/evere/Servers/Certificates/key.pem'),
 }
 
 var app = require('https').createServer(options, server)
 var io = require('socket.io')(app);
 
-// app.use(morgan('[:date[web]] :remote-addr - :remote-user ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"'))
-
 app.listen(4434);
 
 function server (req, res) {
-	// console.log("Request", req.url, "from the ip of", req.connection.remoteAddress, "referred from", req.headers.referer);
 	var filePath = '.' + req.url;
 	if (filePath == './')
 		filePath = './chat.html';

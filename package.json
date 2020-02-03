@@ -1,23 +1,23 @@
 {
   "name": "HyperChat",
   "version": "1.0.0",
-  "description": "",
+  "description": "A chat app created by Justsnoopy30.",
   "main": "Server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node Server.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hypercubemc-github/HyperChat.git"
+  },
   "author": "Justsnoopy30",
   "license": "AGPL-3.0",
   "dependencies": {
     "bad-words": "^3.0.3",
-    "express": "^4.17.1",
     "fs": "0.0.1-security",
-    "http2": "^3.3.7",
     "https": "^1.0.0",
-    "mongoose": "^5.7.7",
-    "morgan": "^1.9.1",
-    "npm": "^6.13.4",
+    "mongoose": "^5.8.11",
     "path": "^0.12.7",
     "socket.io": "^2.3.0",
     "url": "^0.11.0"
