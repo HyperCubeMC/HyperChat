@@ -12,6 +12,8 @@
     <meta name="msapplication-TileColor" content="#00adff">
     <meta name="theme-color" content="#00adff">
     <link rel="manifest" href="/manifest.json">
+    <!-- Fix Electron Support (before scripts) -->
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
     <script src="/jquery-3.4.1.min.js"></script>
     <link rel="stylesheet" href="/jquery-ui.min.css">
     <script src="/jquery-ui.min.js"></script>
@@ -24,6 +26,8 @@
     <script src="/store2.min.js"></script>
     <script src="/react.development.js"></script>
     <script src="/react-dom.development.js"></script>
+    <!-- Fix Electron Support (after scripts) -->
+    <script>if (window.module) module = window.module;</script>
   </head>
   <body>
     <ul class="pages">
