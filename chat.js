@@ -84,8 +84,8 @@ if (store('darkTheme') == true) {
     "background-color": "rgb(30,34,39)",
     "color": "#fff"
   });
-  $('.settingsIcon').attr('src','WhiteSettingsIcon.png');
-  $('.notificationBell').attr('src','WhiteNotificationBell.png');
+  $('.settingsIcon').attr('src','./WhiteSettingsIcon.png');
+  $('.notificationBell').attr('src','./WhiteNotificationBell.png');
 }
 
 if (store('darkTheme') == false) {
@@ -98,8 +98,8 @@ if (store('darkTheme') == false) {
     "background-color": "#fff",
     "color": "#212529"
   })
-  $('.settingsIcon').attr('src','BlackSettingsIcon.png');
-  $('.notificationBell').attr('src','BlackNotificationBell.png');
+  $('.settingsIcon').attr('src','./BlackSettingsIcon.png');
+  $('.notificationBell').attr('src','./BlackNotificationBell.png');
 }
 
 $('#darkThemeSwitch').on('change.bootstrapSwitch', function (event) {
