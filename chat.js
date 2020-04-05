@@ -513,7 +513,7 @@ socket.on('new message', (data) => {
     addChatMessage(data);
     var chatMessageSound = new Audio('ChatMessageSound.mp3');
     chatMessageSound.play();
-    if ('navigator.serviceWorker.controller' && notificationPermission === 'granted') {
+    if ('navigator.serviceWorker.controller' && notificationPermission === 'granted' && data.message.includes('@' + username)) {
       navigator.serviceWorker.ready.then(function(registration) {
         registration.showNotification(data.username, {
           body: data.message,
@@ -523,7 +523,7 @@ socket.on('new message', (data) => {
           actions: [
               {action: 'reply', title: 'Reply', type: 'text', placeholder: 'Type your reply.'},
               {action: 'close', title: 'Close notification'}
-            ]
+          ]
         });
       });
   	}
