@@ -157,13 +157,13 @@ ul {
   font-size: 100%;
   bottom: 0;
   height: auto;
-  left: 0;
+  left: 0.5%;
   outline: none;
   border: 1px solid #40444b;
   padding-left: 10px;
   position: absolute;
   right: 0;
-  width: 85%;
+  width: 84.5%;
   overflow-y: auto;
   resize: none;
   border-radius: 8px;
@@ -180,7 +180,7 @@ ul {
   padding-left: 10px;
   position: absolute;
   right: 0;
-  width: 15%;
+  width: 14.5%;
   top: 0px;
 }
 
