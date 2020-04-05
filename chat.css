@@ -162,16 +162,17 @@ ul {
   padding-left: 10px;
   position: absolute;
   right: 0;
-  width: 100%;
-  overflow-y: auto
+  width: 85%;
+  overflow-y: auto;
+  resize: none;
 }
 
 /* User List */
 
 .userList {
-  border: 3px solid #0400ff;
+  border-left: 3px solid #0400ff;
   bottom: 0;
-  height: 93.5%;
+  height: 100%;
   outline: none;
   padding-left: 10px;
   position: absolute;

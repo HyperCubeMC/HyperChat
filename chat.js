@@ -90,11 +90,11 @@ if (store('theme') == null) {
 if (store('theme') == 'dark') {
   $('#darkThemeSwitch').prop('checked', 'dark');
   $('body').css({
-    "background-color": "rgb(30,34,39)",
+    "background-color": "rgb(54,57,63)",
     "color": "#fff"
   });
   $('.inputMessage').css({
-    "background-color": "rgb(30,34,39)",
+    "background-color": "rgb(64,68,75)",
     "color": "#fff"
   });
   $('.settingsIcon').attr('src','./WhiteSettingsIcon.png');
@@ -120,11 +120,11 @@ $('#darkThemeSwitch').on('change.bootstrapSwitch', function (event) {
   if (darkThemeSwitchState == true) {
     store('theme', 'dark');
     $('body').css({
-      "background-color": "rgb(30,34,39)",
+      "background-color": "rgb(54,57,63)",
       "color": "#fff"
     });
     $('.inputMessage').css({
-      "background-color": "rgb(30,34,39)",
+      "background-color": "rgb(64,68,75)",
       "color": "#fff"
     });
     $('.settingsIcon').attr('src','WhiteSettingsIcon.png');
