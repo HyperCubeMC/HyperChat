@@ -31,7 +31,6 @@
     <script>if (window.module) module = window.module;</script>
   </head>
   <body>
-    <div id="root"></div>
     <ul class="pages">
       <li class="chat page">
         <div class="chatArea">
@@ -48,9 +47,12 @@
         <div class="form">
           <h3 class="title">Login or Register (Main room is General)</h3>
           <form class=loginForm>
-            <input class="usernameInput" type="text" autocomplete="username" placeholder="Username" maxlength="14"/>
-            <input class="passwordInput" type="password" autocomplete="current-password" placeholder="Password" maxlength="14"/>
-            <input class="roomInput" type="text" placeholder="Chat Room" maxlength="14"/>
+            <input id="usernameInput" class="usernameInput" type="text" autocomplete="username" placeholder="Username" maxlength="14"/>
+            <label for="usernameInput">Username</label>
+            <input id="passwordInput" class="passwordInput" type="password" autocomplete="current-password" placeholder="Password" maxlength="14"/>
+            <label for="passwordInput">Password</label>
+            <input id="roomInput" class="roomInput" type="text" placeholder="Chat Room" maxlength="14"/>
+            <label for="roomInput">Room</label>
           </form>
         </div>
       </li>

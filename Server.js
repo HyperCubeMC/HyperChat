@@ -6,7 +6,7 @@ var Filter = require('bad-words'),
     filter = new Filter();
 
 	// options for SSL certificate
-	const options = {
+const options = {
 	cert: fs.readFileSync('/Users/evere/Servers/Certificates/chain.pem'),
 	key: fs.readFileSync('/Users/evere/Servers/Certificates/key.pem'),
 }
