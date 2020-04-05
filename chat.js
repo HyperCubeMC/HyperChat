@@ -221,8 +221,8 @@ socket.on('login authorized', () => {
 });
 
 socket.on('login denied', (data) => {
-  loginDeniedReason = data.loginDeniedReason
-  alert(loginDeniedReason)
+  loginDeniedReason = data.loginDeniedReason;
+  alert(loginDeniedReason);
   location.reload();
 });
 
@@ -237,7 +237,7 @@ socket.on('muted', () => {
 
 socket.on('flip', (data) => {
   if (data.affectedUsername == username) {
-    ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix){
+    ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix) {
     	document.body.style[prefix + 'transform'] = 'rotate(180deg)';
     });
   }
@@ -245,7 +245,7 @@ socket.on('flip', (data) => {
 
 socket.on('unflip', (data) => {
   if (data.affectedUsername == username) {
-    ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix){
+    ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix) {
     	document.body.style[prefix + 'transform'] = 'rotate(0deg)';
     });
   }
