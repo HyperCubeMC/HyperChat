@@ -60,6 +60,7 @@ var notificationReplyMessage;
 var initialLogin = true;
 var darkThemeSwitchState;
 var pageVisible;
+var systemTheme;
 
 var sequences = {
   primary: 'up up down down left right left right b a',
@@ -75,8 +76,19 @@ cheet.done(function (seq) {
 
 var socket = io();
 
-if (store('darkTheme') == true) {
-  $('#darkThemeSwitch').prop('checked', true);
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  systemTheme = 'dark';
+}
+else {
+  systemTheme = 'light';
+}
+
+if (store('theme') == null) {
+  store('theme', systemTheme);
+}
+
+if (store('theme') == 'dark') {
+  $('#darkThemeSwitch').prop('checked', 'dark');
   $('body').css({
     "background-color": "rgb(30,34,39)",
     "color": "#fff"
@@ -89,8 +101,8 @@ if (store('darkTheme') == true) {
   $('.notificationBell').attr('src','./WhiteNotificationBell.png');
 }
 
-if (store('darkTheme') == false) {
-  $('#darkThemeSwitch').prop('checked', false);
+if (store('theme') == 'light') {
+  $('#darkThemeSwitch').prop('checked', 'light');
   $('body').css({
     "background-color": "#fff",
     "color": "#212529"
@@ -105,8 +117,8 @@ if (store('darkTheme') == false) {
 
 $('#darkThemeSwitch').on('change.bootstrapSwitch', function (event) {
   darkThemeSwitchState = $('#darkThemeSwitch').prop('checked');
-  if (darkThemeSwitchState == true) {
-    store('darkTheme', true);
+  if (darkThemeSwitchState == 'dark') {
+    store('theme', 'dark');
     $('body').css({
       "background-color": "rgb(30,34,39)",
       "color": "#fff"
@@ -119,8 +131,8 @@ $('#darkThemeSwitch').on('change.bootstrapSwitch', function (event) {
     $('.notificationBell').attr('src','WhiteNotificationBell.png');
   }
 
-  if (darkThemeSwitchState == false) {
-    store('darkTheme', false);
+  if (darkThemeSwitchState == 'light') {
+    store('theme', 'light');
     $('body').css({
       "background-color": "#fff",
       "color": "#212529"
