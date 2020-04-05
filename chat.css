@@ -159,18 +159,21 @@ ul {
   height: auto;
   left: 0;
   outline: none;
+  border: 1px solid #40444b;
   padding-left: 10px;
   position: absolute;
   right: 0;
   width: 85%;
   overflow-y: auto;
   resize: none;
+  border-radius: 8px;
+  max-height: 144px;
 }
 
 /* User List */
 
 .userList {
-  border-left: 3px solid #0400ff;
+  border-left: 3px solid #40444b;
   bottom: 0;
   height: 100%;
   outline: none;
