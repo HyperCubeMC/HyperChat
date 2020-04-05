@@ -117,7 +117,7 @@ if (store('theme') == 'light') {
 
 $('#darkThemeSwitch').on('change.bootstrapSwitch', function (event) {
   darkThemeSwitchState = $('#darkThemeSwitch').prop('checked');
-  if (darkThemeSwitchState == 'dark') {
+  if (darkThemeSwitchState == true) {
     store('theme', 'dark');
     $('body').css({
       "background-color": "rgb(30,34,39)",
@@ -131,7 +131,7 @@ $('#darkThemeSwitch').on('change.bootstrapSwitch', function (event) {
     $('.notificationBell').attr('src','WhiteNotificationBell.png');
   }
 
-  if (darkThemeSwitchState == 'light') {
+  if (darkThemeSwitchState == false) {
     store('theme', 'light');
     $('body').css({
       "background-color": "#fff",
