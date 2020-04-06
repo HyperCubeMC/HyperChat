@@ -19,15 +19,15 @@
     <link rel="preload" href="./BlackSettingsIcon.png" as="image">
     <!-- Fix Electron Support (before scripts) -->
     <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
-    <script src="./jquery-3.4.1.min.js"></script>
+    <script src="./jquery-3.4.1.min.js" async></script>
     <!-- <link rel="stylesheet" href="./jquery-ui.min.css"> -->
     <!-- <script src="./jquery-ui.min.js"></script> -->
     <link rel="stylesheet" href="./bootstrap.min.css">
-    <script src="./bootstrap.min.js"></script>
-    <script src="./socket.io/socket.io.js"></script>
-    <script src="./showdown.min.js"></script>
-    <script src="./cheet.min.js"></script>
-    <script src="./store2.min.js"></script>
+    <script src="./bootstrap.min.js" async></script>
+    <script src="./socket.io/socket.io.js" async></script>
+    <script src="./showdown.min.js" async></script>
+    <script src="./cheet.min.js" async></script>
+    <script src="./store2.min.js" async></script>
     <!-- Fix Electron Support (after scripts) -->
     <script>if (window.module) module = window.module;</script>
   </head>
@@ -65,7 +65,7 @@
         </div>
       </li>
     </ul>
-    <script src="./chat.js"></script>
+    <script src="./chat.js" async></script>
 <!--    <script src="./react.js" type="module"></script> -->
   </body>
 </html>

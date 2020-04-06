@@ -4,6 +4,7 @@ const fs = require('fs')
 const mongoose = require('mongoose');
 var Filter = require('bad-words'),
     filter = new Filter();
+var compress = require("compression")
 
 	// options for SSL certificate
 const options = {
@@ -17,6 +18,9 @@ var io = require('socket.io')(app);
 app.listen(4434);
 
 function server (req, res) {
+  var defaultCompressOptions = function(){}, useDefaultOptions = {}
+  compress(useDefaultOptions)(req,res,defaultCompressOptions) // mutates the response object
+  
 	var filePath = '.' + req.url;
 	if (filePath == './')
 		filePath = './chat.html';
