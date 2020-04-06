@@ -87,22 +87,8 @@ if (store('theme') == null) {
   store('theme', systemTheme);
 }
 
-if (store('theme') == 'dark') {
-  $('#darkThemeSwitch').prop('checked', 'dark');
-  $('body').css({
-    "background-color": "#36393f",
-    "color": "#fff"
-  });
-  $('.inputMessage').css({
-    "background-color": "#40444b",
-    "color": "#fff"
-  });
-  $('.settingsIcon').attr('src','./WhiteSettingsIcon.png');
-  $('.notificationBell').attr('src','./WhiteNotificationBell.png');
-}
-
 if (store('theme') == 'light') {
-  $('#darkThemeSwitch').prop('checked', 'light');
+  $('#lightThemeRadio').prop('checked', true)
   $('body').css({
     "background-color": "#fff",
     "color": "#212529"
@@ -115,23 +101,22 @@ if (store('theme') == 'light') {
   $('.notificationBell').attr('src','./BlackNotificationBell.png');
 }
 
-$('#darkThemeSwitch').on('change.bootstrapSwitch', function (event) {
-  darkThemeSwitchState = $('#darkThemeSwitch').prop('checked');
-  if (darkThemeSwitchState == true) {
-    store('theme', 'dark');
-    $('body').css({
-      "background-color": "#36393f",
-      "color": "#fff"
-    });
-    $('.inputMessage').css({
-      "background-color": "#40444b",
-      "color": "#fff"
-    });
-    $('.settingsIcon').attr('src','WhiteSettingsIcon.png');
-    $('.notificationBell').attr('src','WhiteNotificationBell.png');
-  }
+if (store('theme') == 'dark') {
+  $('#darkThemeRadio').prop('checked', true)
+  $('body').css({
+    "background-color": "#36393f",
+    "color": "#fff"
+  });
+  $('.inputMessage').css({
+    "background-color": "#40444b",
+    "color": "#fff"
+  });
+  $('.settingsIcon').attr('src','./WhiteSettingsIcon.png');
+  $('.notificationBell').attr('src','./WhiteNotificationBell.png');
+}
 
-  if (darkThemeSwitchState == false) {
+const changeTheme = (theme) => {
+  if (theme == 'light') {
     store('theme', 'light');
     $('body').css({
       "background-color": "#fff",
@@ -144,6 +129,29 @@ $('#darkThemeSwitch').on('change.bootstrapSwitch', function (event) {
     $('.settingsIcon').attr('src','BlackSettingsIcon.png');
     $('.notificationBell').attr('src','BlackNotificationBell.png');
   }
+  if (theme == 'dark') {
+    store('theme', 'dark');
+    $('body').css({
+      "background-color": "#36393f",
+      "color": "#fff"
+    });
+    $('.inputMessage').css({
+      "background-color": "#40444b",
+      "color": "#fff"
+    });
+    $('.settingsIcon').attr('src','WhiteSettingsIcon.png');
+    $('.notificationBell').attr('src','WhiteNotificationBell.png');
+  }
+}
+
+$('#lightThemeRadio').on('change', function (event) {
+  // Light theme radio checked
+  changeTheme('light');
+});
+
+$('#darkThemeRadio').on('change', function (event) {
+  // Dark theme radio checked
+  changeTheme('dark');
 });
 
 function onVisibilityChange(callback) {
