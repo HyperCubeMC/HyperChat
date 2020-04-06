@@ -19,8 +19,8 @@ app.listen(4434);
 
 function server (req, res) {
   var defaultCompressOptions = function(){}, useDefaultOptions = {}
-  compress(useDefaultOptions)(req,res,defaultCompressOptions) // mutates the response object
-  
+  compress(useDefaultOptions)(req,res,defaultCompressOptions) // mutates the response object to add compression
+
 	var filePath = '.' + req.url;
 	if (filePath == './')
 		filePath = './chat.html';

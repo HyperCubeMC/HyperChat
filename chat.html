@@ -23,11 +23,12 @@
     <!-- <link rel="stylesheet" href="./jquery-ui.min.css"> -->
     <!-- <script src="./jquery-ui.min.js"></script> -->
     <link rel="stylesheet" href="./bootstrap.min.css">
-    <script src="./bootstrap.min.js" async></script>
-    <script src="./socket.io/socket.io.js" async></script>
-    <script src="./showdown.min.js" async></script>
-    <script src="./cheet.min.js" async></script>
-    <script src="./store2.min.js" async></script>
+    <script src="./bootstrap.min.js" defer></script>
+    <script src="./socket.io/socket.io.js" defer></script>
+    <script src="./showdown.min.js" defer></script>
+    <script src="./cheet.min.js" defer></script>
+    <script src="./store2.min.js" defer></script>
+    <script src="./chat.js" defer></script>
     <!-- Fix Electron Support (after scripts) -->
     <script>if (window.module) module = window.module;</script>
   </head>
@@ -65,7 +66,6 @@
         </div>
       </li>
     </ul>
-    <script src="./chat.js" async></script>
-<!--    <script src="./react.js" type="module"></script> -->
+<!--  <script src="./react.js" type="module"></script> -->
   </body>
 </html>
