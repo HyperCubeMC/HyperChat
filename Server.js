@@ -107,7 +107,7 @@ io.on('connection', (socket) => {
   // when the client emits 'new message', this listens and executes
   socket.on('new message', (message) => {
 		message = filter.clean(message);
-    var converter = new showdown.Converter({extensions: [xssFilter], tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, ghMentions: true});
+    var converter = new showdown.Converter({extensions: [xssFilter], tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
     message = converter.makeHtml(message);
 		isMuted = false;
 		if (mutedList.includes(socket.username)) {
@@ -178,13 +178,13 @@ io.on('connection', (socket) => {
 				"password": socket.password
 			}
 
-			db.collection('credentials').count({username: socket.username, password: socket.password}, function(err, count) {
+			db.collection('credentials').countDocuments({username: socket.username, password: socket.password}, function(err, count) {
 				if (err) throw err;
 				if (count > 0) {
 					allowLogin();
 				}
 				else {
-					db.collection('credentials').count({username: socket.username}, function(err, count) {
+					db.collection('credentials').countDocuments({username: socket.username}, function(err, count) {
 						if (err) throw err;
 						if (count > 0) {
 							socket.emit('login denied', {
