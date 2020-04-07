@@ -2,11 +2,11 @@ const url = require('url')
 const path = require('path')
 const fs = require('fs')
 const mongoose = require('mongoose');
-var Filter = require('bad-words'),
+const Filter = require('bad-words'),
     filter = new Filter();
-var compress = require("compression");
-var showdown = require('showdown');
-var xssFilter = require('showdown-xss-filter');
+const compress = require("compression");
+const showdown = require('showdown');
+const xssFilter = require('showdown-xss-filter');
 
 	// options for SSL certificate
 const options = {
