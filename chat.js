@@ -369,7 +369,7 @@ const addChatMessage = (data, options) => {
   var $usernameDiv = $('<span class="username"/>')
     .text(data.username)
     .css('color', getUsernameColor(data.username));
-  var $messageBodyDiv = $('<span class="messageBody">' + markdownMessage)
+  var $messageBodyDiv = $('<span class="messageBody">' + markdownMessage + '</span>')
     // .text(data.message);
 
   var typingClass = data.typing ? 'typing' : '';
