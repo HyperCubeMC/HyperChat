@@ -4,7 +4,9 @@ const fs = require('fs')
 const mongoose = require('mongoose');
 var Filter = require('bad-words'),
     filter = new Filter();
-var compress = require("compression")
+var compress = require("compression");
+var showdown = require('showdown');
+var xssFilter = require('showdown-xss-filter');
 
 	// options for SSL certificate
 const options = {
@@ -105,6 +107,8 @@ io.on('connection', (socket) => {
   // when the client emits 'new message', this listens and executes
   socket.on('new message', (message) => {
 		message = filter.clean(message);
+    var converter = new showdown.Converter({extensions: [xssFilter], tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, ghMentions: true});
+    message = converter.makeHtml(message);
 		isMuted = false;
 		if (mutedList.includes(socket.username)) {
 		  isMuted = true

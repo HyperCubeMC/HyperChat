@@ -356,8 +356,6 @@ const removeFromUserList = (data) => {
 
 // Adds the visual chat message to the message list
 const addChatMessage = (data, options) => {
-  var converter = new showdown.Converter({tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, ghMentions: true});
-  var markdownMessage = converter.makeHtml(data.message);
   // Don't fade the message in if there is an 'X was typing'
   var $typingMessages = getTypingMessages(data);
   options = options || {};
@@ -369,7 +367,7 @@ const addChatMessage = (data, options) => {
   var $usernameDiv = $('<span class="username"/>')
     .text(data.username)
     .css('color', getUsernameColor(data.username));
-  var $messageBodyDiv = $('<span class="messageBody">' + markdownMessage + '</span>')
+  var $messageBodyDiv = $('<span class="messageBody">' + data.message + '</span>')
     // .text(data.message);
 
   var typingClass = data.typing ? 'typing' : '';
