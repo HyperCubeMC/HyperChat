@@ -7,6 +7,7 @@ const Filter = require('bad-words'),
 const compress = require("compression");
 const showdown = require('showdown');
 const xssFilter = require('showdown-xss-filter');
+const argon2 = require('argon2');
 
 	// options for SSL certificate
 const options = {
@@ -92,11 +93,11 @@ function arrayRemove(arr, value) {
 var mutedList = []
 var isMuted;
 
-mongoose.connect('mongodb://localhost:27017/chatapp', {useNewUrlParser: true, useUnifiedTopology: true});
-var db = mongoose.connection;
+mongoose.connect('mongodb://localhost:27017/hyperchat', {useNewUrlParser: true, useUnifiedTopology: true});
+const db = mongoose.connection;
 db.on('error', console.log.bind(console, "Connection error upon trying to connect to MongoDB!"));
-db.once('open', function(callback){
-    console.log("Connection to MongoDB successful!");
+db.once('open', function(callback) {
+  console.log("Connection to MongoDB successful!");
 })
 
 var prefix = '/';
@@ -107,7 +108,7 @@ io.on('connection', (socket) => {
   // when the client emits 'new message', this listens and executes
   socket.on('new message', (message) => {
 		message = filter.clean(message);
-    var converter = new showdown.Converter({extensions: [xssFilter], tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
+    const converter = new showdown.Converter({extensions: [xssFilter], tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
     message = converter.makeHtml(message);
 		isMuted = false;
 		if (mutedList.includes(socket.username)) {
@@ -172,105 +173,143 @@ io.on('connection', (socket) => {
 		socket.username = username;
 		socket.password = password;
 		socket.room = room;
+    var userHashedPassword;
+
 		if (socket.username.length <= 14 && socket.password.length <= 14 && socket.room.length <= 14 && socket.username.length > 0 && socket.password.length > 0 && socket.room.length > 0) {
-			var credentials = {
-				"username": socket.username,
-				"password": socket.password
-			}
+      const hashPassword = async (password) => {
+        try {
+          const hashedPassword = await argon2.hash(password);
+          return hashedPassword;
+        }
+        catch (err) {
+          console.error("ERROR: Cannot hash password: " + err);
+        }
+      }
 
-			db.collection('credentials').countDocuments({username: socket.username, password: socket.password}, function(err, count) {
-				if (err) throw err;
-				if (count > 0) {
-					allowLogin();
-				}
-				else {
-					db.collection('credentials').countDocuments({username: socket.username}, function(err, count) {
-						if (err) throw err;
-						if (count > 0) {
-							socket.emit('login denied', {
-								loginDeniedReason: "Username already exists/Invalid Password"
-							});
-						}
-						else if (count == 0) {
-							db.collection('credentials').insertOne(credentials, function(err, collection) {
-								if (err) throw err;
-								allowLogin();
-							});
-						}
-					});
-				}
-			});
-			var allowLogin = function() {
-				socket.join(socket.room);
+      const verifyPassword = async (hashKey, password) => {
+        try {
+          if (await argon2.verify(hashKey, password)) {
+            return 'match';
+          }
+          else {
+            return 'noMatch';
+          }
+        }
+        catch (err) {
+          console.error("ERROR: Cannot verify password: " + err);
+        }
+      }
 
-				socket.emit('login authorized');
-		    addedUser = true;
-		    // echo to the room that a person has connected
-		    socket.to(socket.room).emit('user joined', {
-		      username: socket.username,
-		    });
-				if (typeof userListContents[room] == 'undefined') {
-					userListContents[room] = [];
-				}
-				userListContents[room].push(username);
-				socket.emit('user list', {
-		      userListContents: userListContents[room]
-				});
-			};
-		}
-		else if (socket.username.length > 14) {
-			socket.emit('login denied', {
-				loginDeniedReason: "Username cannot be longer than 14 characters"
-			});
-		}
-		else if (socket.password.length > 14) {
-			socket.emit('login denied', {
-				loginDeniedReason: "Password cannot be longer than 14 characters"
-			});
-		}
-		else if (socket.room.length > 14) {
-			socket.emit('login denied', {
-				loginDeniedReason: "Room cannot be longer than 14 characters"
-			});
-		}
-		else if (socket.username.length == 0) {
-			socket.emit('login denied', {
-				loginDeniedReason: "Username cannot be empty"
-			});
-		}
-		else if (socket.password.length == 0) {
-			socket.emit('login denied', {
-				loginDeniedReason: "Password cannot be empty"
-			});
-		}
-		else if (socket.room.length == 0) {
-			socket.emit('login denied', {
-				loginDeniedReason: "Room cannot be empty"
-			});
-		}
+      hashPassword(socket.password).then(hashedPassword => {
+        userHashedPassword = hashedPassword;
+        verifyLogin();
+      });
+
+      function verifyLogin() {
+        db.collection('credentials').countDocuments({username: socket.username, hashedPassword: {$exists: true}}, function(err, count) {
+          var credentials = {
+            "username": socket.username,
+            "hashedPassword": userHashedPassword
+          }
+
+          if (err) throw err;
+          if (count > 0) {
+            db.collection('credentials').findOne({username: socket.username}, function(err, user) {
+              async function getUserVerification() {
+                var userVerification = await verifyPassword(user.hashedPassword, socket.password);
+                return userVerification;
+              }
+              getUserVerification().then(userVerification => {
+                if (userVerification == 'match') {
+                  allowLogin();
+                }
+                else if (userVerification == 'noMatch') {
+                  socket.emit('login denied', {
+                    loginDeniedReason: "Username already exists/Invalid Password"
+                  });
+                }
+              });
+            });
+          }
+          else {
+            db.collection('credentials').insertOne(credentials, function(err, collection) {
+              if (err) throw err;
+              allowLogin();
+            });
+          }
+        });
+        var allowLogin = function() {
+          socket.join(socket.room);
+
+          socket.emit('login authorized');
+          addedUser = true;
+          // Echo to the room that a person has connected
+          socket.to(socket.room).emit('user joined', {
+            username: socket.username,
+          });
+          if (typeof userListContents[socket.room] == 'undefined') {
+            userListContents[socket.room] = [];
+          }
+          userListContents[socket.room].push(socket.username);
+          socket.emit('user list', {
+            userListContents: userListContents[socket.room]
+          });
+        }
+      }
+    }
+    else if (socket.username.length > 14) {
+      socket.emit('login denied', {
+        loginDeniedReason: "Username cannot be longer than 14 characters"
+      });
+    }
+    else if (socket.password.length > 14) {
+      socket.emit('login denied', {
+        loginDeniedReason: "Password cannot be longer than 14 characters"
+      });
+    }
+    else if (socket.room.length > 14) {
+      socket.emit('login denied', {
+        loginDeniedReason: "Room cannot be longer than 14 characters"
+      });
+    }
+    else if (socket.username.length == 0) {
+      socket.emit('login denied', {
+        loginDeniedReason: "Username cannot be empty"
+      });
+    }
+    else if (socket.password.length == 0) {
+      socket.emit('login denied', {
+        loginDeniedReason: "Password cannot be empty"
+      });
+    }
+    else if (socket.room.length == 0) {
+      socket.emit('login denied', {
+        loginDeniedReason: "Room cannot be empty"
+      });
+    }
   });
 
-  // when the client emits 'typing', we broadcast it to others
+  // When the client emits 'typing', we broadcast it to others
   socket.on('typing', () => {
     socket.to(socket.room).emit('typing', {
       username: socket.username
     });
   });
 
-  // when the client emits 'stop typing', we broadcast it to others
+  // When the client emits 'stop typing', we broadcast it to others
   socket.on('stop typing', () => {
     socket.to(socket.room).emit('stop typing', {
       username: socket.username
     });
   });
 
-  // when the user disconnects.. perform this
+  // When the user disconnects.. perform this
   socket.on('disconnect', () => {
     if (addedUser) {
 			userListContents[socket.room] = arrayRemove(userListContents[socket.room], socket.username);
-      // echo globally that this client has left
+      // Echo globally that this client has left
       socket.to(socket.room).emit('user left', {
-        username: socket.username,
+        username: socket.username
       });
     }
   });
