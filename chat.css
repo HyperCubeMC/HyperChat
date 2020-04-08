@@ -235,6 +235,7 @@ ul {
 }
 
 .notificationBell {
+  margin: 10px;
   position: absolute;
   top: 0px;
   right: 50px;
@@ -244,6 +245,7 @@ ul {
 }
 
 .settingsIcon {
+  margin: 10px;
   position: absolute;
   top: 0px;
   right: 0px;
