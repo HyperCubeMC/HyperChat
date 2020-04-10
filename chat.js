@@ -61,6 +61,7 @@ var initialLogin = true;
 var darkThemeSwitchState;
 var pageVisible;
 var systemTheme;
+const converter = new showdown.Converter({tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
 
 var sequences = {
   primary: 'up up down down left right left right b a',
@@ -526,9 +527,10 @@ socket.on('new message', (data) => {
     var chatMessageSound = new Audio('ChatMessageSound.mp3');
     chatMessageSound.play();
     if ('navigator.serviceWorker.controller' && notificationPermission === 'granted' && data.message.includes('@' + username)) {
+      var notificationMessage = converter.makeMarkdown(data.message);
       navigator.serviceWorker.ready.then(function(registration) {
         registration.showNotification(data.username, {
-          body: data.message,
+          body: notificationMessage,
           icon: './favicon.ico',
           vibrate: [200, 100, 200, 100, 200, 100, 200],
           tag: 'pingNotification',
