@@ -1,3 +1,4 @@
+var mainCode;
 self.addEventListener('install', function(event) {
   // Put `offline.html` page into cache
   var offlineRequest = new Request('offline.html');
@@ -37,7 +38,7 @@ self.addEventListener('fetch', function(event) {
 });
 
 self.addEventListener("message", function(event) {
-  mainCode = event.source
+  mainCode = event.source;
   if (event.data === "Initial message to service worker.") {
     event.source.postMessage("Initial message to main code.");
   }
