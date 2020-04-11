@@ -6,28 +6,29 @@
     <meta name="description" content="HyperChat is a fast, open-source chat app developed by Justsnoopy30.">
     <title>HyperChat</title>
     <link rel="stylesheet" href="./chat.css">
-    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
-    <link rel="mask-icon" href="./safari-pinned-tab.svg" color="#00adff">
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png">
+    <link rel="mask-icon" href="./assets/safari-pinned-tab.svg" color="#00adff">
+    <link rel="shortcut icon" href="/assets/favicon.ico">
     <meta name="msapplication-TileColor" content="#00adff">
     <meta name="theme-color" content="#00adff">
     <link rel="manifest" href="./manifest.json">
-    <link rel="preload" href="./WhiteNotificationBell.png" as="image">
-    <link rel="preload" href="./WhiteSettingsIcon.png" as="image">
-    <link rel="preload" href="./BlackNotificationBell.png" as="image">
-    <link rel="preload" href="./BlackSettingsIcon.png" as="image">
+    <link rel="preload" href="./assets/WhiteNotificationBell.png" as="image">
+    <link rel="preload" href="./assets/WhiteSettingsIcon.png" as="image">
+    <link rel="preload" href="./assets/BlackNotificationBell.png" as="image">
+    <link rel="preload" href="./assets/BlackSettingsIcon.png" as="image">
     <!-- Fix Electron Support (before scripts) -->
     <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
-    <script src="./jquery-3.4.1.min.js" defer></script>
+    <script src="./libraries/jquery-3.4.1.min.js" defer></script>
     <!-- <link rel="stylesheet" href="./jquery-ui.min.css"> -->
     <!-- <script src="./jquery-ui.min.js"></script> -->
-    <link rel="stylesheet" href="./bootstrap.min.css">
-    <script src="./bootstrap.min.js" defer></script>
+    <link rel="stylesheet" href="./libraries/bootstrap.min.css">
+    <script src="./libraries/bootstrap.min.js" defer></script>
     <script src="./socket.io/socket.io.js" defer></script>
-    <script src="./cheet.min.js" defer></script>
-    <script src="./store2.min.js" defer></script>
-    <script src="./showdown.min.js" defer></script>
+    <script src="./libraries/cheet.min.js" defer></script>
+    <script src="./libraries/store2.min.js" defer></script>
+    <script src="./libraries/showdown.min.js" defer></script>
     <script src="./chat.js" defer></script>
     <!-- Fix Electron Support (after scripts) -->
     <script>if (window.module) module = window.module;</script>
@@ -47,8 +48,8 @@
       </li>
       <li id="chatPage">
         <div id="chatArea">
-          <img id="notificationBell" src="./BlackNotificationBell.png" alt="Notification Bell" onclick="notificationPermissionPrompt()">
-          <img class="settingsIcon" src="./BlackSettingsIcon.png" alt="Settings Icon" onclick="showSettingsPage()">
+          <img id="notificationBell" src="./assets/BlackNotificationBell.png" alt="Notification Bell" onclick="notificationPermissionPrompt()">
+          <img class="settingsIcon" src="./assets/BlackSettingsIcon.png" alt="Settings Icon" onclick="showSettingsPage()">
           <ul id="messages"></ul>
         </div>
         <div id="userList">
@@ -61,12 +62,12 @@
           <nav class="navbar" id="settingsTopBar">
             <div class="container-fluid">
               <a class="navbar-brand" href="#">
-                <img src="./favicon.ico" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
+                <img src="./assets/favicon.ico" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
                 HyperChat Settings
               </a>
             </div>
           </nav>
-          <img class="settingsIcon" src="./BlackSettingsIcon.png" alt="Settings Icon" onclick="hideSettingsPage()">
+          <img class="settingsIcon" src="./assets/BlackSettingsIcon.png" alt="Settings Icon" onclick="hideSettingsPage()">
           <div class="form-check form-control-lg">
             <input class="form-check-input" type="radio" name="themeRadio" id="lightThemeRadio">
             <label class="form-check-label" for="lightThemeRadio">Light Theme</label>

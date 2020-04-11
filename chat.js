@@ -86,8 +86,8 @@ if (store('theme') == 'light') {
     "background-color": "#fff",
     "color": "#212529"
   })
-  $('.settingsIcon').attr('src','./BlackSettingsIcon.png');
-  $('#notificationBell').attr('src','./BlackNotificationBell.png');
+  $('.settingsIcon').attr('src','./assets/BlackSettingsIcon.png');
+  $('#notificationBell').attr('src','./assets/BlackNotificationBell.png');
   $('#settingsTopBar').addClass('navbar-light bg-light');
 }
 
@@ -101,8 +101,8 @@ if (store('theme') == 'dark') {
     "background-color": "#40444b",
     "color": "#fff"
   });
-  $('.settingsIcon').attr('src','./WhiteSettingsIcon.png');
-  $('#notificationBell').attr('src','./WhiteNotificationBell.png');
+  $('.settingsIcon').attr('src','./assets/WhiteSettingsIcon.png');
+  $('#notificationBell').attr('src','./assets/WhiteNotificationBell.png');
   $('#settingsTopBar').addClass('navbar-dark bg-dark');
 }
 
@@ -117,8 +117,8 @@ const changeTheme = (theme) => {
       "background-color": "#fff",
       "color": "#212529"
     })
-    $('.settingsIcon').attr('src','BlackSettingsIcon.png');
-    $('#notificationBell').attr('src','BlackNotificationBell.png');
+    $('.settingsIcon').attr('src','./assets/BlackSettingsIcon.png');
+    $('#notificationBell').attr('src','./assets/BlackNotificationBell.png');
     $('#settingsTopBar').removeClass('navbar-dark bg-dark');
     $('#settingsTopBar').addClass('navbar-light bg-light');
   }
@@ -132,8 +132,8 @@ const changeTheme = (theme) => {
       "background-color": "#40444b",
       "color": "#fff"
     });
-    $('.settingsIcon').attr('src','WhiteSettingsIcon.png');
-    $('#notificationBell').attr('src','WhiteNotificationBell.png');
+    $('.settingsIcon').attr('src','./assets/WhiteSettingsIcon.png');
+    $('#notificationBell').attr('src','./assets/WhiteNotificationBell.png');
     $('#settingsTopBar').removeClass('navbar-light bg-light');
     $('#settingsTopBar').addClass('navbar-dark bg-dark');
   }

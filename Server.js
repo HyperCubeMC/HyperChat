@@ -22,7 +22,7 @@ app.listen(4434);
 
 function server (req, res) {
   var defaultCompressOptions = function(){}, useDefaultOptions = {}
-  compress(useDefaultOptions)(req,res,defaultCompressOptions) // mutates the response object to add compression
+  compress(useDefaultOptions)(req,res,defaultCompressOptions) // Mutates the response object to add compression
 
 	var filePath = '.' + req.url;
 	if (filePath == './')
@@ -50,7 +50,7 @@ function server (req, res) {
 		'.otf': 'application/font-otf',
 		'.svg': 'application/image/svg+xml',
 		'.ico': 'image/x-icon',
-		'.pdf': 'application/pdf',
+		'.pdf': 'application/pdf'
 	};
 
 	var contentType = mimeTypes[extname] || 'application/octet-stream';
@@ -58,7 +58,7 @@ function server (req, res) {
 	fs.readFile(filePath, function (error, content) {
 		if (error) {
 			if (error.code == 'ENOENT') {
-				fs.readFile('./404.html', function (error, content) {
+				fs.readFile('./errors/404.html', function (error, content) {
 					res.writeHead(404, {
 						'Content-Type': 'text/html'
 					});
