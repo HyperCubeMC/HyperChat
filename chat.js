@@ -1,4 +1,4 @@
-if ('serviceWorker' in navigator) {
+currentInputif ('serviceWorker' in navigator) {
   if (navigator.serviceWorker.controller) {
     console.log("Service worker is controlling the site.");
     console.log("Sent \"Initial message to service worker.\" to service worker.")
@@ -34,7 +34,7 @@ var colors = [
 ]; // Colors for usernames
 
 // Initialize variables
-var $currentInput; // Current input focus variable
+var currentInput; // Current input focus variable
 var username;
 var password;
 var room;
@@ -225,7 +225,7 @@ socket.on('login authorized', () => {
     $('#loginPage').fadeOut();
     $('#chatPage').fadeIn();
     $('#loginPage').off('click');
-    $currentInput = $('#inputMessage').focus();
+    currentInput = $('#inputMessage').focus();
     connected = true;
     loggedIn = true
     // Display the welcome message
@@ -485,7 +485,7 @@ $(window).keydown(event => {
   if (loggedIn) {
     // Auto-focus the current input when a key is typed
     if (!(event.ctrlKey || event.metaKey || event.altKey || event.shiftKey)) {
-      $currentInput.focus();
+      currentInput.focus();
     }
   }
   // When the client hits ENTER on their keyboard
@@ -500,12 +500,12 @@ $('#inputMessage').on('input', () => {
 
 // Set focus to username input when clicked
 $('#usernameInput').click(() => {
-  $currentInput = $('#usernameInput').focus();
+  currentInput = $('#usernameInput').focus();
 });
 
 // Set focus to password input when clicked
 $('#passwordInput').click(() => {
-  $currentInput = $('#passwordInput').focus();
+  currentInput = $('#passwordInput').focus();
 });
 
 // Focus input when clicking on the message input's border
