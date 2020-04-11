@@ -25,28 +25,16 @@ if ('serviceWorker' in navigator) {
   }
 }
 
-var FADE_TIME = 150; // ms
-var TYPING_TIMER_LENGTH = 400; // ms
-var COLORS = [
+var fadeTime = 150; // In ms
+var typingTimerLength = 400; // In ms
+var colors = [
   '#e21400', '#91580f', '#f8a700', '#f78b00',
   '#58dc00', '#287b00', '#a8f07a', '#4ae8c4',
   '#3b88eb', '#3824aa', '#a700ff', '#d300e7'
-];
+]; // Colors for usernames
 
 // Initialize variables
-var $window = $(window);
-var $usernameInput = $('.usernameInput'); // Input for username
-var $passwordInput = $('.passwordInput'); // Input for password
-var $roomInput = $('.roomInput'); // Input for chat room
-var $messages = $('.messages'); // Messages area
-var $inputMessage = $('.inputMessage'); // Input message input box
-var $userList = $('.userList'); // User list
-var $currentInput // Current input focus variable
-
-var $loginPage = $('.login.page'); // The login page
-var $chatPage = $('.chat.page'); // The chatroom page
-var $settingsPage = $('.settings.page'); // The settings page
-
+var $currentInput; // Current input focus variable
 var username;
 var password;
 var room;
@@ -94,12 +82,12 @@ if (store('theme') == 'light') {
     "background-color": "#fff",
     "color": "#212529"
   })
-  $('.inputMessage').css({
+  $('#inputMessage').css({
     "background-color": "#fff",
     "color": "#212529"
   })
   $('.settingsIcon').attr('src','./BlackSettingsIcon.png');
-  $('.notificationBell').attr('src','./BlackNotificationBell.png');
+  $('#notificationBell').attr('src','./BlackNotificationBell.png');
   $('#settingsTopBar').addClass('navbar-light bg-light');
 }
 
@@ -109,12 +97,12 @@ if (store('theme') == 'dark') {
     "background-color": "#36393f",
     "color": "#fff"
   });
-  $('.inputMessage').css({
+  $('#inputMessage').css({
     "background-color": "#40444b",
     "color": "#fff"
   });
   $('.settingsIcon').attr('src','./WhiteSettingsIcon.png');
-  $('.notificationBell').attr('src','./WhiteNotificationBell.png');
+  $('#notificationBell').attr('src','./WhiteNotificationBell.png');
   $('#settingsTopBar').addClass('navbar-dark bg-dark');
 }
 
@@ -125,12 +113,12 @@ const changeTheme = (theme) => {
       "background-color": "#fff",
       "color": "#212529"
     })
-    $('.inputMessage').css({
+    $('#inputMessage').css({
       "background-color": "#fff",
       "color": "#212529"
     })
     $('.settingsIcon').attr('src','BlackSettingsIcon.png');
-    $('.notificationBell').attr('src','BlackNotificationBell.png');
+    $('#notificationBell').attr('src','BlackNotificationBell.png');
     $('#settingsTopBar').removeClass('navbar-dark bg-dark');
     $('#settingsTopBar').addClass('navbar-light bg-light');
   }
@@ -140,12 +128,12 @@ const changeTheme = (theme) => {
       "background-color": "#36393f",
       "color": "#fff"
     });
-    $('.inputMessage').css({
+    $('#inputMessage').css({
       "background-color": "#40444b",
       "color": "#fff"
     });
     $('.settingsIcon').attr('src','WhiteSettingsIcon.png');
-    $('.notificationBell').attr('src','WhiteNotificationBell.png');
+    $('#notificationBell').attr('src','WhiteNotificationBell.png');
     $('#settingsTopBar').removeClass('navbar-light bg-light');
     $('#settingsTopBar').addClass('navbar-dark bg-dark');
   }
@@ -212,32 +200,32 @@ onVisibilityChange(function(visible) {
 });
 
 function showSettingsPage() {
-  $chatPage.fadeOut();
-  $settingsPage.fadeIn();
-  $chatPage.off('click');
+  $('#chatPage').fadeOut();
+  $('#settingsPage').fadeIn();
+  $('#chatPage').off('click');
 }
 
 function hideSettingsPage() {
-  $settingsPage.fadeOut();
-  $chatPage.fadeIn();
-  $settingsPage.off('click');
+  $('#settingsPage').fadeOut();
+  $('#chatPage').fadeIn();
+  $('#settingsPage').off('click');
 }
 
 // Submits the credentials to the server
 const submitLoginInfo = () => {
-  username = cleanInput($usernameInput.val().trim());
-  password = cleanInput($passwordInput.val().trim());
-  room = cleanInput($roomInput.val().trim());
+  username = cleanInput($('#usernameInput').val().trim());
+  password = cleanInput($('#passwordInput').val().trim());
+  room = cleanInput($('#roomInput').val().trim());
   // Tell the server your username, password, and room
   socket.emit('login', { username, password, room });
 }
 
 socket.on('login authorized', () => {
   if (initialLogin) {
-    $loginPage.fadeOut();
-    $chatPage.fadeIn();
-    $loginPage.off('click');
-    $currentInput = $inputMessage.focus();
+    $('#loginPage').fadeOut();
+    $('#chatPage').fadeIn();
+    $('#loginPage').off('click');
+    $currentInput = $('#inputMessage').focus();
     connected = true;
     loggedIn = true
     // Display the welcome message
@@ -323,7 +311,7 @@ const sendMessage = (message) => {
   // Prevent markup from being injected into the message
   // message = cleanInput(message);
   if (message && connected && !cheatActivated) {
-    $inputMessage.val('');
+    $('#inputMessage').val('');
     socket.emit('new message', message);
   }
   else if (message && connected && cheatActivated) {
@@ -337,7 +325,7 @@ const syncUserList = (userListContents) => {
       usersToAddToUserList = usersToAddToUserList.add('<li class="user">' + userListContents[x] + '</li>');
     }
   }
-  $userList.append(usersToAddToUserList);
+  $('#userList').append(usersToAddToUserList);
 }
 
 // Log a message
@@ -348,7 +336,7 @@ const log = (message, options) => {
 
 const addToUserList = (data) => {
   var $user = $('<li>').addClass('user').text(data);
-  $userList.append($user);
+  $('#userList').append($user);
 }
 const removeFromUserList = (data) => {
   $('li').filter(function() { return $.text([this]) === data; }).remove();
@@ -365,14 +353,13 @@ const addChatMessage = (data, options) => {
     $typingMessages.remove();
   }
 
-  var $usernameDiv = $('<span class="username"/>')
+  var $usernameDiv = $('<span class="username"></span>')
     .text(data.username)
     .css('color', getUsernameColor(data.username));
   var $messageBodyDiv = $('<span class="messageBody">' + data.message + '</span>')
-    // .text(data.message);
 
   var typingClass = data.typing ? 'typing' : '';
-  var $messageDiv = $('<li class="message"/>')
+  var $messageDiv = $('<li class="message"></li>')
     .data('username', data.username)
     .addClass(typingClass)
     .append($usernameDiv, $messageBodyDiv);
@@ -383,7 +370,7 @@ const addChatMessage = (data, options) => {
 // Adds the visual chat typing message
 const addChatTyping = (data) => {
   data.typing = true;
-  data.message = 'is typing';
+  data.message = 'is typing...';
   addChatMessage(data);
 }
 
@@ -415,14 +402,14 @@ const addMessageElement = (el, options) => {
 
   // Apply options
   if (options.fade) {
-    $el.hide().fadeIn(FADE_TIME);
+    $el.hide().fadeIn(fadeTime);
   }
   if (options.prepend) {
-    $messages.prepend($el);
+    $('#messages').prepend($el);
   } else {
-    $messages.append($el);
+    $('#messages').append($el);
   }
-  $messages[0].scrollTop = $messages[0].scrollHeight;
+  $('#messages')[0].scrollTop = $('#messages')[0].scrollHeight;
 }
 
 // Prevents input from having injected markup
@@ -442,17 +429,17 @@ const updateTyping = () => {
     setTimeout(() => {
       var typingTimer = (new Date()).getTime();
       var timeDiff = typingTimer - lastTypingTime;
-      if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
+      if (timeDiff >= typingTimerLength && typing) {
         socket.emit('stop typing');
         typing = false;
       }
-    }, TYPING_TIMER_LENGTH);
+    }, typingTimerLength);
   }
 }
 
 // Gets the 'X is typing' messages of a user
 const getTypingMessages = (data) => {
-  return $('.typing.message').filter(function (i) {
+  return $('.typing').filter(function (i) {
     return $(this).data('username') === data.username;
   });
 }
@@ -465,28 +452,28 @@ const getUsernameColor = (username) => {
      hash = username.charCodeAt(i) + (hash << 5) - hash;
   }
   // Calculate color
-  var index = Math.abs(hash % COLORS.length);
-  return COLORS[index];
+  var index = Math.abs(hash % colors.length);
+  return colors[index];
 }
 
 // Keyboard events
 
-$inputMessage.on('input', function (event) {
+$('#inputMessage').on('input', function (event) {
   this.style.height = 'auto';
   this.style.height = (this.scrollHeight) + 'px';
 });
 
-$inputMessage.keydown(function (event) {
+$('#inputMessage').keydown(function (event) {
   if (event.key=="Enter" && !event.shiftKey) {
     event.preventDefault()
-    sendMessage($inputMessage.val())
+    sendMessage($('#inputMessage').val())
     socket.emit('stop typing');
     typing = false;
     this.style.height = "auto";
   }
 });
 
-$window.keydown(event => {
+$(window).keydown(event => {
   if (loggedIn) {
     // Auto-focus the current input when a key is typed
     if (!(event.ctrlKey || event.metaKey || event.altKey || event.shiftKey)) {
@@ -499,23 +486,23 @@ $window.keydown(event => {
   }
 });
 
-$inputMessage.on('input', () => {
+$('#inputMessage').on('input', () => {
   updateTyping();
 });
 
 // Set focus to username input when clicked
-$usernameInput.click(() => {
-  $currentInput = $usernameInput.focus();
+$('#usernameInput').click(() => {
+  $currentInput = $('#usernameInput').focus();
 });
 
 // Set focus to password input when clicked
-$passwordInput.click(() => {
-  $currentInput = $passwordInput.focus();
+$('#passwordInput').click(() => {
+  $currentInput = $('#passwordInput').focus();
 });
 
 // Focus input when clicking on the message input's border
-$inputMessage.click(() => {
-  $inputMessage.focus();
+$('#inputMessage').click(() => {
+  $('#inputMessage').focus();
 });
 
 // Socket events
@@ -526,8 +513,8 @@ socket.on('new message', (data) => {
     addChatMessage(data);
     var chatMessageSound = new Audio('ChatMessageSound.mp3');
     chatMessageSound.play();
-    if ('navigator.serviceWorker.controller' && notificationPermission === 'granted' && data.message.includes('@' + username)) {
-      var notificationMessage = converter.makeMarkdown(data.message);
+    if ('navigator.serviceWorker.controller' && notificationPermission === 'granted' && data.message.includes('@' + username)) { // Make sure we have the permission to send notifications and the user was mentioned
+      var notificationMessage = converter.makeMarkdown(data.message); // Convert html to markdown for the notification
       navigator.serviceWorker.ready.then(function(registration) {
         registration.showNotification(data.username, {
           body: notificationMessage,
@@ -549,7 +536,7 @@ socket.on('new message', (data) => {
 
 // Whenever the server emits 'user joined', log it in the chat body
 socket.on('user joined', (data) => {
-  log(data.username + ' joined');
+  log(data.username + ' joined the chatroom.');
   var userJoinedChat = new Audio('UserJoinedChat.mp3');
   userJoinedChat.play();
   addToUserList(data.username);
@@ -557,7 +544,7 @@ socket.on('user joined', (data) => {
 
 // Whenever the server emits 'user left', log it in the chat body
 socket.on('user left', (data) => {
-  log(data.username + ' left');
+  log(data.username + ' left the chatroom.');
   var userLeftChat = new Audio('UserLeftChat.mp3');
   userLeftChat.play();
   removeChatTyping(data);
@@ -575,14 +562,14 @@ socket.on('stop typing', (data) => {
 });
 
 socket.on('disconnect', () => {
-  log('You have been disconnected');
+  log('You have been disconnected.');
 });
 
 socket.on('reconnect', () => {
-  log('You have been reconnected');
+  log('You have been reconnected.');
   if (username) {
     initialLogin = false;
-    const userListDivContents = document.getElementsByClassName("userList")[0];
+    const userListDivContents = document.getElementById("userList");
     while (userListDivContents.firstChild) {
       userListDivContents.removeChild(userListDivContents.firstChild);
     }
