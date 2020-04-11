@@ -99,12 +99,16 @@ ul {
 
 #chatPage {
   display: none;
+  width: 100%;
+  height: 100%;
 }
 
 /* Settings page */
 
 #settingsPage {
   display: none;
+  width: 100%;
+  height: 100%;
 }
 
 #settingsArea {
@@ -145,6 +149,7 @@ ul {
 
 .typing {
   color: gray;
+  overflow: auto;
 }
 
 .username {
@@ -254,4 +259,15 @@ ul {
   height: 50px;
   width: 50px;
   cursor: pointer;
+}
+
+#typingMessageArea {
+  bottom: 5%;
+  height: 5%;
+  position: absolute;
+  width: 84.5%;
+  margin: 0;
+  overflow-y: hidden;
+  padding: 10px 20px 10px 20px;
+  font-size: 150%;
 }

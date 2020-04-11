@@ -26,7 +26,7 @@ if ('serviceWorker' in navigator) {
 }
 
 var fadeTime = 150; // In ms
-var typingTimerLength = 400; // In ms
+var typingTimerLength = 1000; // In ms
 var colors = [
   '#e21400', '#91580f', '#f8a700', '#f78b00',
   '#58dc00', '#287b00', '#a8f07a', '#4ae8c4',
@@ -353,19 +353,12 @@ const removeFromUserList = (data) => {
 
 // Adds the visual chat message to the message list
 const addChatMessage = (data, options) => {
-  // Don't fade the message in if there is an 'X was typing'
-  var $typingMessages = getTypingMessages(data);
   options = options || {};
-  if ($typingMessages.length !== 0) {
-    options.fade = false;
-    $typingMessages.remove();
-  }
 
   var $usernameDiv = $('<span class="username"></span>')
     .text(data.username)
     .css('color', getUsernameColor(data.username));
   var $messageBodyDiv = $('<span class="messageBody">' + data.message + '</span>')
-
   var typingClass = data.typing ? 'typing' : '';
   var $messageDiv = $('<li class="message"></li>')
     .data('username', data.username)
@@ -376,10 +369,29 @@ const addChatMessage = (data, options) => {
 }
 
 // Adds the visual chat typing message
-const addChatTyping = (data) => {
+const addChatTyping = (data, options) => {
   data.typing = true;
   data.message = 'is typing...';
-  addChatMessage(data);
+
+  // Don't fade the message in if there is an 'X was typing'
+  var $typingMessages = getTypingMessages(data);
+  options = options || {};
+  if ($typingMessages.length !== 0) {
+    options.fade = false;
+    $typingMessages.remove();
+  }
+
+  options.typing = true;
+
+  var $usernameDiv = $('<span class="username"></span>')
+    .text(data.username)
+    .css('color', getUsernameColor(data.username));
+  var $messageBodyDiv = $('<span class="messageBody">' + data.message + '</span>')
+  var $messageDiv = $('<li class="typing"></li>')
+    .data('username', data.username)
+    .append($usernameDiv, $messageBodyDiv);
+
+  addMessageElement($messageDiv, options);
 }
 
 // Removes the visual chat typing message
@@ -390,17 +402,18 @@ const removeChatTyping = (data) => {
 }
 
 // Adds a message element to the messages and scrolls to the bottom
-// el - The element to add as a message
+// element - The element to add as a message
 // options.fade - If the element should fade-in (default = true)
 // options.prepend - If the element should prepend
 //   all other messages (default = false)
-const addMessageElement = (el, options) => {
-  var $el = $(el);
+const addMessageElement = (element, options) => {
+  var $element = $(element);
 
   // Setup default options
   if (!options) {
     options = {};
   }
+
   if (typeof options.fade === 'undefined') {
     options.fade = true;
   }
@@ -410,13 +423,26 @@ const addMessageElement = (el, options) => {
 
   // Apply options
   if (options.fade) {
-    $el.hide().fadeIn(fadeTime);
+    $element.hide().fadeIn(fadeTime);
   }
+
   if (options.prepend) {
-    $('#messages').prepend($el);
-  } else {
-    $('#messages').append($el);
+    if (options.typing) {
+      $('#typingMessageArea').prepend($element);
+    }
+    else {
+      $('#messages').prepend($element);
+    }
   }
+  else {
+    if (options.typing) {
+      $('#typingMessageArea').append($element);
+    }
+    else {
+      $('#messages').append($element);
+    }
+  }
+
   $('#messages')[0].scrollTop = $('#messages')[0].scrollHeight;
 }
 
@@ -519,7 +545,7 @@ $('#inputMessage').click(() => {
 socket.on('new message', (data) => {
   if (data.username !== username) {
     addChatMessage(data);
-    var chatMessageSound = new Audio('ChatMessageSound.mp3');
+    var chatMessageSound = new Audio('./assets/ChatMessageSound.mp3');
     chatMessageSound.play();
     if ('navigator.serviceWorker.controller' && notificationPermission === 'granted' && data.message.includes('@' + username)) { // Make sure we have the permission to send notifications and the user was mentioned
       var notificationMessage = converter.makeMarkdown(data.message); // Convert html to markdown for the notification
@@ -545,7 +571,7 @@ socket.on('new message', (data) => {
 // Whenever the server emits 'user joined', log it in the chat body
 socket.on('user joined', (data) => {
   log(data.username + ' joined the chatroom.');
-  var userJoinedChat = new Audio('UserJoinedChat.mp3');
+  var userJoinedChat = new Audio('./assets/UserJoinedChat.mp3');
   userJoinedChat.play();
   addToUserList(data.username);
 });
@@ -553,7 +579,7 @@ socket.on('user joined', (data) => {
 // Whenever the server emits 'user left', log it in the chat body
 socket.on('user left', (data) => {
   log(data.username + ' left the chatroom.');
-  var userLeftChat = new Audio('UserLeftChat.mp3');
+  var userLeftChat = new Audio('./assets/UserLeftChat.mp3');
   userLeftChat.play();
   removeChatTyping(data);
   removeFromUserList(data.username);

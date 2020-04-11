@@ -297,14 +297,20 @@ io.on('connection', (socket) => {
 
   // When the client emits 'typing', we broadcast it to others
   socket.on('typing', () => {
-    socket.to(socket.room).emit('typing', {
+    // socket.to(socket.room).emit('typing', {
+    //   username: socket.username
+    // });
+    io.in(socket.room).emit('typing', {
       username: socket.username
     });
   });
 
   // When the client emits 'stop typing', we broadcast it to others
   socket.on('stop typing', () => {
-    socket.to(socket.room).emit('stop typing', {
+    // socket.to(socket.room).emit('stop typing', {
+    //   username: socket.username
+    // });
+    io.in(socket.room).emit('stop typing', {
       username: socket.username
     });
   });
