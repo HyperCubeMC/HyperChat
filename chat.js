@@ -1,4 +1,4 @@
-currentInputif ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator) {
   if (navigator.serviceWorker.controller) {
     console.log("Service worker is controlling the site.");
     console.log("Sent \"Initial message to service worker.\" to service worker.")
