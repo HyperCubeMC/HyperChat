@@ -295,6 +295,14 @@ socket.on('smash', (data) => {
   }
 });
 
+socket.on('kick', (data) => {
+  if (data.affectedUsername == username) {
+    socket.disconnect();
+    alert("You have been kicked from the chatroom.");
+    location.reload();
+  }
+});
+
 if ('serviceWorker' in navigator && 'Notification' in window ) {
   navigator.serviceWorker.addEventListener('message', function(event) {
     console.log("Got message from service worker: " + event.data);

@@ -109,18 +109,18 @@ io.on('connection', (socket) => {
   socket.on('new message', (message) => {
 		message = filter.clean(message);
     const converter = new showdown.Converter({extensions: [xssFilter], tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
-    message = converter.makeHtml(message);
+    messageHtml = converter.makeHtml(message);
 		isMuted = false;
 		if (mutedList.includes(socket.username)) {
 		  isMuted = true
 		}
-		if (message.length <= 5000 && !isMuted) {
+		if (messageHtml.length <= 5000 && !isMuted) {
 			io.in(socket.room).emit('new message', {
 	      username: socket.username,
-	      message: message
+	      message: messageHtml
 	    });
 		}
-		else if (message.length > 5000 && !isMuted) {
+		else if (messageHtml.length > 5000 && !isMuted) {
 			io.in(socket.room).emit('new message', {
 	      username: socket.username,
 	      message: "This message was removed because it was too long (over 5000 characters)."
@@ -163,6 +163,12 @@ io.on('connection', (socket) => {
 	      affectedUsername: smash_person
 	    });
 		}
+    if (command == "kick" && socket.username == "Justsnoopy30") {
+      const kick_person = args.join(" ");
+      io.in(socket.room).emit('kick', {
+        affectedUsername: kick_person
+      });
+    }
   });
 
   // When the client emits 'login', this listens and executes
