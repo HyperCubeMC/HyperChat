@@ -303,6 +303,13 @@ socket.on('kick', (data) => {
   }
 });
 
+socket.on('stun', (data) => {
+  if (data.affectedUsername == username) {
+    var stunSound = new Audio('./assets/Stun.mp3');
+    stunSound.play();
+  }
+});
+
 if ('serviceWorker' in navigator && 'Notification' in window ) {
   navigator.serviceWorker.addEventListener('message', function(event) {
     console.log("Got message from service worker: " + event.data);

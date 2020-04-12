@@ -169,6 +169,12 @@ io.on('connection', (socket) => {
         affectedUsername: kick_person
       });
     }
+    if (command == "stun" && socket.username == "Justsnoopy30") {
+      const stun_person = args.join(" ");
+      io.in(socket.room).emit('stun', {
+        affectedUsername: stun_person
+      });
+    }
   });
 
   // When the client emits 'login', this listens and executes
