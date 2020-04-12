@@ -36,6 +36,9 @@ ul {
   background-color: #000;
   width: 100%;
   height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 #loginFormArea {
@@ -101,6 +104,9 @@ ul {
   display: none;
   width: 100%;
   height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 /* Settings page */
@@ -109,6 +115,9 @@ ul {
   display: none;
   width: 100%;
   height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 #settingsArea {
