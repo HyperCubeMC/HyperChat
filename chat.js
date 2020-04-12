@@ -297,6 +297,7 @@ socket.on('smash', (data) => {
 
 socket.on('kick', (data) => {
   if (data.affectedUsername == username) {
+    var kickSound = new Audio('./assets/Kick.mp3');
     socket.disconnect();
     alert("You have been kicked from the chatroom.");
     location.reload();
