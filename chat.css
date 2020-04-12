@@ -267,7 +267,9 @@ ul {
   position: absolute;
   width: 84.5%;
   margin: 0;
-  overflow-y: hidden;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
   padding: 10px 20px 10px 20px;
   font-size: 150%;
 }
