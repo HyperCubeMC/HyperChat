@@ -588,16 +588,16 @@ socket.on('new message', (data) => {
 // Whenever the server emits 'user joined', log it in the chat body
 socket.on('user joined', (data) => {
   log(data.username + ' joined the chatroom.');
-  var userJoinedChat = new Audio('./assets/UserJoinedChat.mp3');
-  userJoinedChat.play();
+  var userJoinedChatSound = new Audio('./assets/UserJoinedChat.mp3');
+  userJoinedChatSound.play();
   addToUserList(data.username);
 });
 
 // Whenever the server emits 'user left', log it in the chat body
 socket.on('user left', (data) => {
   log(data.username + ' left the chatroom.');
-  var userLeftChat = new Audio('./assets/UserLeftChat.mp3');
-  userLeftChat.play();
+  var userLeftChatSound = new Audio('./assets/UserLeftChat.mp3');
+  userLeftChatSound.play();
   removeChatTyping(data);
   removeFromUserList(data.username);
 });
@@ -614,11 +614,15 @@ socket.on('stop typing', (data) => {
 
 socket.on('disconnect', () => {
   log('You have been disconnected.');
+  var lostConnectionSound = new Audio('./assets/LostConnection.mp3');
+  lostConnectionSound.play();
   showReconnectingPage();
 });
 
 socket.on('reconnect', () => {
   hideReconnectingPage();
+  var regainedConnectionSound = new Audio('./assets/RegainedConnection.mp3');
+  regainedConnectionSound.play();
   log('You have been reconnected.');
   if (username) {
     initialLogin = false;
