@@ -71,7 +71,7 @@ cheet.done(function (seq) {
   }
 });
 
-var socket = io();
+const socket = io();
 
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
   systemTheme = 'dark';
