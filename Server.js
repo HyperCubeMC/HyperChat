@@ -108,24 +108,25 @@ io.on('connection', (socket) => {
   // when the client emits 'new message', this listens and executes
   socket.on('new message', (message) => {
     if (typeof message !== 'string' || message == null) return;
-		message = filter.clean(message);
     const converter = new showdown.Converter({extensions: [xssFilter], tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
-    messageHtml = converter.makeHtml(message);
 		isMuted = false;
 		if (mutedList.includes(socket.username)) {
 		  isMuted = true
 		}
-		if (messageHtml.length <= 2000 && !isMuted) {
+		if (message.length <= 2000 && !isMuted) {
+      message = filter.clean(message);
+      messageHtml = converter.makeHtml(message);
 			io.in(socket.room).emit('new message', {
 	      username: socket.username,
 	      message: messageHtml
 	    });
 		}
-		else if (messageHtml.length > 2000 && !isMuted) {
+		else if (message.length > 2000 && !isMuted) {
 			io.in(socket.room).emit('new message', {
 	      username: socket.username,
 	      message: "This message was removed because it was too long (over 2000 characters)."
 	    });
+      return;
 		}
 		else if (isMuted) {
 			socket.emit('muted');
@@ -306,6 +307,7 @@ io.on('connection', (socket) => {
         loginDeniedReason: "Room cannot be empty"
       });
     }
+    console.log("User joined room: " + socket.room);
   });
 
   // When the client emits 'typing', we broadcast it to others
