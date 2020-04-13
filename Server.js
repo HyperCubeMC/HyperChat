@@ -190,45 +190,45 @@ io.on('connection', (socket) => {
     const command = args.shift().toLowerCase();
     if (socket.username == 'Justsnoopy30') {
       switch (command) {
-        case mute:
+        case 'mute':
           const mute_person = args.join(" ");
           mutedList.push(mute_person);
           break;
-        case unmute:
+        case 'unmute':
           const unmute_person = args.join(" ");
           mutedList = arrayRemove(mutedList, unmute_person);
           break;
-        case flip:
+        case 'flip':
           const flip_person = args.join(" ");
           io.in(socket.room).emit('flip', {
             affectedUsername: flip_person
           });
           break;
-        case unflip:
+        case 'unflip':
           const unflip_person = args.join(" ");
           io.in(socket.room).emit('unflip', {
             affectedUsername: unflip_person
           });
           break;
-        case stupidify:
+        case 'stupidify':
           const stupidify_person = args.join(" ");
           io.in(socket.room).emit('stupidify', {
             affectedUsername: stupidify_person
           });
           break;
-        case smash:
+        case 'smash':
           const smash_person = args.join(" ");
           io.in(socket.room).emit('smash', {
             affectedUsername: smash_person
           });
           break;
-        case kick:
+        case 'kick':
           const kick_person = args.join(" ");
           io.in(socket.room).emit('kick', {
             affectedUsername: kick_person
           });
           break;
-        case stun:
+        case 'stun':
           const stun_person = args.join(" ");
           io.in(socket.room).emit('stun', {
             affectedUsername: stun_person
