@@ -181,6 +181,12 @@ io.on('connection', (socket) => {
   socket.on('login', ({ username, password, room }) => {
     if (addedUser) return;
 
+    if (typeof username == 'undefined' || typeof password == 'undefined' || typeof room == 'undefined') {
+      socket.emit('login denied', {
+        loginDeniedReason: "Invalid Login Request"
+      });
+      return;
+    }
 		// Store login info in the local session
 		socket.username = username;
 		socket.password = password;
