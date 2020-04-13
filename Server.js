@@ -15,7 +15,7 @@ const options = {
 	key: fs.readFileSync('/Users/evere/Servers/Certificates/key.pem'),
 }
 
-var app = require('https').createServer(options, server)
+var app = require('https').createServer(options, server);
 var io = require('socket.io')(app);
 
 app.listen(4434);
