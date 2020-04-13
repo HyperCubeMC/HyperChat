@@ -87,12 +87,8 @@ const changeTheme = (theme) => {
     $('#notificationBell').attr('src','./assets/BlackNotificationBell.png');
     $('#settingsTopBar').removeClass('navbar-dark bg-dark');
     $('#settingsTopBar').addClass('navbar-light bg-light');
-    $('::-webkit-scrollbar-track').css({
-        "background-color": "#fff"
-    });
-    $('::-webkit-scrollbar').css({
-        "background-color": "#fff"
-    });
+    $('#inputMessage').removeClass("darkThemeScrollbar").addClass("lightThemeScrollbar");
+    $('#messages').removeClass("darkThemeScrollbar").addClass("lightThemeScrollbar");
   }
   if (theme == 'dark') {
     store('theme', 'dark');
@@ -108,12 +104,8 @@ const changeTheme = (theme) => {
     $('#notificationBell').attr('src','./assets/WhiteNotificationBell.png');
     $('#settingsTopBar').removeClass('navbar-light bg-light');
     $('#settingsTopBar').addClass('navbar-dark bg-dark');
-    $('::-webkit-scrollbar-track').css({
-      	"background-color": "#202225"
-    });
-    $('::-webkit-scrollbar').css({
-        "background-color": "#202225"
-    });
+    $('#inputMessage').removeClass('lightThemeScrollbar').addClass('darkThemeScrollbar');
+    $('#messages').removeClass('lightThemeScrollbar').addClass('darkThemeScrollbar');
   }
 }
 
