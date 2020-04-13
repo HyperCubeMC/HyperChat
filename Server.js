@@ -188,7 +188,7 @@ io.on('connection', (socket) => {
     }
     const args = message.slice(prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
-    if (socket.username == 'Justsnoopu30') {
+    if (socket.username == 'Justsnoopy30') {
       switch (command) {
         case mute:
           const mute_person = args.join(" ");
