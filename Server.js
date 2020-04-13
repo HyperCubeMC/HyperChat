@@ -13,9 +13,10 @@ const argon2 = require('argon2');
 const options = {
 	cert: fs.readFileSync('/Users/evere/Servers/Certificates/chain.pem'),
 	key: fs.readFileSync('/Users/evere/Servers/Certificates/key.pem'),
+  allowHTTP1: true
 }
 
-var app = require('https').createServer(options, server);
+var app = require('http2').createSecureServer(options, server);
 var io = require('socket.io')(app);
 
 app.listen(4434);
