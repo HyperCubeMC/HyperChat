@@ -307,7 +307,7 @@ io.on('connection', (socket) => {
         loginDeniedReason: "Room cannot be empty"
       });
     }
-    console.log("User joined room: " + socket.room);
+    console.log(username + " joined room: " + socket.room);
   });
 
   // When the client emits 'typing', we broadcast it to others
