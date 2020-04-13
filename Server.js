@@ -107,6 +107,9 @@ io.on('connection', (socket) => {
 
   // when the client emits 'new message', this listens and executes
   socket.on('new message', (message) => {
+    if (typeof message == 'undefined' || message == null) {
+      return;
+    }
 		message = filter.clean(message);
     const converter = new showdown.Converter({extensions: [xssFilter], tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
     messageHtml = converter.makeHtml(message);
