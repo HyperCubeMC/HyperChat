@@ -9,10 +9,10 @@ const showdown = require('showdown');
 const xssFilter = require('showdown-xss-filter');
 const argon2 = require('argon2');
 
-	// options for SSL certificate
+  // options for SSL certificate
 const options = {
-	cert: fs.readFileSync('/Users/evere/Servers/Certificates/chain.pem'),
-	key: fs.readFileSync('/Users/evere/Servers/Certificates/key.pem'),
+  cert: fs.readFileSync('/Users/evere/Servers/Certificates/chain.pem'),
+  key: fs.readFileSync('/Users/evere/Servers/Certificates/key.pem'),
   allowHTTP1: true
 }
 
@@ -25,58 +25,112 @@ function server (req, res) {
   var defaultCompressOptions = function(){}, useDefaultOptions = {}
   compress(useDefaultOptions)(req,res,defaultCompressOptions) // Mutates the response object to add compression
 
-	var filePath = '.' + req.url;
-	if (filePath == './')
-		filePath = './chat.html';
+  var filePath = '.' + req.url;
+  if (filePath == './')
+    filePath = './chat.html';
 
-	var extname = String(path.extname(filePath)).toLowerCase();
-	var mimeTypes = {
-		'': 'text/html',
-		'.txt': 'text/plain',
-		'.html': 'text/html',
-		'.mhtml': 'message/rfc822',
-		'.js': 'application/javascript',
-		'.mjs': 'text/javascript',
-		'.css': 'text/css',
-		'.json': 'application/json',
-		'.png': 'image/png',
-		'.jpg': 'image/jpeg',
-		'.gif': 'image/gif',
-		'.wav': 'audio/wav',
-		'.mp3': 'audio/mp3',
-		'.mp4': 'video/mp4',
-		'.woff': 'application/font-woff',
-		'.ttf': 'application/font-ttf',
-		'.eot': 'application/vnd.ms-fontobject',
-		'.otf': 'application/font-otf',
-		'.svg': 'image/svg+xml',
-		'.ico': 'image/x-icon',
-		'.pdf': 'application/pdf'
-	};
+  var extname = String(path.extname(filePath)).toLowerCase();
+  var mimeTypes = {
+    '': 'text/html',
+    '.7z': 'application/x-7z-compressed',
+    '.aac': 'audio/aac',
+    '.abw': 'application/x-abiword',
+    '.arc': 'application/x-freearc',
+    '.avi': 'video/x-msvideo',
+    '.azw': 'application/vnd.amazon.ebook',
+    '.bin': 'application/octet-stream',
+    '.bmp': 'image/bmp',
+    '.bz': 'application/x-bzip',
+    '.bz2': 'application/x-bzip2',
+    '.csh': 'application/x-csh',
+    '.css': 'text/css',
+    '.csv': 'text/csv',
+    '.doc': 'application/msword',
+    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    '.eot': 'application/vnd.ms-fontobject',
+    '.epub': 'application/epub+zip',
+    '.gif': 'image/gif',
+    '.gz': 'application/gzip',
+    '.htm': 'text/html',
+    '.html': 'text/html',
+    '.ico': 'image/x-icon',
+    '.ics': 'text/calendar',
+    '.jar': 'application/java-archive',
+    '.jpeg': 'image/jpeg',
+    '.jpg': 'image/jpeg',
+    '.js': 'application/javascript',
+    '.json': 'application/json',
+    '.jsonld': 'application/ld+json',
+    '.md': 'application/markdown',
+    '.mhtml': 'message/rfc822',
+    '.mid': 'audio/midi',
+    '.midi': 'audio/midi',
+    '.mjs': 'text/javascript',
+    '.mp3': 'audio/mp3',
+    '.mp4': 'video/mp4',
+    '.mpeg': 'video/mpeg',
+    '.mpkg': 'application/vnd.apple.installer+xml',
+    '.odp': 'application/vnd.oasis.opendocument.presentation',
+    '.ods': 'application/vnd.oasis.opendocument.spreadsheet',
+    '.odt': 'application/vnd.oasis.opendocument.text',
+    '.oga': 'audio/ogg',
+    '.ogg': 'application/ogg',
+    '.ogv': 'video/ogg',
+    '.ogx': 'application/ogg',
+    '.opus': 'audio/opus',
+    '.otf': 'font/otf',
+    '.pdf': 'application/pdf',
+    '.php': 'application/php',
+    '.png': 'image/png',
+    '.ppt': 'application/vnd.ms-powerpoint',
+    '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    '.rar': 'application/vnd.rar',
+    '.rtf': 'application/rtf',
+    '.sfnt': 'font/sfnt',
+    '.sh': 'application/x-sh' ,
+    '.svg': 'image/svg+xml',
+    '.tar': 'application/x-tar',
+    '.tif': 'image/tiff',
+    '.tiff': 'image/tiff',
+    '.ttf': 'font/ttf',
+    '.txt': 'text/plain',
+    '.wav': 'audio/wav',
+    '.weba': 'audio/webm',
+    '.webm': 'video/webm',
+    '.webp': 'image/webm',
+    '.woff': 'font/woff',
+    '.woff2': 'font/woff2',
+    '.xhtml': 'application/xhtml+xml',
+    '.xls': 'application/vnd.ms-excel',
+    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    '.xml': 'application/xml',
+    '.xul': 'application/vnd.mozilla.xul+xml',
+    '.zip': 'application/zip'
+  };
 
-	var contentType = mimeTypes[extname] || 'application/octet-stream';
+  var contentType = mimeTypes[extname] || 'application/octet-stream';
 
-	fs.readFile(filePath, function (error, content) {
-		if (error) {
-			if (error.code == 'ENOENT') {
-				fs.readFile('./errors/404.html', function (error, content) {
-					res.writeHead(404, {
-						'Content-Type': 'text/html'
-					});
-					res.end(content, 'utf-8');
-				});
-			} else {
-				res.writeHead(500);
-				res.end('Error: ' + error.code + '          Something went wrong.\n');
-				res.end();
-			}
-		} else {
-			res.writeHead(200, {
-				'Content-Type': contentType
-			});
-			res.end(content, 'utf-8');
-		}
-	});
+  fs.readFile(filePath, function (error, content) {
+    if (error) {
+      if (error.code == 'ENOENT') {
+        fs.readFile('./errors/404.html', function (error, content) {
+          res.writeHead(404, {
+            'Content-Type': 'text/html'
+          });
+          res.end(content, 'utf-8');
+        });
+      } else {
+        res.writeHead(500);
+        res.end('Error: ' + error.code + '\nSomething went wrong.');
+        res.end();
+      }
+    } else {
+      res.writeHead(200, {
+        'Content-Type': contentType
+      });
+      res.end(content, 'utf-8');
+    }
+  });
 }
 
 
@@ -110,62 +164,62 @@ io.on('connection', (socket) => {
   socket.on('new message', (message) => {
     if (typeof message !== 'string' || message == null) return;
     const converter = new showdown.Converter({extensions: [xssFilter], tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
-		isMuted = false;
-		if (mutedList.includes(socket.username)) {
-		  isMuted = true
-		}
-		if (message.length <= 2000 && !isMuted) {
+    isMuted = false;
+    if (mutedList.includes(socket.username)) {
+      isMuted = true
+    }
+    if (message.length <= 2000 && !isMuted) {
       message = filter.clean(message);
       messageHtml = converter.makeHtml(message);
-			io.in(socket.room).emit('new message', {
-	      username: socket.username,
-	      message: messageHtml
-	    });
-		}
-		else if (message.length > 2000 && !isMuted) {
-			io.in(socket.room).emit('new message', {
-	      username: socket.username,
-	      message: "This message was removed because it was too long (over 2000 characters)."
-	    });
+      io.in(socket.room).emit('new message', {
+        username: socket.username,
+        message: messageHtml
+      });
+    }
+    else if (message.length > 2000 && !isMuted) {
+      io.in(socket.room).emit('new message', {
+        username: socket.username,
+        message: "This message was removed because it was too long (over 2000 characters)."
+      });
       return;
-		}
-		else if (isMuted) {
-			socket.emit('muted');
-		}
-		const args = message.slice(prefix.length).trim().split(/ +/g);
-		const command = args.shift().toLowerCase();
-		if (command == "mute" && socket.username == "Justsnoopy30") {
-		  const mute_person = args.join(" ");
-		  mutedList.push(mute_person);
-		}
-		if (command == "unmute" && socket.username == "Justsnoopy30") {
-		  const unmute_person = args.join(" ");
-		  mutedList = arrayRemove(mutedList, unmute_person);
-		}
-		if (command == "flip" && socket.username == "Justsnoopy30") {
-			const flip_person = args.join(" ");
-			io.in(socket.room).emit('flip', {
-	      affectedUsername: flip_person
-	    });
-		}
-		if (command == "unflip" && socket.username == "Justsnoopy30") {
-			const unflip_person = args.join(" ");
-			io.in(socket.room).emit('unflip', {
-	      affectedUsername: unflip_person
-	    });
-		}
-		if (command == "stupidify" && socket.username == "Justsnoopy30") {
-			const stupidify_person = args.join(" ");
-			io.in(socket.room).emit('stupidify', {
-	      affectedUsername: stupidify_person
-	    });
-		}
-		if (command == "smash" && socket.username == "Justsnoopy30") {
-			const smash_person = args.join(" ");
-			io.in(socket.room).emit('smash', {
-	      affectedUsername: smash_person
-	    });
-		}
+    }
+    else if (isMuted) {
+      socket.emit('muted');
+    }
+    const args = message.slice(prefix.length).trim().split(/ +/g);
+    const command = args.shift().toLowerCase();
+    if (command == "mute" && socket.username == "Justsnoopy30") {
+      const mute_person = args.join(" ");
+      mutedList.push(mute_person);
+    }
+    if (command == "unmute" && socket.username == "Justsnoopy30") {
+      const unmute_person = args.join(" ");
+      mutedList = arrayRemove(mutedList, unmute_person);
+    }
+    if (command == "flip" && socket.username == "Justsnoopy30") {
+      const flip_person = args.join(" ");
+      io.in(socket.room).emit('flip', {
+        affectedUsername: flip_person
+      });
+    }
+    if (command == "unflip" && socket.username == "Justsnoopy30") {
+      const unflip_person = args.join(" ");
+      io.in(socket.room).emit('unflip', {
+        affectedUsername: unflip_person
+      });
+    }
+    if (command == "stupidify" && socket.username == "Justsnoopy30") {
+      const stupidify_person = args.join(" ");
+      io.in(socket.room).emit('stupidify', {
+        affectedUsername: stupidify_person
+      });
+    }
+    if (command == "smash" && socket.username == "Justsnoopy30") {
+      const smash_person = args.join(" ");
+      io.in(socket.room).emit('smash', {
+        affectedUsername: smash_person
+      });
+    }
     if (command == "kick" && socket.username == "Justsnoopy30") {
       const kick_person = args.join(" ");
       io.in(socket.room).emit('kick', {
@@ -190,13 +244,13 @@ io.on('connection', (socket) => {
       });
       return;
     }
-		// Store login info in the local session
-		socket.username = username;
-		socket.password = password;
-		socket.room = room;
+    // Store login info in the local session
+    socket.username = username;
+    socket.password = password;
+    socket.room = room;
     var userHashedPassword;
 
-		if (socket.username.length <= 14 && socket.password.length <= 14 && socket.room.length <= 14 && socket.username.length > 0 && socket.password.length > 0 && socket.room.length > 0) {
+    if (socket.username.length <= 14 && socket.password.length <= 14 && socket.room.length <= 14 && socket.username.length > 0 && socket.password.length > 0 && socket.room.length > 0) {
       const hashPassword = async (password) => {
         try {
           const hashedPassword = await argon2.hash(password);
@@ -334,7 +388,7 @@ io.on('connection', (socket) => {
   // When the user disconnects.. perform this
   socket.on('disconnect', () => {
     if (addedUser) {
-			userListContents[socket.room] = arrayRemove(userListContents[socket.room], socket.username);
+      userListContents[socket.room] = arrayRemove(userListContents[socket.room], socket.username);
       // Echo globally that this client has left
       socket.to(socket.room).emit('user left', {
         username: socket.username
