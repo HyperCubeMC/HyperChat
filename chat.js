@@ -202,15 +202,29 @@ function hideSettingsPage() {
 }
 
 function showReconnectingPage() {
-  $('#chatPage').fadeOut();
-  $('#reconnectingPage').fadeIn();
-  $('#chatPage').off('click');
+  if (loggedIn) {
+    $('#chatPage').fadeOut();
+    $('#reconnectingPage').fadeIn();
+    $('#chatPage').off('click');
+  }
+  else {
+    $('#loginPage').fadeOut();
+    $('#reconnectingPage').fadeIn();
+    $('#loginPage').off('click');
+  }
 }
 
 function hideReconnectingPage() {
-  $('#reconnectingPage').fadeOut();
-  $('#chatPage').fadeIn();
-  $('#reconnectingPage').off('click');
+  if (loggedIn) {
+    $('#reconnectingPage').fadeOut();
+    $('#chatPage').fadeIn();
+    $('#reconnectingPage').off('click');
+  }
+  else {
+    $('#reconnectingPage').fadeOut();
+    $('#loginPage').fadeIn();
+    $('#reconnectingPage').off('click');
+  }
 }
 
 // Submits the credentials to the server
