@@ -238,51 +238,6 @@ io.on('connection', (socket) => {
           break;
       }
     }
-
-    if (command == "mute" && socket.username == "Justsnoopy30") {
-      const mute_person = args.join(" ");
-      mutedList.push(mute_person);
-    }
-    if (command == "unmute" && socket.username == "Justsnoopy30") {
-      const unmute_person = args.join(" ");
-      mutedList = arrayRemove(mutedList, unmute_person);
-    }
-    if (command == "flip" && socket.username == "Justsnoopy30") {
-      const flip_person = args.join(" ");
-      io.in(socket.room).emit('flip', {
-        affectedUsername: flip_person
-      });
-    }
-    if (command == "unflip" && socket.username == "Justsnoopy30") {
-      const unflip_person = args.join(" ");
-      io.in(socket.room).emit('unflip', {
-        affectedUsername: unflip_person
-      });
-    }
-    if (command == "stupidify" && socket.username == "Justsnoopy30") {
-      const stupidify_person = args.join(" ");
-      io.in(socket.room).emit('stupidify', {
-        affectedUsername: stupidify_person
-      });
-    }
-    if (command == "smash" && socket.username == "Justsnoopy30") {
-      const smash_person = args.join(" ");
-      io.in(socket.room).emit('smash', {
-        affectedUsername: smash_person
-      });
-    }
-    if (command == "kick" && socket.username == "Justsnoopy30") {
-      const kick_person = args.join(" ");
-      io.in(socket.room).emit('kick', {
-        affectedUsername: kick_person
-      });
-    }
-    if (command == "stun" && socket.username == "Justsnoopy30") {
-      const stun_person = args.join(" ");
-      io.in(socket.room).emit('stun', {
-        affectedUsername: stun_person
-      });
-    }
   });
 
   // When the client emits 'login', this listens and executes
