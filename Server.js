@@ -48,7 +48,7 @@ function server (req, res) {
 		'.ttf': 'application/font-ttf',
 		'.eot': 'application/vnd.ms-fontobject',
 		'.otf': 'application/font-otf',
-		'.svg': 'application/image/svg+xml',
+		'.svg': 'image/svg+xml',
 		'.ico': 'image/x-icon',
 		'.pdf': 'application/pdf'
 	};
@@ -114,16 +114,16 @@ io.on('connection', (socket) => {
 		if (mutedList.includes(socket.username)) {
 		  isMuted = true
 		}
-		if (messageHtml.length <= 5000 && !isMuted) {
+		if (messageHtml.length <= 2000 && !isMuted) {
 			io.in(socket.room).emit('new message', {
 	      username: socket.username,
 	      message: messageHtml
 	    });
 		}
-		else if (messageHtml.length > 5000 && !isMuted) {
+		else if (messageHtml.length > 2000 && !isMuted) {
 			io.in(socket.room).emit('new message', {
 	      username: socket.username,
-	      message: "This message was removed because it was too long (over 5000 characters)."
+	      message: "This message was removed because it was too long (over 2000 characters)."
 	    });
 		}
 		else if (isMuted) {

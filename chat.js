@@ -72,40 +72,6 @@ else {
   systemTheme = 'light';
 }
 
-if (store('theme') == null) {
-  store('theme', systemTheme);
-}
-
-if (store('theme') == 'light') {
-  $('#lightThemeRadio').prop('checked', true)
-  $('body').css({
-    "background-color": "#fff",
-    "color": "#212529"
-  })
-  $('#inputMessage').css({
-    "background-color": "#fff",
-    "color": "#212529"
-  })
-  $('.settingsIcon').attr('src','./assets/BlackSettingsIcon.png');
-  $('#notificationBell').attr('src','./assets/BlackNotificationBell.png');
-  $('#settingsTopBar').addClass('navbar-light bg-light');
-}
-
-if (store('theme') == 'dark') {
-  $('#darkThemeRadio').prop('checked', true)
-  $('body').css({
-    "background-color": "#36393f",
-    "color": "#fff"
-  });
-  $('#inputMessage').css({
-    "background-color": "#40444b",
-    "color": "#fff"
-  });
-  $('.settingsIcon').attr('src','./assets/WhiteSettingsIcon.png');
-  $('#notificationBell').attr('src','./assets/WhiteNotificationBell.png');
-  $('#settingsTopBar').addClass('navbar-dark bg-dark');
-}
-
 const changeTheme = (theme) => {
   if (theme == 'light') {
     store('theme', 'light');
@@ -121,6 +87,12 @@ const changeTheme = (theme) => {
     $('#notificationBell').attr('src','./assets/BlackNotificationBell.png');
     $('#settingsTopBar').removeClass('navbar-dark bg-dark');
     $('#settingsTopBar').addClass('navbar-light bg-light');
+    $('::-webkit-scrollbar-track').css({
+        "background-color": "#fff"
+    });
+    $('::-webkit-scrollbar').css({
+        "background-color": "#fff"
+    });
   }
   if (theme == 'dark') {
     store('theme', 'dark');
@@ -136,17 +108,35 @@ const changeTheme = (theme) => {
     $('#notificationBell').attr('src','./assets/WhiteNotificationBell.png');
     $('#settingsTopBar').removeClass('navbar-light bg-light');
     $('#settingsTopBar').addClass('navbar-dark bg-dark');
+    $('::-webkit-scrollbar-track').css({
+      	"background-color": "#202225"
+    });
+    $('::-webkit-scrollbar').css({
+        "background-color": "#202225"
+    });
   }
 }
 
-$('#lightThemeRadio').on('change', function (event) {
-  // Light theme radio checked
+if (store('theme') == null) {
+  store('theme', systemTheme);
+}
+
+if (store('theme') == 'light') {
+  $('#lightThemeRadio').prop('checked', true)
   changeTheme('light');
+}
+
+if (store('theme') == 'dark') {
+  $('#darkThemeRadio').prop('checked', true)
+  changeTheme('dark');
+}
+
+$('#lightThemeRadio').on('change', function (event) {
+  changeTheme('light'); // Light theme radio chosen
 });
 
 $('#darkThemeRadio').on('change', function (event) {
-  // Dark theme radio checked
-  changeTheme('dark');
+  changeTheme('dark'); // Dark theme radio chosen
 });
 
 function onVisibilityChange(callback) {
@@ -209,6 +199,18 @@ function hideSettingsPage() {
   $('#settingsPage').fadeOut();
   $('#chatPage').fadeIn();
   $('#settingsPage').off('click');
+}
+
+function showReconnectingPage() {
+  $('#chatPage').fadeOut();
+  $('#reconnectingPage').fadeIn();
+  $('#chatPage').off('click');
+}
+
+function hideReconnectingPage() {
+  $('#reconnectingPage').fadeOut();
+  $('#chatPage').fadeIn();
+  $('#reconnectingPage').off('click');
 }
 
 // Submits the credentials to the server
@@ -606,9 +608,11 @@ socket.on('stop typing', (data) => {
 
 socket.on('disconnect', () => {
   log('You have been disconnected.');
+  showReconnectingPage();
 });
 
 socket.on('reconnect', () => {
+  hideReconnectingPage();
   log('You have been reconnected.');
   if (username) {
     initialLogin = false;
