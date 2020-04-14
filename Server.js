@@ -376,7 +376,7 @@ io.on('connection', (socket) => {
     });
   });
 
-  // When the user disconnects.. perform this
+  // When the user disconnects, perform this
   socket.on('disconnect', () => {
     if (addedUser) {
       userListContents[socket.room] = arrayRemove(userListContents[socket.room], socket.username);
