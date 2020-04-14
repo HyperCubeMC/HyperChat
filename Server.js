@@ -146,7 +146,6 @@ function arrayRemove(arr, value) {
 }
 
 var mutedList = []
-var isMuted;
 const prefix = '/';
 const userMap = new Map();
 
@@ -160,15 +159,12 @@ db.once('open', function(callback) {
 io.on('connection', (socket) => {
   var addedUser = false;
 
-  // when the client emits 'new message', this listens and executes
+  // When the client emits 'new message', this listens and executes
   socket.on('new message', (message) => {
     if (typeof message !== 'string' || message == null) return;
+    if (mutedList.includes(socket.username)) return;
     const converter = new showdown.Converter({extensions: [xssFilter], tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
-    isMuted = false;
-    if (mutedList.includes(socket.username)) {
-      isMuted = true
-    }
-    if (message.length <= 2000 && !isMuted) {
+    if (message.length <= 2000) {
       message = filter.clean(message);
       messageHtml = converter.makeHtml(message);
       io.in(socket.room).emit('new message', {
@@ -176,14 +172,11 @@ io.on('connection', (socket) => {
         message: messageHtml
       });
     }
-    else if (message.length > 2000 && !isMuted) {
+    else if (message.length > 2000) {
       io.in(socket.room).emit('new message', {
         username: socket.username,
         message: "This message was removed because it was too long (over 2000 characters)."
       });
-      return;
-    }
-    else if (isMuted) {
       return;
     }
     const args = message.slice(prefix.length).trim().split(/ +/g);
