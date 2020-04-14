@@ -56,7 +56,7 @@ var userLeftChatSound = new Audio('./assets/UserLeftChat.mp3');
 var userJoinedChatSound = new Audio('./assets/UserJoinedChat.mp3');
 var lostConnectionSound = new Audio('./assets/LostConnection.mp3');
 var regainedConnectionSound = new Audio('./assets/RegainedConnection.mp3');
-var stunSound = new Audio('./assets/Stun.mp3');
+var stunSound = new Audio('./assets/Stun.webm');
 var kickSound = new Audio('./assets/Kick.mp3');
 
 var sequences = {
