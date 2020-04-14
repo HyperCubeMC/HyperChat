@@ -25,7 +25,7 @@ function server (req, res) {
   const defaultCompressOptions = function(){}, useDefaultOptions = {}
   compress(useDefaultOptions)(req,res,defaultCompressOptions) // Mutates the response object to add compression
 
-  const filePath = '.' + req.url;
+  var filePath = '.' + req.url;
   if (filePath == './')
     filePath = './chat.html';
 
