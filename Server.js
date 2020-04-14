@@ -4,7 +4,7 @@ const fs = require('fs')
 const mongoose = require('mongoose');
 const Filter = require('bad-words'),
     filter = new Filter();
-const compress = require("compression");
+const compress = require('compression');
 const showdown = require('showdown');
 const xssFilter = require('showdown-xss-filter');
 const argon2 = require('argon2');
@@ -22,15 +22,15 @@ var io = require('socket.io')(app);
 app.listen(4434);
 
 function server (req, res) {
-  var defaultCompressOptions = function(){}, useDefaultOptions = {}
+  const defaultCompressOptions = function(){}, useDefaultOptions = {}
   compress(useDefaultOptions)(req,res,defaultCompressOptions) // Mutates the response object to add compression
 
-  var filePath = '.' + req.url;
+  const filePath = '.' + req.url;
   if (filePath == './')
     filePath = './chat.html';
 
-  var extname = String(path.extname(filePath)).toLowerCase();
-  var mimeTypes = {
+  const extname = String(path.extname(filePath)).toLowerCase();
+  const mimeTypes = {
     '': 'text/html',
     '.7z': 'application/x-7z-compressed',
     '.aac': 'audio/aac',
@@ -108,7 +108,7 @@ function server (req, res) {
     '.zip': 'application/zip'
   };
 
-  var contentType = mimeTypes[extname] || 'application/octet-stream';
+  const contentType = mimeTypes[extname] || 'application/octet-stream';
 
   fs.readFile(filePath, function (error, content) {
     if (error) {
@@ -136,16 +136,15 @@ function server (req, res) {
 
 // Chat
 
-var userListContents = [];
-function arrayRemove(arr, value) {
-
-   return arr.filter(function(ele){
-       return ele != value;
-   });
-
+function arrayRemove(array, value) {
+  return array.filter(function(ele) {
+    return ele != value;
+  });
 }
 
-var mutedList = []
+var userListContents = [];
+var mutedList = [];
+
 const prefix = '/';
 const userMap = new Map();
 
@@ -175,7 +174,7 @@ io.on('connection', (socket) => {
     else if (message.length > 2000) {
       io.in(socket.room).emit('new message', {
         username: socket.username,
-        message: "This message was removed because it was too long (over 2000 characters)."
+        message: 'This message was removed because it was too long (over 2000 characters).'
       });
       return;
     }
@@ -184,39 +183,39 @@ io.on('connection', (socket) => {
     if (socket.username == 'Justsnoopy30') {
       switch (command) {
         case 'mute':
-          const mute_person = args.join(" ");
-          mutedList.push(mute_person);
-          io.to(userMap.get(mute_person)).emit('mute');
+          const mutePerson = args.join(" ");
+          mutedList.push(mutePerson);
+          io.to(userMap.get(mutePerson)).emit('mute');
           break;
         case 'unmute':
-          const unmute_person = args.join(" ");
-          mutedList = arrayRemove(mutedList, unmute_person);
-          io.to(userMap.get(unmute_person)).emit('unmute');
+          const unmutePerson = args.join(" ");
+          mutedList = arrayRemove(mutedList, unmutePerson);
+          io.to(userMap.get(unmutePerson)).emit('unmute');
           break;
         case 'flip':
-          const flip_person = args.join(" ");
-          io.to(userMap.get(flip_person)).emit('flip');
+          const flipPerson = args.join(" ");
+          io.to(userMap.get(flipPerson)).emit('flip');
           break;
         case 'unflip':
-          const unflip_person = args.join(" ");
-          io.to(userMap.get(unflip_person)).emit('unflip');
+          const unflipPerson = args.join(" ");
+          io.to(userMap.get(unflipPerson)).emit('unflip');
           break;
         case 'stupidify':
-          const stupidify_person = args.join(" ");
-          io.to(userMap.get(stupidify_person)).emit('stupidify');
+          const stupidifyPerson = args.join(" ");
+          io.to(userMap.get(stupidifyPerson)).emit('stupidify');
           break;
         case 'smash':
-          const smash_person = args.join(" ");
-          io.to(userMap.get(smash_person)).emit('smash');
+          const smashPerson = args.join(" ");
+          io.to(userMap.get(smashPerson)).emit('smash');
           break;
         case 'kick':
-          const kick_person = args.join(" ");
-          io.to(userMap.get(kick_person)).emit('kick');
-          io.sockets.sockets[userMap.get(kick_person)].disconnect();
+          const kickPerson = args.join(" ");
+          io.to(userMap.get(kickPerson)).emit('kick');
+          io.sockets.sockets[userMap.get(kickPerson)].disconnect();
           break;
         case 'stun':
-          const stun_person = args.join(" ");
-          io.to(userMap.get(stun_person)).emit('stun');
+          const stunPerson = args.join(" ");
+          io.to(userMap.get(stunPerson)).emit('stun');
           break;
         default:
           break;
@@ -261,7 +260,7 @@ io.on('connection', (socket) => {
           }
         }
         catch (err) {
-          console.error("ERROR: Cannot verify password: " + err);
+          console.error('ERROR: Cannot verify password: ' + err);
         }
       }
 
@@ -273,8 +272,8 @@ io.on('connection', (socket) => {
       function verifyLogin() {
         db.collection('credentials').countDocuments({username: socket.username, hashedPassword: {$exists: true}}, function(err, count) {
           var credentials = {
-            "username": socket.username,
-            "hashedPassword": userHashedPassword
+            'username': socket.username,
+            'hashedPassword': userHashedPassword
           }
 
           if (err) throw err;
@@ -290,7 +289,7 @@ io.on('connection', (socket) => {
                 }
                 else if (userVerification == 'noMatch') {
                   socket.emit('login denied', {
-                    loginDeniedReason: "Username already exists/Invalid Password"
+                    loginDeniedReason: 'Username already exists/Invalid Password'
                   });
                 }
               });
@@ -325,35 +324,35 @@ io.on('connection', (socket) => {
     }
     else if (socket.username.length > 14) {
       socket.emit('login denied', {
-        loginDeniedReason: "Username cannot be longer than 14 characters"
+        loginDeniedReason: 'Username cannot be longer than 14 characters'
       });
     }
     else if (socket.password.length > 14) {
       socket.emit('login denied', {
-        loginDeniedReason: "Password cannot be longer than 14 characters"
+        loginDeniedReason: 'Password cannot be longer than 14 characters'
       });
     }
     else if (socket.room.length > 14) {
       socket.emit('login denied', {
-        loginDeniedReason: "Room cannot be longer than 14 characters"
+        loginDeniedReason: 'Room cannot be longer than 14 characters'
       });
     }
     else if (socket.username.length == 0) {
       socket.emit('login denied', {
-        loginDeniedReason: "Username cannot be empty"
+        loginDeniedReason: 'Username cannot be empty'
       });
     }
     else if (socket.password.length == 0) {
       socket.emit('login denied', {
-        loginDeniedReason: "Password cannot be empty"
+        loginDeniedReason: 'Password cannot be empty'
       });
     }
     else if (socket.room.length == 0) {
       socket.emit('login denied', {
-        loginDeniedReason: "Room cannot be empty"
+        loginDeniedReason: 'Room cannot be empty'
       });
     }
-    console.log(username + " joined room: " + socket.room);
+    console.log(username + ' joined room: ' + socket.room);
   });
 
   // When the client emits 'typing', we broadcast it to others
