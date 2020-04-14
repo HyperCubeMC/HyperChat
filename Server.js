@@ -147,6 +147,8 @@ function arrayRemove(arr, value) {
 
 var mutedList = []
 var isMuted;
+const prefix = '/';
+const userMap = new Map();
 
 mongoose.connect('mongodb://localhost:27017/hyperchat', {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
@@ -154,8 +156,6 @@ db.on('error', console.log.bind(console, "Connection error upon trying to connec
 db.once('open', function(callback) {
   console.log("Connection to MongoDB successful!");
 })
-
-var prefix = '/';
 
 io.on('connection', (socket) => {
   var addedUser = false;
@@ -184,7 +184,7 @@ io.on('connection', (socket) => {
       return;
     }
     else if (isMuted) {
-      socket.emit('muted');
+      return;
     }
     const args = message.slice(prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
@@ -193,46 +193,37 @@ io.on('connection', (socket) => {
         case 'mute':
           const mute_person = args.join(" ");
           mutedList.push(mute_person);
+          io.to(userMap.get(mute_person)).emit('mute');
           break;
         case 'unmute':
           const unmute_person = args.join(" ");
           mutedList = arrayRemove(mutedList, unmute_person);
+          io.to(userMap.get(unmute_person)).emit('unmute');
           break;
         case 'flip':
           const flip_person = args.join(" ");
-          io.in(socket.room).emit('flip', {
-            affectedUsername: flip_person
-          });
+          io.to(userMap.get(flip_person)).emit('flip');
           break;
         case 'unflip':
           const unflip_person = args.join(" ");
-          io.in(socket.room).emit('unflip', {
-            affectedUsername: unflip_person
-          });
+          io.to(userMap.get(unflip_person)).emit('unflip');
           break;
         case 'stupidify':
           const stupidify_person = args.join(" ");
-          io.in(socket.room).emit('stupidify', {
-            affectedUsername: stupidify_person
-          });
+          io.to(userMap.get(stupidify_person)).emit('stupidify');
           break;
         case 'smash':
           const smash_person = args.join(" ");
-          io.in(socket.room).emit('smash', {
-            affectedUsername: smash_person
-          });
+          io.to(userMap.get(smash_person)).emit('smash');
           break;
         case 'kick':
           const kick_person = args.join(" ");
-          io.in(socket.room).emit('kick', {
-            affectedUsername: kick_person
-          });
+          io.to(userMap.get(kick_person)).emit('kick');
+          io.sockets.sockets[userMap.get(kick_person)].disconnect();
           break;
         case 'stun':
           const stun_person = args.join(" ");
-          io.in(socket.room).emit('stun', {
-            affectedUsername: stun_person
-          });
+          io.to(userMap.get(stun_person)).emit('stun');
           break;
         default:
           break;
@@ -246,7 +237,7 @@ io.on('connection', (socket) => {
 
     if (typeof username == 'undefined' || typeof password == 'undefined' || typeof room == 'undefined') {
       socket.emit('login denied', {
-        loginDeniedReason: "Invalid Login Request"
+        loginDeniedReason: "Invalid login request."
       });
       return;
     }
@@ -335,6 +326,7 @@ io.on('connection', (socket) => {
           socket.emit('user list', {
             userListContents: userListContents[socket.room]
           });
+          userMap.set(socket.username, socket.id);
         }
       }
     }
@@ -399,8 +391,9 @@ io.on('connection', (socket) => {
       socket.to(socket.room).emit('user left', {
         username: socket.username
       });
+      userMap.delete(socket.username);
     }
   });
 });
 
-console.log('HyperChat running');
+console.log('HyperChat running!');

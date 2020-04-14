@@ -262,68 +262,61 @@ socket.on('user list', (data) => {
   syncUserList(userListContents);
 });
 
-socket.on('muted', () => {
-	alert('You are muted!');
+socket.on('mute', () => {
+  $('#inputMessage').prop('disabled', true);
+	alert('You are now muted!');
 });
 
-socket.on('flip', (data) => {
-  if (data.affectedUsername == username) {
-    ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix) {
-    	document.body.style[prefix + 'transform'] = 'rotate(180deg)';
-    });
-  }
+socket.on('unmute', () => {
+  $('#inputMessage').prop('disabled', false);
+	alert('You are now unmuted!');
 });
 
-socket.on('unflip', (data) => {
-  if (data.affectedUsername == username) {
-    ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix) {
-    	document.body.style[prefix + 'transform'] = 'rotate(0deg)';
-    });
-  }
+socket.on('flip', () => {
+  ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix) {
+  	document.body.style[prefix + 'transform'] = 'rotate(180deg)';
+  });
 });
 
-socket.on('stupidify', (data) => {
-  if (data.affectedUsername == username) {
-    (function(){
-    	var TEXT = 'When I looked in the mirror, the reflection showed Joe Mama. Then the mirror screamed, and shattered. '
-    	Array.prototype.slice.call(document.querySelectorAll('input,textarea')).map(function(el){
-    		el.onkeypress=function(evt){
-    			var charCode = typeof evt.which == "number" ? evt.which : evt.keyCode;
-    			if (charCode && charCode > 31) {
-    				var start = this.selectionStart, end = this.selectionEnd;
-    				this.value = this.value.slice(0, start) + TEXT[start % TEXT.length] + this.value.slice(end);
-    				this.selectionStart = this.selectionEnd = start + 1;
-    			}
-    			return false;
-    		}
-    	});
-    }());
-  }
+socket.on('unflip', () => {
+  ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix) {
+  	document.body.style[prefix + 'transform'] = 'rotate(0deg)';
+  });
 });
 
-socket.on('smash', (data) => {
-  if (data.affectedUsername == username) {
-    ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix){
-    	Array.prototype.slice.call(document.querySelectorAll('div,p,span,img,a,body')).map(function(el){
-    		el.style[prefix + 'transform'] = 'rotate(' + (Math.floor(Math.random() * 10) - 1) + 'deg)';
-    	});
-    });
-  }
+socket.on('stupidify', () => {
+  (function(){
+  	var TEXT = 'When I looked in the mirror, the reflection showed Joe Mama. Then the mirror screamed, and shattered. '
+  	Array.prototype.slice.call(document.querySelectorAll('input,textarea')).map(function(el){
+  		el.onkeypress=function(evt){
+  			var charCode = typeof evt.which == "number" ? evt.which : evt.keyCode;
+  			if (charCode && charCode > 31) {
+  				var start = this.selectionStart, end = this.selectionEnd;
+  				this.value = this.value.slice(0, start) + TEXT[start % TEXT.length] + this.value.slice(end);
+  				this.selectionStart = this.selectionEnd = start + 1;
+  			}
+  			return false;
+  		}
+  	});
+  }());
 });
 
-socket.on('kick', (data) => {
-  if (data.affectedUsername == username) {
-    kickSound.play();
-    socket.disconnect();
-    alert("You have been kicked from the chatroom.");
-    location.reload();
-  }
+socket.on('smash', () => {
+  ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix){
+  	Array.prototype.slice.call(document.querySelectorAll('div,p,span,img,a,body')).map(function(el){
+  		el.style[prefix + 'transform'] = 'rotate(' + (Math.floor(Math.random() * 10) - 1) + 'deg)';
+  	});
+  });
 });
 
-socket.on('stun', (data) => {
-  if (data.affectedUsername == username) {
-    stunSound.play();
-  }
+socket.on('kick', () => {
+  kickSound.play();
+  alert("You have been kicked from the chatroom.");
+  location.reload();
+});
+
+socket.on('stun', () => {
+  stunSound.play();
 });
 
 if ('serviceWorker' in navigator && 'Notification' in window ) {
