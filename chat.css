@@ -188,42 +188,42 @@ ul {
 
 .lightThemeScrollbar::-webkit-scrollbar-track
 {
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	border-radius: 10px;
-	background-color: #fff;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  border-radius: 10px;
+  background-color: #fff;
 }
 .lightThemeScrollbar::-webkit-scrollbar
 {
-	width: 12px;
+  width: 12px;
   border-radius: 10px;
-	background-color: #fff;
+  background-color: #fff;
 }
 
 .lightThemeScrollbar::-webkit-scrollbar-thumb
 {
-	border-radius: 10px;
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	background-color: #555;
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  background-color: #555;
 }
 
 .darkThemeScrollbar::-webkit-scrollbar-track
 {
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	border-radius: 10px;
-	background-color: #555;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  border-radius: 10px;
+  background-color: #555;
 }
 .darkThemeScrollbar::-webkit-scrollbar
 {
-	width: 12px;
+  width: 12px;
   border-radius: 10px;
-	background-color: #555;
+  background-color: #555;
 }
 
 .darkThemeScrollbar::-webkit-scrollbar-thumb
 {
-	border-radius: 10px;
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	background-color: #202225;
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  background-color: #202225;
 }
 
 /* User List */

@@ -264,48 +264,48 @@ socket.on('user list', (data) => {
 
 socket.on('mute', () => {
   $('#inputMessage').prop('disabled', true);
-	alert('You are now muted!');
+  alert('You are now muted!');
 });
 
 socket.on('unmute', () => {
   $('#inputMessage').prop('disabled', false);
-	alert('You are now unmuted!');
+  alert('You are now unmuted!');
 });
 
 socket.on('flip', () => {
   ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix) {
-  	document.body.style[prefix + 'transform'] = 'rotate(180deg)';
+    document.body.style[prefix + 'transform'] = 'rotate(180deg)';
   });
 });
 
 socket.on('unflip', () => {
   ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix) {
-  	document.body.style[prefix + 'transform'] = 'rotate(0deg)';
+    document.body.style[prefix + 'transform'] = 'rotate(0deg)';
   });
 });
 
 socket.on('stupidify', () => {
   (function(){
-  	var TEXT = 'When I looked in the mirror, the reflection showed Joe Mama. Then the mirror screamed, and shattered. '
-  	Array.prototype.slice.call(document.querySelectorAll('input,textarea')).map(function(el){
-  		el.onkeypress=function(evt){
-  			var charCode = typeof evt.which == "number" ? evt.which : evt.keyCode;
-  			if (charCode && charCode > 31) {
-  				var start = this.selectionStart, end = this.selectionEnd;
-  				this.value = this.value.slice(0, start) + TEXT[start % TEXT.length] + this.value.slice(end);
-  				this.selectionStart = this.selectionEnd = start + 1;
-  			}
-  			return false;
-  		}
-  	});
+    var TEXT = 'When I looked in the mirror, the reflection showed Joe Mama. Then the mirror screamed, and shattered. '
+    Array.prototype.slice.call(document.querySelectorAll('input,textarea')).map(function(el){
+      el.onkeypress=function(evt){
+        var charCode = typeof evt.which == "number" ? evt.which : evt.keyCode;
+        if (charCode && charCode > 31) {
+          var start = this.selectionStart, end = this.selectionEnd;
+          this.value = this.value.slice(0, start) + TEXT[start % TEXT.length] + this.value.slice(end);
+          this.selectionStart = this.selectionEnd = start + 1;
+        }
+        return false;
+      }
+    });
   }());
 });
 
 socket.on('smash', () => {
   ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix){
-  	Array.prototype.slice.call(document.querySelectorAll('div,p,span,img,a,body')).map(function(el){
-  		el.style[prefix + 'transform'] = 'rotate(' + (Math.floor(Math.random() * 10) - 1) + 'deg)';
-  	});
+    Array.prototype.slice.call(document.querySelectorAll('div,p,span,img,a,body')).map(function(el){
+      el.style[prefix + 'transform'] = 'rotate(' + (Math.floor(Math.random() * 10) - 1) + 'deg)';
+    });
   });
 });
 
@@ -576,7 +576,7 @@ socket.on('new message', (data) => {
           ]
         });
       });
-  	}
+    }
   }
   else {
     addChatMessage(data);
