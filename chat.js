@@ -51,13 +51,13 @@ var pageVisible;
 var systemTheme;
 const converter = new showdown.Converter({tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
 
-var chatMessageSound = new Audio('./assets/ChatMessageSound.mp3');
-var userLeftChatSound = new Audio('./assets/UserLeftChat.mp3');
-var userJoinedChatSound = new Audio('./assets/UserJoinedChat.mp3');
-var lostConnectionSound = new Audio('./assets/LostConnection.mp3');
-var regainedConnectionSound = new Audio('./assets/RegainedConnection.mp3');
+var chatMessageSound = new Audio('./assets/ChatMessageSound.webm');
+var userLeftChatSound = new Audio('./assets/UserLeftChat.webm');
+var userJoinedChatSound = new Audio('./assets/UserJoinedChat.webm');
+var lostConnectionSound = new Audio('./assets/LostConnection.webm');
+var regainedConnectionSound = new Audio('./assets/RegainedConnection.webm');
 var stunSound = new Audio('./assets/Stun.webm');
-var kickSound = new Audio('./assets/Kick.mp3');
+var kickSound = new Audio('./assets/Kick.webm');
 
 var sequences = {
   primary: 'up up down down left right left right b a',
