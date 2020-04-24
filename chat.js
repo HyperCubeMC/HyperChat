@@ -49,6 +49,7 @@ var initialLogin = true;
 var darkThemeSwitchState;
 var pageVisible;
 var systemTheme;
+var socket; // Socket.io, placeholder variable until assigned later below.
 const converter = new showdown.Converter({tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
 
 var chatMessageSound = new Audio('./assets/ChatMessageSound.webm');
@@ -71,7 +72,21 @@ cheet.done(function (seq) {
   }
 });
 
-const socket = io();
+function isElectron() {
+  if (typeof navigator === 'object' && typeof navigator.userAgent === 'string' && navigator.userAgent.indexOf('Electron') >= 0) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+if (isElectron()) {
+  socket = io('https://hyperchat.cf');
+}
+else {
+  socket = io();
+}
 
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
   systemTheme = 'dark';

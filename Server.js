@@ -9,7 +9,7 @@ const showdown = require('showdown');
 const xssFilter = require('showdown-xss-filter');
 const argon2 = require('argon2');
 
-  // options for SSL certificate
+// Options for SSL certificate and allowing http1
 const options = {
   cert: fs.readFileSync('/Users/evere/Servers/Certificates/chain.pem'),
   key: fs.readFileSync('/Users/evere/Servers/Certificates/key.pem'),
