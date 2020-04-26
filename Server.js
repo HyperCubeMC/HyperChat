@@ -270,15 +270,15 @@ io.on('connection', (socket) => {
       });
 
       function verifyLogin() {
-        db.collection('credentials').countDocuments({username: socket.username, hashedPassword: {$exists: true}}, function(err, count) {
+        db.collection('credentials').countDocuments({username: socket.username.toLowerCase(), hashedPassword: {$exists: true}}, function(err, count) {
           var credentials = {
-            'username': socket.username,
+            'username': socket.username.toLowerCase(),
             'hashedPassword': userHashedPassword
           }
 
           if (err) throw err;
           if (count > 0) {
-            db.collection('credentials').findOne({username: socket.username}, function(err, user) {
+            db.collection('credentials').findOne({username: socket.username.toLowerCase()}, function(err, user) {
               async function getUserVerification() {
                 var userVerification = await verifyPassword(user.hashedPassword, socket.password);
                 return userVerification;
