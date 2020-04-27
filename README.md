@@ -1,3 +1,5 @@
+# please stop spamming the discord server, you're coming across as super needy
+
 # HyperChat
 ## A fast, open-source chat app developed by Justsnoopy30.
 ### https://hyperchat.cf
