@@ -302,7 +302,7 @@ io.on('connection', (socket) => {
             });
           }
         });
-        var allowLogin = function() {
+        const allowLogin = function() {
           socket.join(socket.room);
 
           socket.emit('login authorized');
