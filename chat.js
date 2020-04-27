@@ -14,16 +14,19 @@ if ('serviceWorker' in navigator) {
 
   if ('Notification' in window) {
     var notificationPermission = Notification.permission;
-
-    function notificationPermissionPrompt() {
-      Notification.requestPermission(function(result) {
-        if (result === 'granted') {
-          notificationPermission = 'granted';
-        }
-      });
-    }
   }
 }
+
+// eslint-disable-next-line no-unused-vars
+function notificationPermissionPrompt() {
+  if ('Notification' in window) {
+    Notification.requestPermission(function(result) {
+      if (result === 'granted') {
+        notificationPermission = 'granted';
+      }
+    });
+  }
+} // Used in html file with onclick.
 
 var fadeTime = 150; // In ms
 var typingTimerLength = 1000; // In ms
