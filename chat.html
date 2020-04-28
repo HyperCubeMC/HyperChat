@@ -56,8 +56,8 @@
       </li>
       <li id="chatPage">
         <div id="chatArea">
-          <img id="notificationBell" src="./assets/BlackNotificationBell.png" alt="Notification Bell" onclick="notificationPermissionPrompt()" draggable="false">
-          <img class="settingsIcon" src="./assets/BlackSettingsIcon.png" alt="Settings Icon" onclick="showSettingsPage()" draggable="false">
+          <img id="notificationBell" src="./assets/BlackNotificationBell.png" alt="Notification Bell" draggable="false">
+          <img class="settingsIcon" id="settingsIconInChat"  src="./assets/BlackSettingsIcon.png" alt="Settings Icon" draggable="false">
           <ul id="messages"></ul>
         </div>
         <div id="userList">
@@ -76,7 +76,7 @@
               </a>
             </div>
           </nav>
-          <img class="settingsIcon" src="./assets/BlackSettingsIcon.png" alt="Settings Icon" onclick="hideSettingsPage()" draggable="false">
+          <img class="settingsIcon" id="settingsIconInSettings" src="./assets/BlackSettingsIcon.png" alt="Settings Icon" draggable="false">
           <div class="form-check form-control-lg">
             <input class="form-check-input" type="radio" name="themeRadio" id="lightThemeRadio">
             <label class="form-check-label" for="lightThemeRadio">Light Theme</label>

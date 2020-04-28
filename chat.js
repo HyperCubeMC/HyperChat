@@ -6,6 +6,7 @@ const cheet = require('cheet.js/cheet.min.js');
 const store = require('store2/dist/store2.min.js');
 const showdown = require('showdown/dist/showdown.min.js');
 
+let notificationPermission = 'default';
 if ('serviceWorker' in navigator) {
   if (navigator.serviceWorker.controller) {
     console.log("Service worker is controlling the site.");
@@ -21,7 +22,7 @@ if ('serviceWorker' in navigator) {
   }
 
   if ('Notification' in window) {
-    var notificationPermission = Notification.permission;
+    notificationPermission = Notification.permission;
   }
 }
 
@@ -34,46 +35,44 @@ function notificationPermissionPrompt() {
       }
     });
   }
-} // Used in html file with onclick.
+} // Used to show a permission prompt to grant access to notifications
 
-window.notificationPermissionPrompt = notificationPermissionPrompt; // Make notificationPermissioPrompt global so that it can be called from chat.html
-
-var fadeTime = 150; // In ms
-var typingTimerLength = 1000; // In ms
-var colors = [
+let fadeTime = 150; // In ms
+let typingTimerLength = 1000; // In ms
+let colors = [
   '#e21400', '#91580f', '#f8a700', '#f78b00',
   '#58dc00', '#287b00', '#a8f07a', '#4ae8c4',
   '#3b88eb', '#3824aa', '#a700ff', '#d300e7'
 ]; // Colors for usernames
 
 // Initialize variables
-var currentInput; // Current input focus variable
-var username;
-var password;
-var room;
-var connected = false;
-var typing = false;
-var lastTypingTime;
-var userListContents;
-var loggedIn;
-var cheatActivated;
-var notificationReplyMessage;
-var initialLogin = true;
-var darkThemeSwitchState;
-var pageVisible;
-var systemTheme;
-var socket; // Socket.io, placeholder variable until assigned later below.
+let currentInput; // Current input focus letiable
+let username;
+let password;
+let room;
+let connected = false;
+let typing = false;
+let lastTypingTime;
+let userListContents;
+let loggedIn;
+let cheatActivated;
+let notificationReplyMessage;
+let initialLogin = true;
+let darkThemeSwitchState;
+let pageVisible;
+let systemTheme;
+let socket; // Socket.io, placeholder letiable until assigned later below.
 const converter = new showdown.Converter({tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
 
-var chatMessageSound = new Audio('./assets/ChatMessageSound.webm');
-var userLeftChatSound = new Audio('./assets/UserLeftChat.webm');
-var userJoinedChatSound = new Audio('./assets/UserJoinedChat.webm');
-var lostConnectionSound = new Audio('./assets/LostConnection.webm');
-var regainedConnectionSound = new Audio('./assets/RegainedConnection.webm');
-var stunSound = new Audio('./assets/Stun.webm');
-var kickSound = new Audio('./assets/Kick.webm');
+let chatMessageSound = new Audio('./assets/ChatMessageSound.webm');
+let userLeftChatSound = new Audio('./assets/UserLeftChat.webm');
+let userJoinedChatSound = new Audio('./assets/UserJoinedChat.webm');
+let lostConnectionSound = new Audio('./assets/LostConnection.webm');
+let regainedConnectionSound = new Audio('./assets/RegainedConnection.webm');
+let stunSound = new Audio('./assets/Stun.webm');
+let kickSound = new Audio('./assets/Kick.webm');
 
-var sequences = {
+let sequences = {
   primary: 'up up down down left right left right b a',
 };
 
@@ -168,49 +167,49 @@ $('#darkThemeRadio').on('change', function (event) {
 });
 
 function onVisibilityChange(callback) {
-    var visible = true;
+  let visible = true;
 
-    if (!callback) {
-        throw new Error('no callback given');
-    }
+  if (!callback) {
+      throw new Error('no callback given');
+  }
 
-    function focused() {
-        if (!visible) {
-            callback(visible = true);
-        }
-    }
+  function focused() {
+      if (!visible) {
+          callback(visible = true);
+      }
+  }
 
-    function unfocused() {
-        if (visible) {
-            callback(visible = false);
-        }
-    }
+  function unfocused() {
+      if (visible) {
+          callback(visible = false);
+      }
+  }
 
-    // Standards:
-    if ('hidden' in document) {
-        document.addEventListener('visibilitychange',
-            function() {(document.hidden ? unfocused : focused)()});
-    }
-    if ('mozHidden' in document) {
-        document.addEventListener('mozvisibilitychange',
-            function() {(document.mozHidden ? unfocused : focused)()});
-    }
-    if ('webkitHidden' in document) {
-        document.addEventListener('webkitvisibilitychange',
-            function() {(document.webkitHidden ? unfocused : focused)()});
-    }
-    if ('msHidden' in document) {
-        document.addEventListener('msvisibilitychange',
-            function() {(document.msHidden ? unfocused : focused)()});
-    }
-    // IE 9 and lower:
-    if ('onfocusin' in document) {
-        document.onfocusin = focused;
-        document.onfocusout = unfocused;
-    }
-    // All others:
-    window.onpageshow = window.onfocus = focused;
-    window.onpagehide = window.onblur = unfocused;
+  // Standards:
+  if ('hidden' in document) {
+      document.addEventListener('visibilitychange',
+        function() {(document.hidden ? unfocused : focused)()});
+  }
+  if ('mozHidden' in document) {
+      document.addEventListener('mozvisibilitychange',
+        function() {(document.mozHidden ? unfocused : focused)()});
+  }
+  if ('webkitHidden' in document) {
+      document.addEventListener('webkitvisibilitychange',
+        function() {(document.webkitHidden ? unfocused : focused)()});
+  }
+  if ('msHidden' in document) {
+      document.addEventListener('msvisibilitychange',
+        function() {(document.msHidden ? unfocused : focused)()});
+  }
+  // IE 9 and lower:
+  if ('onfocusin' in document) {
+    document.onfocusin = focused;
+    document.onfocusout = unfocused;
+  }
+  // All others:
+  window.onpageshow = window.onfocus = focused;
+  window.onpagehide = window.onblur = unfocused;
 }
 
 onVisibilityChange(function(visible) {
@@ -223,15 +222,11 @@ function showSettingsPage() {
   $('#chatPage').off('click');
 }
 
-window.showSettingsPage = showSettingsPage; // Make showSettingsPage global so that it can be called from chat.html
-
 function hideSettingsPage() {
   $('#settingsPage').fadeOut();
   $('#chatPage').fadeIn();
   $('#settingsPage').off('click');
 }
-
-window.hideSettingsPage = hideSettingsPage; // Make hideSettingsPage global so that it can be called from chat.html.
 
 function showReconnectingPage() {
   if (loggedIn) {
@@ -318,12 +313,12 @@ socket.on('unflip', () => {
 
 socket.on('stupidify', () => {
   (function(){
-    var TEXT = 'When I looked in the mirror, the reflection showed Joe Mama. Then the mirror screamed, and shattered. '
+    let TEXT = 'When I looked in the mirror, the reflection showed Joe Mama. Then the mirror screamed, and shattered. '
     Array.prototype.slice.call(document.querySelectorAll('input,textarea')).map(function(el){
       el.onkeypress=function(evt){
-        var charCode = typeof evt.which == "number" ? evt.which : evt.keyCode;
+        let charCode = typeof evt.which == "number" ? evt.which : evt.keyCode;
         if (charCode && charCode > 31) {
-          var start = this.selectionStart, end = this.selectionEnd;
+          let start = this.selectionStart, end = this.selectionEnd;
           this.value = this.value.slice(0, start) + TEXT[start % TEXT.length] + this.value.slice(end);
           this.selectionStart = this.selectionEnd = start + 1;
         }
@@ -375,8 +370,8 @@ const sendMessage = (message) => {
   }
 }
 const syncUserList = (userListContents) => {
-  var usersToAddToUserList = $();
-  for(var x = 0; x < 1000; x++) {
+  let usersToAddToUserList = $();
+  for(let x = 0; x < 1000; x++) {
     if (userListContents[x] !== undefined) {
       usersToAddToUserList = usersToAddToUserList.add('<li class="user">' + userListContents[x] + '</li>');
     }
@@ -386,12 +381,12 @@ const syncUserList = (userListContents) => {
 
 // Log a message
 const log = (message, options) => {
-  var $el = $('<li>').addClass('log').text(message);
+  let $el = $('<li>').addClass('log').text(message);
   addMessageElement($el, options);
 }
 
 const addToUserList = (data) => {
-  var $user = $('<li>').addClass('user').text(data);
+  let $user = $('<li>').addClass('user').text(data);
   $('#userList').append($user);
 }
 const removeFromUserList = (data) => {
@@ -403,12 +398,12 @@ const removeFromUserList = (data) => {
 const addChatMessage = (data, options) => {
   options = options || {};
 
-  var $usernameDiv = $('<span class="username"></span>')
+  let $usernameDiv = $('<span class="username"></span>')
     .text(data.username)
     .css('color', getUsernameColor(data.username));
-  var $messageBodyDiv = $('<span class="messageBody">' + data.message + '</span>')
-  var typingClass = data.typing ? 'typing' : '';
-  var $messageDiv = $('<li class="message"></li>')
+  let $messageBodyDiv = $('<span class="messageBody">' + data.message + '</span>')
+  let typingClass = data.typing ? 'typing' : '';
+  let $messageDiv = $('<li class="message"></li>')
     .data('username', data.username)
     .addClass(typingClass)
     .append($usernameDiv, $messageBodyDiv);
@@ -422,7 +417,7 @@ const addChatTyping = (data, options) => {
   data.message = 'is typing...';
 
   // Don't fade the message in if there is an 'X was typing'
-  var $typingMessages = getTypingMessages(data);
+  let $typingMessages = getTypingMessages(data);
   options = options || {};
   if ($typingMessages.length !== 0) {
     options.fade = false;
@@ -431,11 +426,11 @@ const addChatTyping = (data, options) => {
 
   options.typing = true;
 
-  var $usernameDiv = $('<span class="username"></span>')
+  let $usernameDiv = $('<span class="username"></span>')
     .text(data.username)
     .css('color', getUsernameColor(data.username));
-  var $messageBodyDiv = $('<span class="messageBody">' + data.message + '</span>')
-  var $messageDiv = $('<li class="typing"></li>')
+  let $messageBodyDiv = $('<span class="messageBody">' + data.message + '</span>')
+  let $messageDiv = $('<li class="typing"></li>')
     .data('username', data.username)
     .append($usernameDiv, $messageBodyDiv);
 
@@ -455,7 +450,7 @@ const removeChatTyping = (data) => {
 // options.prepend - If the element should prepend
 //   all other messages (default = false)
 const addMessageElement = (element, options) => {
-  var $element = $(element);
+  let $element = $(element);
 
   // Setup default options
   if (!options) {
@@ -509,8 +504,8 @@ const updateTyping = () => {
     lastTypingTime = (new Date()).getTime();
 
     setTimeout(() => {
-      var typingTimer = (new Date()).getTime();
-      var timeDiff = typingTimer - lastTypingTime;
+      let typingTimer = (new Date()).getTime();
+      let timeDiff = typingTimer - lastTypingTime;
       if (timeDiff >= typingTimerLength && typing) {
         socket.emit('stop typing');
         typing = false;
@@ -529,12 +524,12 @@ const getTypingMessages = (data) => {
 // Gets the color of a username through our hash function
 const getUsernameColor = (username) => {
   // Compute hash code
-  var hash = 7;
-  for (var i = 0; i < username.length; i++) {
+  let hash = 7;
+  for (let i = 0; i < username.length; i++) {
      hash = username.charCodeAt(i) + (hash << 5) - hash;
   }
   // Calculate color
-  var index = Math.abs(hash % colors.length);
+  let index = Math.abs(hash % colors.length);
   return colors[index];
 }
 
@@ -587,6 +582,21 @@ $('#inputMessage').click(() => {
   $('#inputMessage').focus();
 });
 
+// Go to the settings page when the settings icon on the chat page is clicked
+$('#settingsIconInChat').click(() => {
+  showSettingsPage();
+});
+
+// Go to the chat page when the settings icon in settings is clicked
+$('#settingsIconInSettings').click(() => {
+  hideSettingsPage();
+});
+
+// Show the notification permission prompt when the notification bell is clicked
+$('#notificationBell').click(() => {
+  notificationPermissionPrompt();
+});
+
 // Socket events
 
 // Whenever the server emits 'new message', update the chat body
@@ -595,16 +605,16 @@ socket.on('new message', (data) => {
     addChatMessage(data);
     chatMessageSound.play();
     if ('navigator.serviceWorker.controller' && notificationPermission === 'granted' && data.message.includes('@' + username)) { // Make sure we have the permission to send notifications and the user was mentioned
-      var notificationMessage = converter.makeMarkdown(data.message); // Convert html to markdown for the notification
+      let notificationMessage = converter.makeMarkdown(data.message); // Convert html to markdown for the notification
       navigator.serviceWorker.ready.then(function(registration) {
         registration.showNotification(data.username, {
           body: notificationMessage,
-          icon: './favicon.ico',
+          icon: './assets/favicon.ico',
           vibrate: [200, 100, 200, 100, 200, 100, 200],
           tag: 'pingNotification',
           actions: [
-              {action: 'reply', title: 'Reply', type: 'text', placeholder: 'Type your reply.'},
-              {action: 'close', title: 'Close notification'}
+            {action: 'reply', title: 'Reply', type: 'text', placeholder: 'Type your reply.'},
+            {action: 'close', title: 'Close notification'}
           ]
         });
       });
@@ -656,8 +666,8 @@ socket.on('reconnect', () => {
     while (userListDivContents.firstChild) {
       userListDivContents.removeChild(userListDivContents.firstChild);
     }
-    var userListTitleElement = document.createElement("h3");
-    var userListTitleText = document.createTextNode("User List");
+    let userListTitleElement = document.createElement("h3");
+    let userListTitleText = document.createTextNode("User List");
     userListTitleElement.appendChild(userListTitleText);
     userListDivContents.appendChild(userListTitleElement);
     socket.emit('login', { username, password, room });
