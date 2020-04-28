@@ -64,13 +64,13 @@ let systemTheme;
 let socket; // Socket.io, placeholder letiable until assigned later below.
 const converter = new showdown.Converter({tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
 
-let chatMessageSound = new Audio('./assets/ChatMessageSound.webm');
-let userLeftChatSound = new Audio('./assets/UserLeftChat.webm');
-let userJoinedChatSound = new Audio('./assets/UserJoinedChat.webm');
-let lostConnectionSound = new Audio('./assets/LostConnection.webm');
-let regainedConnectionSound = new Audio('./assets/RegainedConnection.webm');
-let stunSound = new Audio('./assets/Stun.webm');
-let kickSound = new Audio('./assets/Kick.webm');
+const chatMessageSound = new Audio('./assets/ChatMessageSound.webm');
+const userLeftChatSound = new Audio('./assets/UserLeftChat.webm');
+const userJoinedChatSound = new Audio('./assets/UserJoinedChat.webm');
+const lostConnectionSound = new Audio('./assets/LostConnection.webm');
+const regainedConnectionSound = new Audio('./assets/RegainedConnection.webm');
+const stunSound = new Audio('./assets/Stun.webm');
+const kickSound = new Audio('./assets/Kick.webm');
 
 let sequences = {
   primary: 'up up down down left right left right b a',
