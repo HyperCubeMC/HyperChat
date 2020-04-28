@@ -284,7 +284,7 @@ socket.on('login authorized', () => {
 });
 
 socket.on('login denied', (data) => {
-  loginDeniedReason = data.loginDeniedReason;
+  let loginDeniedReason = data.loginDeniedReason;
   alert(loginDeniedReason);
   location.reload();
 });
