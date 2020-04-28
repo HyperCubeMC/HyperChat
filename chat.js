@@ -417,24 +417,24 @@ const addChatTyping = (data, options) => {
   data.message = 'is typing...';
 
   // Don't fade the message in if there is an 'X was typing'
-  let $typingMessages = getTypingMessages(data);
+  let typingMessages = getTypingMessages(data);
   options = options || {};
-  if ($typingMessages.length !== 0) {
+  if (typingMessages.length !== 0) {
     options.fade = false;
-    $typingMessages.remove();
+    typingMessages.remove();
   }
 
   options.typing = true;
 
-  let $usernameDiv = $('<span class="username"></span>')
+  let usernameDiv = $('<span class="username"></span>')
     .text(data.username)
     .css('color', getUsernameColor(data.username));
-  let $messageBodyDiv = $('<span class="messageBody">' + data.message + '</span>')
-  let $messageDiv = $('<li class="typing"></li>')
+  let messageBodyDiv = $('<span class="messageBody">' + data.message + '</span>')
+  let messageDiv = $('<li class="typing"></li>')
     .data('username', data.username)
-    .append($usernameDiv, $messageBodyDiv);
+    .append(usernameDiv, messageBodyDiv);
 
-  addMessageElement($messageDiv, options);
+  addMessageElement(messageDiv, options);
 }
 
 // Removes the visual chat typing message
@@ -450,7 +450,7 @@ const removeChatTyping = (data) => {
 // options.prepend - If the element should prepend
 //   all other messages (default = false)
 const addMessageElement = (element, options) => {
-  let $element = $(element);
+  let element = $(element);
 
   // Setup default options
   if (!options) {
@@ -466,7 +466,7 @@ const addMessageElement = (element, options) => {
 
   // Apply options
   if (options.fade) {
-    $element.hide().fadeIn(fadeTime);
+    element.hide().fadeIn(fadeTime);
   }
 
   if (options.prepend) {
