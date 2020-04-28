@@ -211,7 +211,7 @@ function onVisibilityChange(callback) {
     // All others:
     window.onpageshow = window.onfocus = focused;
     window.onpagehide = window.onblur = unfocused;
-};
+}
 
 onVisibilityChange(function(visible) {
   pageVisible = visible;
