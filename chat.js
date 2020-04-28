@@ -36,6 +36,8 @@ function notificationPermissionPrompt() {
   }
 } // Used in html file with onclick.
 
+window.notificationPermissionPrompt = notificationPermissionPrompt; // Make notificationPermissioPrompt global so that it can be called from chat.html
+
 var fadeTime = 150; // In ms
 var typingTimerLength = 1000; // In ms
 var colors = [
@@ -221,11 +223,15 @@ function showSettingsPage() {
   $('#chatPage').off('click');
 }
 
+window.showSettingsPage = showSettingsPage; // Make showSettingsPage global so that it can be called from chat.html
+
 function hideSettingsPage() {
   $('#settingsPage').fadeOut();
   $('#chatPage').fadeIn();
   $('#settingsPage').off('click');
 }
+
+window.hideSettingsPage = hideSettingsPage; // Make hideSettingsPage global so that it can be called from chat.html.
 
 function showReconnectingPage() {
   if (loggedIn) {
