@@ -170,37 +170,37 @@ function onVisibilityChange(callback) {
   let visible = true;
 
   if (!callback) {
-      throw new Error('no callback given');
+    throw new Error('no callback given');
   }
 
   function focused() {
-      if (!visible) {
-          callback(visible = true);
-      }
+    if (!visible) {
+        callback(visible = true);
+    }
   }
 
   function unfocused() {
-      if (visible) {
-          callback(visible = false);
-      }
+    if (visible) {
+        callback(visible = false);
+    }
   }
 
   // Standards:
   if ('hidden' in document) {
-      document.addEventListener('visibilitychange',
-        function() {(document.hidden ? unfocused : focused)()});
+    document.addEventListener('visibilitychange',
+      function() {(document.hidden ? unfocused : focused)()});
   }
   if ('mozHidden' in document) {
-      document.addEventListener('mozvisibilitychange',
-        function() {(document.mozHidden ? unfocused : focused)()});
+    document.addEventListener('mozvisibilitychange',
+      function() {(document.mozHidden ? unfocused : focused)()});
   }
   if ('webkitHidden' in document) {
-      document.addEventListener('webkitvisibilitychange',
-        function() {(document.webkitHidden ? unfocused : focused)()});
+    document.addEventListener('webkitvisibilitychange',
+      function() {(document.webkitHidden ? unfocused : focused)()});
   }
   if ('msHidden' in document) {
-      document.addEventListener('msvisibilitychange',
-        function() {(document.msHidden ? unfocused : focused)()});
+    document.addEventListener('msvisibilitychange',
+      function() {(document.msHidden ? unfocused : focused)()});
   }
   // IE 9 and lower:
   if ('onfocusin' in document) {
