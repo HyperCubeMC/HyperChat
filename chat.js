@@ -450,7 +450,7 @@ const removeChatTyping = (data) => {
 // options.prepend - If the element should prepend
 //   all other messages (default = false)
 const addMessageElement = (element, options) => {
-  let element = $(element);
+  let $element = $(element);
 
   // Setup default options
   if (!options) {
@@ -466,7 +466,7 @@ const addMessageElement = (element, options) => {
 
   // Apply options
   if (options.fade) {
-    element.hide().fadeIn(fadeTime);
+    $element.hide().fadeIn(fadeTime);
   }
 
   if (options.prepend) {
