@@ -1,3 +1,11 @@
+// Libraries
+
+const $ = require('jquery/dist/jquery.min.js');
+const io = require('socket.io-client/dist/socket.io.js');
+const cheet = require('cheet.js/cheet.min.js');
+const store = require('store2/dist/store2.min.js');
+const showdown = require('showdown/dist/showdown.min.js');
+
 if ('serviceWorker' in navigator) {
   if (navigator.serviceWorker.controller) {
     console.log("Service worker is controlling the site.");
