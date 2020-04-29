@@ -383,6 +383,9 @@ io.on('connection', (socket) => {
       socket.to(socket.room).emit('user left', {
         username: socket.username
       });
+      socket.to(socket.room).emit('stop typing', {
+        username: socket.username
+      });
       userMap.delete(socket.username);
     }
   });

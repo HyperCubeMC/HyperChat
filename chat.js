@@ -61,6 +61,7 @@ let initialLogin = true;
 let darkThemeSwitchState;
 let pageVisible;
 let systemTheme;
+let usersTypingArray = [];
 let socket; // Socket.io, placeholder letiable until assigned later below.
 const converter = new showdown.Converter({tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
 
@@ -254,6 +255,12 @@ function hideReconnectingPage() {
   }
 }
 
+function arrayRemove(array, value) {
+  return array.filter(function(ele) {
+    return ele != value;
+  });
+}
+
 // Submits the credentials to the server
 const submitLoginInfo = () => {
   username = cleanInput($('#usernameInput').val().trim());
@@ -411,42 +418,43 @@ const addChatMessage = (data, options) => {
   addMessageElement($messageDiv, options);
 }
 
-// Adds the visual chat typing message
-const addChatTyping = (data, options) => {
-  data.typing = true;
-  data.message = 'is typing...';
+// Sync the user typing message
+const syncUsersTyping = (usersTypingArray) => {
+  const usersTypingMax = 3;
+  const listFormatter = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' }); // This is for formatting the users out in a string list seperated by commas
 
-  // Don't fade the message in if there is an 'X was typing'
-  let typingMessages = getTypingMessages(data);
-  options = options || {};
-  if (typingMessages.length !== 0) {
-    options.fade = false;
-    typingMessages.remove();
+  function formatUsersTyping (usersTypingArray) {
+    if (!usersTypingArray || !usersTypingArray.length) {
+      return "";
+    }
+
+    const usersTyping = [...usersTypingArray];
+    if (usersTyping.length > usersTypingMax) {
+      usersTyping.splice(
+        usersTypingMax - 1,
+        usersTyping.length,
+        `${usersTypingArray.length - (usersTypingMax - 1)} others`,
+      ); // Make a new array usersTyping with 'x others' in replacement of users after the 3rd user
+    }
+    const usersString = listFormatter.format(usersTyping); // Call the function format and formats the users typing string
+    const verb = usersTyping.length > 1 ? "are" : "is"; // If more than one person are typing, use "are" instead of "is"
+
+    return [usersString, verb, 'typing...'].join(' ');
   }
 
-  options.typing = true;
+  let usersTypingText = formatUsersTyping(usersTypingArray);
 
-  let usernameDiv = $('<span class="username"></span>')
-    .text(data.username)
-    .css('color', getUsernameColor(data.username));
-  let messageBodyDiv = $('<span class="messageBody">' + data.message + '</span>')
-  let messageDiv = $('<li class="typing"></li>')
-    .data('username', data.username)
-    .append(usernameDiv, messageBodyDiv);
-
-  addMessageElement(messageDiv, options);
-}
-
-// Removes the visual chat typing message
-const removeChatTyping = (data) => {
-  getTypingMessages(data).fadeOut(function () {
-    $(this).remove();
-  });
+  if (usersTypingText !== '') {
+    let element = $('<span class="typing"></span>').text(usersTypingText);
+    $('#typingMessageArea').html(element).hide().fadeIn(fadeTime);
+  }
+  else {
+    $('#typingMessageArea').children().fadeOut(fadeTime, function() { $(this).remove() });
+  }
 }
 
 // Adds a message element to the messages and scrolls to the bottom
 // element - The element to add as a message
-// options.fade - If the element should fade-in (default = true)
 // options.prepend - If the element should prepend
 //   all other messages (default = false)
 const addMessageElement = (element, options) => {
@@ -457,33 +465,15 @@ const addMessageElement = (element, options) => {
     options = {};
   }
 
-  if (typeof options.fade === 'undefined') {
-    options.fade = true;
-  }
   if (typeof options.prepend === 'undefined') {
     options.prepend = false;
   }
 
-  // Apply options
-  if (options.fade) {
-    $element.hide().fadeIn(fadeTime);
-  }
-
   if (options.prepend) {
-    if (options.typing) {
-      $('#typingMessageArea').prepend($element);
-    }
-    else {
-      $('#messages').prepend($element);
-    }
+    $('#messages').prepend($element);
   }
   else {
-    if (options.typing) {
-      $('#typingMessageArea').append($element);
-    }
-    else {
-      $('#messages').append($element);
-    }
+    $('#messages').append($element);
   }
 
   $('#messages')[0].scrollTop = $('#messages')[0].scrollHeight;
@@ -514,13 +504,6 @@ const updateTyping = () => {
   }
 }
 
-// Gets the 'X is typing' messages of a user
-const getTypingMessages = (data) => {
-  return $('.typing').filter(function (i) {
-    return $(this).data('username') === data.username;
-  });
-}
-
 // Gets the color of a username through our hash function
 const getUsernameColor = (username) => {
   // Compute hash code
@@ -541,12 +524,12 @@ $('#inputMessage').on('input', function (event) {
 });
 
 $('#inputMessage').keydown(function (event) {
-  if (event.key=="Enter" && !event.shiftKey) {
+  if (event.key=='Enter' && !event.shiftKey) {
     event.preventDefault()
     sendMessage($('#inputMessage').val())
     socket.emit('stop typing');
     typing = false;
-    this.style.height = "auto";
+    this.style.height = 'auto';
   }
 });
 
@@ -636,18 +619,19 @@ socket.on('user joined', (data) => {
 socket.on('user left', (data) => {
   log(data.username + ' left the chatroom.');
   userLeftChatSound.play();
-  removeChatTyping(data);
   removeFromUserList(data.username);
 });
 
 // Whenever the server emits 'typing', show the typing message
 socket.on('typing', (data) => {
-  addChatTyping(data);
+  usersTypingArray.push(data.username);
+  syncUsersTyping(usersTypingArray);
 });
 
 // Whenever the server emits 'stop typing', kill the typing message
 socket.on('stop typing', (data) => {
-  removeChatTyping(data);
+  usersTypingArray = arrayRemove(usersTypingArray, data.username);
+  syncUsersTyping(usersTypingArray);
 });
 
 socket.on('disconnect', () => {
