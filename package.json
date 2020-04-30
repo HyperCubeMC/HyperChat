@@ -22,7 +22,6 @@
     "compression": "^1.7.4",
     "fs": "0.0.1-security",
     "https": "^1.0.0",
-    "jquery": "^3.5.0",
     "mongoose": "^5.9.7",
     "path": "^0.12.7",
     "showdown": "^1.9.1",
