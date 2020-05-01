@@ -401,9 +401,6 @@ const addChatMessage = (data, options) => {
 
   let messageDiv = document.createElement("li");
   messageDiv.classList.add('message');
-  if (data.typing) {
-    messageDiv.classList.add('typing');
-  }
   messageDiv.setAttribute('data-username', data.username);
   messageDiv.append(usernameDiv, messageBodyDiv);
 
