@@ -165,7 +165,7 @@ io.on('connection', (socket) => {
     const converter = new showdown.Converter({extensions: [xssFilter], tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
     if (message.length <= 2000) {
       message = filter.clean(message);
-      messageHtml = converter.makeHtml(message);
+      let messageHtml = converter.makeHtml(message);
       io.in(socket.room).emit('new message', {
         username: socket.username,
         message: messageHtml

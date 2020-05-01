@@ -30,8 +30,11 @@
     <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
     <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js" defer></script>
-    <script src="./node_modules/@tarp/require/require.min.js"></script>
-    <script>Tarp.require({main: "./chat"});</script>
+    <script src="./node_modules/socket.io-client/dist/socket.io.js" defer></script>
+    <script src="./node_modules/store2/dist/store2.min.js" defer></script>
+    <script src="./node_modules/showdown/dist/showdown.min.js" defer></script>
+    <script src="./node_modules/cheet.js/cheet.min.js" defer></script>
+    <script type="module" src="./chat.js" defer></script>
     <!-- Fix Electron Support (after scripts) -->
     <script>if (window.module) module = window.module;</script>
   </head>
