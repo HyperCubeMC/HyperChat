@@ -110,11 +110,19 @@ else {
 }
 
 const changeTheme = (theme) => {
-  let inverse = theme == "light" ? "dark" : "light";
-  let iconPrefix = theme == "light" ? "Black" : "White";
+  store('theme', theme);
+  let inverse;
+  let iconPrefix;
+  if (theme == 'light') {
+    inverse = 'dark';
+    iconPrefix = 'Black';
+  }
+  if (theme == 'dark') {
+    inverse = 'white';
+    iconPrefix = 'White';
+  }
   $("body").classList.add(theme);
   $("body").classList.remove(inverse);
-  store('theme', theme);
   $('.settingsIcon').src = `./assets/${iconPrefix}SettingsIcon.png`;
   $('#notificationBell').src = `./assets/${iconPrefix}NotificationBell.png`;
   $('#settingsTopBar').classList.remove(`navbar-${inverse}`, `bg-${inverse}`);
