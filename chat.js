@@ -370,14 +370,14 @@ const syncUserList = (userListContents) => {
 
 // Log a message
 const log = (message, options) => {
-  var tmp = document.createElement("li");
+  let tmp = document.createElement("li");
   tmp.classList.add('log')
   tmp.innerText = message;
   addMessageElement(tmp, options);
 }
 
 const addToUserList = (data) => {
-  var tmp = document.createElement("li");
+  let tmp = document.createElement("li");
   tmp.classList.add('user')
   tmp.innerText = data;
   $('#userList').appendChild(tmp);
@@ -390,16 +390,16 @@ const removeFromUserList = (data) => {
 // Adds the visual chat message to the message list
 const addChatMessage = (data, options) => {
   options = options || {};
-  var usernameDiv = document.createElement("span");
+  let usernameDiv = document.createElement("span");
   usernameDiv.classList.add('username')
   usernameDiv.innerText = data.username;
   usernameDiv.style.color = getUsernameColor(data.username);
 
-  var messageBodyDiv = document.createElement("span");
+  let messageBodyDiv = document.createElement("span");
   messageBodyDiv.classList.add('messageBody');
   messageBodyDiv.innerHTML = data.message;
 
-  var messageDiv = document.createElement("li");
+  let messageDiv = document.createElement("li");
   messageDiv.classList.add('message');
   if (data.typing) {
     messageDiv.classList.add('typing');
@@ -474,7 +474,7 @@ const addMessageElement = (element, options) => {
 
 // Prevents input from having injected markup
 const cleanInput = (input) => {
-  var tmp = document.createElement("div");
+  let tmp = document.createElement("div");
   tmp.innerHTML = input;
   return tmp.textContent || tmp.innerText || "";
 }
