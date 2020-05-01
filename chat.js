@@ -1,11 +1,5 @@
-// Libraries
-const io = require('socket.io-client/dist/socket.io.js');
-const cheet = require('cheet.js/cheet.min.js');
-const store = require('store2/dist/store2.min.js');
-const showdown = require('showdown/dist/showdown.min.js');
-
-// Crude jQuery replacement for when we *really* need it.
-let $ = (selector) => document.querySelectorAll(selector)[0];
+// Imports
+import $ from './MagicHelper.js';
 
 let notificationPermission = 'default';
 if ('serviceWorker' in navigator) {
