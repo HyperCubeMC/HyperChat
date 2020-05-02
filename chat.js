@@ -112,11 +112,11 @@ const changeTheme = (theme) => {
     iconPrefix = 'Black';
   }
   if (theme == 'dark') {
-    inverse = 'white';
+    inverse = 'light';
     iconPrefix = 'White';
   }
-  $("body").classList.add(theme);
-  $("body").classList.remove(inverse);
+  $('body').classList.add(theme);
+  $('body').classList.remove(inverse);
   $('.settingsIcon').src = `./assets/${iconPrefix}SettingsIcon.png`;
   $('#notificationBell').src = `./assets/${iconPrefix}NotificationBell.png`;
   $('#settingsTopBar').classList.remove(`navbar-${inverse}`, `bg-${inverse}`);
@@ -128,25 +128,25 @@ const changeTheme = (theme) => {
 }
 
 if (store('theme') == null) {
-  changeTheme("light");
+  changeTheme('light');
 }
 
 if (store('theme') == 'light') {
   $('#lightThemeRadio').checked = true;
-  changeTheme("light");
+  changeTheme('light');
 }
 
 if (store('theme') == 'dark') {
   $('#darkThemeRadio').checked = true;
-  changeTheme("dark");
+  changeTheme('dark');
 }
 
 $('#lightThemeRadio').addEventListener('change', function (event) {
-  changeTheme("light"); // Light theme radio chosen
+  changeTheme('light'); // Light theme radio chosen
 });
 
 $('#darkThemeRadio').addEventListener('change', function (event) {
-  changeTheme("dark"); // Dark theme radio chosen
+  changeTheme('dark'); // Dark theme radio chosen
 });
 
 function onVisibilityChange(callback) {
@@ -354,7 +354,7 @@ const sendMessage = (message) => {
 }
 const syncUserList = (userListContents) => {
   let usersToAddToUserList = document.createElement("ul");
-  for(let x = 0; x < 1000; x++) {
+  for (let x = 0; x < 1000; x++) {
     if (userListContents[x] !== undefined) {
       usersToAddToUserList = usersToAddToUserList.append('<li class="user">' + userListContents[x] + '</li>');
     }
