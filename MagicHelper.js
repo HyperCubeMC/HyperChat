@@ -55,32 +55,6 @@ HTMLElement.prototype.text = function (text) {
 }
 
 /*
-Append an element to the end of the inside of another element.
-Usage: $('element').append('<p>This element was appended with MagicHelper!</p>')
-*/
-HTMLElement.prototype.append = function (element) {
-  if (element instanceof HTMLElement) {
-    this.appendChild(element);
-    return this;
-  }
-  this.append(element);
-  return this;
-}
-
-/*
-Prepend an element to the start of the inside of another element.
-Usage: $('element').prepend('<p>This element was prepended with MagicHelper!</p>')
-*/
-HTMLElement.prototype.prepend = function (element) {
-  if (element instanceof HTMLElement) {
-    this.parentNode.insertBefore(element, this);
-    return this;
-  }
-  this.parentNode.insertBefore(element, this);
-  return this;
-}
-
-/*
 Remove an element.
 Usage: $('element').remove()
 */
