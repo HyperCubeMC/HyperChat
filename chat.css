@@ -317,12 +317,3 @@ body .dark, .dark #inputMessage, .dark #pages {
     background-color: #36393f;
     color:#fff;
 }
-
-li[id$="Page"] {
-  display: none;
-  transition: display 0.5s, opacity 0.5s linear;
-}
-
-li#loginPage {
-  display: block;
-}
