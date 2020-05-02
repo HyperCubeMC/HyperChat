@@ -13,6 +13,7 @@ const $ = (selector, context = document) => context.querySelector(selector);
 
 /**
  * Get, set, and list attributes of an element.
+ * Usage:
  * Get attribute: $('element').attr('attribute')
  * Set attribute: $('element').attr('attribute', 'value')
  * List attributes: $('element').attr()
@@ -30,6 +31,7 @@ HTMLElement.prototype.attr = function (attribute, value) {
 
 /**
  * Get and set the html of an element.
+ * Usage:
  * Get element html: $('element').html()
  * Set element html: $('element').html('<p>This html was set with MagicHelper!</p>')
  */
@@ -43,6 +45,7 @@ HTMLElement.prototype.html = function (html) {
 
 /**
  * Get and set the inner text of an element.
+ * Usage:
  * Get element text: $('element').text()
  * Set element text: $('element').text('This text was set with MagicHelper!')
  */
@@ -52,14 +55,6 @@ HTMLElement.prototype.text = function (text) {
   }
   this.innerText = text;
   return this;
-}
-
-/**
- * Remove an element.
- * Usage: $('element').remove()
- */
-HTMLElement.prototype.remove = function() {
-  this.parentNode.removeChild(this);
 }
 
 /**
