@@ -117,7 +117,8 @@ const changeTheme = (theme) => {
   }
   $('body').classList.add(theme);
   $('body').classList.remove(inverse);
-  $('.settingsIcon').src = `./assets/${iconPrefix}SettingsIcon.png`;
+  $('#settingsIconInChat').src = `./assets/${iconPrefix}SettingsIcon.png`;
+  $('#settingsIconInSettings').src = `./assets/${iconPrefix}SettingsIcon.png`;
   $('#notificationBell').src = `./assets/${iconPrefix}NotificationBell.png`;
   $('#settingsTopBar').classList.remove(`navbar-${inverse}`, `bg-${inverse}`);
   $('#settingsTopBar').classList.add(`navbar-${theme}`, `bg-${theme}`);
