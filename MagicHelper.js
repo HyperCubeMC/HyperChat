@@ -30,8 +30,8 @@ const $ = (selector, context = document) => context.querySelector(selector);
  * @returns {(string|NamedNodeMap)} Returns an attribute's value as a string (get), HTMLElement (set), or a list of attributes on an element as a NamedNodeMap (list).
  */
 HTMLElement.prototype.attr = function (attribute, value) {
-  if (!value) {
-    if (!attribute) {
+  if (typeof value === 'undefined') {
+    if (typeof attribute === 'undefined') {
       return this.attributes;
     }
     return this.getAttribute(attribute);
@@ -49,7 +49,7 @@ HTMLElement.prototype.attr = function (attribute, value) {
  * @returns {(String|HTMLElement)} Returns a string of the html (get), or the HTMLElement (set).
  */
 HTMLElement.prototype.html = function (html) {
-  if (!html) {
+  if (typeof html === 'undefined') {
     return this.innerHTML;
   }
   this.innerHTML = html;
@@ -65,7 +65,7 @@ HTMLElement.prototype.html = function (html) {
  * @returns {(String|HTMLElement)} Returns a string of the text (get), or the HTMLElement (set).
  */
 HTMLElement.prototype.text = function (text) {
-  if (!text) {
+  if (typeof text === 'undefined') {
     return this.textContent;
   }
   this.innerText = text;
@@ -122,13 +122,59 @@ HTMLElement.prototype.off = function (event, callback, options) {
  * @returns {HTMLElement} Returns the HTMLElement.
  */
 HTMLElement.prototype.data = function (data, value) {
-  if (!value) {
-    if (!data) {
+  if (typeof value === 'undefined') {
+    if (typeof data === 'undefined') {
       return this.dataset;
     }
     return this.dataset[data];
   }
   this.dataset[data] = value;
+  return this;
+}
+
+/**
+ * Gets or sets a css property of an element.
+ * @example
+ * Get a css property value: $('element').css('property')
+ * Set a css property value: $('element').css('property' 'value')
+ * @param {String} property - The css property to get or set.
+ * @param {String} value - The css property value to set.
+ * @returns {(HTMLElement|String|CSSStyleDeclaration)} Returns the HTMLElement, a string containing the value of a property, or a list of css properties in the form of a CSSStyleDeclaration.
+ */
+HTMLElement.prototype.css = function (property, value) {
+  if (typeof value === 'undefined') {
+    if (typeof property === 'undefined') {
+      return this.style;
+    }
+    return this.style.getPropertyValue(property);
+  }
+  this.style.setProperty(property, value);
+  return this;
+}
+
+/**
+ * Hides an element.
+ * @example
+ * $('element').hide()
+ * @returns {HTMLElement} - Returns an HTMLElement.
+ */
+HTMLElement.prototype.hide = function () {
+  let originalDisplay = this.css('display');
+  this.data('originalDisplay', originalDisplay);
+  this.css('display', 'none')
+  return this;
+}
+
+/**
+ * Shows an element.
+ * @example
+ * $('element').show()
+ * @returns {HTMLElement} - Returns an HTMLElement.
+ */
+HTMLElement.prototype.show = function () {
+  let originalDisplay = this.data('originalDisplay') || 'initial';
+  console.log(originalDisplay);
+  this.css('display', originalDisplay);
   return this;
 }
 
