@@ -108,7 +108,6 @@ HTMLElement.prototype.on = function (event, callback, options) {
   return this;
 }
 
-
 /**
  * Remove an event listener from an element.
  * @example
@@ -161,9 +160,9 @@ HTMLElement.prototype.data = function (data, value, callback) {
 HTMLElement.prototype.css = function (property, value, callback) {
   if (typeof value === 'undefined') {
     if (typeof property === 'undefined') {
-      return this.style;
+      return window.getComputedStyle(this);
     }
-    return this.style.getPropertyValue(property);
+    return window.getComputedStyle(this).getPropertyValue(property);
   }
   this.style.setProperty(property, value);
   if (typeof callback === 'function') {
@@ -212,7 +211,7 @@ HTMLElement.prototype.removeClass = function (classToRemove, callback) {
  * @returns {HTMLElement} Returns the HTMLElement.
  */
 HTMLElement.prototype.hide = function (callback) {
-  let originalDisplay = this.css('display');
+  let originalDisplay = this.css('display') || 'initial';
   this.data('originalDisplay', originalDisplay);
   this.css('display', 'none');
   if (typeof callback === 'function') {
@@ -229,8 +228,8 @@ HTMLElement.prototype.hide = function (callback) {
  * @returns {HTMLElement} Returns the HTMLElement.
  */
 HTMLElement.prototype.show = function (callback) {
-  let originalDisplay = this.data('originalDisplay') || 'initial';
-  this.css('display', originalDisplay);
+  let displayToShow = this.data('originalDisplay') || 'initial';
+  this.css('display', displayToShow);
   if (typeof callback === 'function') {
     callback(this);
   }
@@ -245,14 +244,13 @@ HTMLElement.prototype.show = function (callback) {
  * @returns {HTMLElement} Returns the HTMLElement.
  */
 HTMLElement.prototype.fadeIn = function (callback) {
+  this.css('visibility', '0');
   this.css('transition', 'opacity 0.5s');
-  this.css('opacity', '0');
   this.show();
   this.css('opacity', '1');
   if (typeof callback === 'function') {
     callback(this);
   }
-  return this;
 }
 
 /**
@@ -265,7 +263,10 @@ HTMLElement.prototype.fadeIn = function (callback) {
 HTMLElement.prototype.fadeOut = function (callback) {
   this.css('transition', 'opacity 0.5s');
   this.css('opacity', '0');
-  this.hide();
+  const options = {
+    once: true
+  };
+  this.addEventListener('transitionend', this.hide, options);
   if (typeof callback === 'function') {
     callback(this);
   }
