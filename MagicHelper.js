@@ -166,7 +166,6 @@ HTMLElement.prototype.css = function (property, value, callback) {
     return this.style.getPropertyValue(property);
   }
   this.style.setProperty(property, value);
-  console.log(property, value);
   if (typeof callback === 'function') {
     callback(this);
   }
