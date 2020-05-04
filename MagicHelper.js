@@ -266,7 +266,7 @@ HTMLElement.prototype.fadeOut = function (callback) {
   const options = {
     once: true
   };
-  this.addEventListener('transitionend', this.hide, options);
+  this.on('transitionend', this.hide, options);
   if (typeof callback === 'function') {
     callback(this);
   }
