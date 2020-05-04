@@ -37,6 +37,11 @@
     <script type="module" src="./chat.js" defer></script>
     <!-- Fix Electron Support (after scripts) -->
     <script>if (window.module) module = window.module;</script>
+    <script>
+      // Legacy browser check.
+      var isIE = /Trident|MSIE/.test(navigator.userAgent);
+      if (isIE) alert("You're using a legacy browser, Internet Explorer, which is old and is not supported on this web app. Please switch to a modern browser to use this web app.");
+    </script>
   </head>
   <body>
     <noscript>
@@ -65,6 +70,7 @@
         </div>
         <div id="userList">
           <h3>User List</h3>
+          <ul id="userListContents"></ul>
         </div>
         <div id="typingMessageArea"></div>
         <textarea id="inputMessage" placeholder="Type here..." cols="20" wrap="hard" maxlength="2000"></textarea>

@@ -240,8 +240,13 @@ ul {
   top: 0px;
 }
 
-/* Users in user list */
-.user {
+/* User list contents */
+#userListContents {
+  padding-left: 0;
+}
+
+/* Users in the user list */
+.userInUserlist {
   overflow: auto;
   display: list-item;
   padding-top: 5px;

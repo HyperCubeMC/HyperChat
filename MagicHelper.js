@@ -27,9 +27,10 @@ const $ = (selector, context = document) => context.querySelector(selector);
  * List attributes: $('element').attr()
  * @param {String} attribute - The attribute to get or set.
  * @param {String} value - The value to set the attribute to.
+ * @param {function} callback - A function to run when the function finishes.
  * @returns {(string|NamedNodeMap)} Returns an attribute's value as a string (get), HTMLElement (set), or a list of attributes on an element as a NamedNodeMap (list).
  */
-HTMLElement.prototype.attr = function (attribute, value) {
+HTMLElement.prototype.attr = function (attribute, value, callback) {
   if (typeof value === 'undefined') {
     if (typeof attribute === 'undefined') {
       return this.attributes;
@@ -37,6 +38,9 @@ HTMLElement.prototype.attr = function (attribute, value) {
     return this.getAttribute(attribute);
   }
   this.setAttribute(attribute, value);
+  if (typeof callback === 'function') {
+    callback(this);
+  }
   return this;
 }
 
@@ -46,29 +50,37 @@ HTMLElement.prototype.attr = function (attribute, value) {
  * Get element html: $('element').html()
  * Set element html: $('element').html('<p>This html was set with MagicHelper!</p>')
  * @param {String} html - A string containing the html to set the element to.
+ * @param {function} callback - A function to run when the function finishes.
  * @returns {(String|HTMLElement)} Returns a string of the html (get), or the HTMLElement (set).
  */
-HTMLElement.prototype.html = function (html) {
+HTMLElement.prototype.html = function (html, callback) {
   if (typeof html === 'undefined') {
     return this.innerHTML;
   }
   this.innerHTML = html;
+  if (typeof callback === 'function') {
+    callback(this);
+  }
   return this;
 }
 
 /**
- * Get and set the inner text of an element.
+ * Get and set the inner text of an element. This uses textContent as it is tons faster than innerText.
  * @example
  * Get element text: $('element').text()
  * Set element text: $('element').text('This text was set with MagicHelper!')
  * @param {String} text - A string containing the text to set the element to contain.
+ * @param {function} callback - A function to run when the function finishes.
  * @returns {(String|HTMLElement)} Returns a string of the text (get), or the HTMLElement (set).
  */
-HTMLElement.prototype.text = function (text) {
+HTMLElement.prototype.text = function (text, callback) {
   if (typeof text === 'undefined') {
     return this.textContent;
   }
-  this.innerText = text;
+  this.textContent = text;
+  if (typeof callback === 'function') {
+    callback(this);
+  }
   return this;
 }
 
@@ -119,9 +131,10 @@ HTMLElement.prototype.off = function (event, callback, options) {
 * List data: $('element').data()
  * @param {String} data - The data to get or set.
  * @param {String} value - The value to set the data to.
+ * @param {function} callback - A function to run when the function finishes.
  * @returns {HTMLElement} Returns the HTMLElement.
  */
-HTMLElement.prototype.data = function (data, value) {
+HTMLElement.prototype.data = function (data, value, callback) {
   if (typeof value === 'undefined') {
     if (typeof data === 'undefined') {
       return this.dataset;
@@ -129,6 +142,9 @@ HTMLElement.prototype.data = function (data, value) {
     return this.dataset[data];
   }
   this.dataset[data] = value;
+  if (typeof callback === 'function') {
+    callback(this);
+  }
   return this;
 }
 
@@ -136,12 +152,13 @@ HTMLElement.prototype.data = function (data, value) {
  * Gets or sets a css property of an element.
  * @example
  * Get a css property value: $('element').css('property')
- * Set a css property value: $('element').css('property' 'value')
+ * Set a css property value: $('element').css('property', 'value')
  * @param {String} property - The css property to get or set.
  * @param {String} value - The css property value to set.
+ * @param {function} callback - A function to run when the function finishes.
  * @returns {(HTMLElement|String|CSSStyleDeclaration)} Returns the HTMLElement, a string containing the value of a property, or a list of css properties in the form of a CSSStyleDeclaration.
  */
-HTMLElement.prototype.css = function (property, value) {
+HTMLElement.prototype.css = function (property, value, callback) {
   if (typeof value === 'undefined') {
     if (typeof property === 'undefined') {
       return this.style;
@@ -149,6 +166,42 @@ HTMLElement.prototype.css = function (property, value) {
     return this.style.getPropertyValue(property);
   }
   this.style.setProperty(property, value);
+  console.log(property, value);
+  if (typeof callback === 'function') {
+    callback(this);
+  }
+  return this;
+}
+
+/**
+ * Adds a class to an element.
+ * @example
+ * $('element').addClass('classToAdd')
+ * @param {String} classToAdd - The class to add to the element.
+ * @param {function} callback - A function to run when the function finishes.
+ * @returns {HTMLElement} Returns the HTMLElement.
+ */
+HTMLElement.prototype.addClass = function (classToAdd, callback) {
+  this.classList.add(classToAdd);
+  if (typeof callback === 'function') {
+    callback(this);
+  }
+  return this;
+}
+
+/**
+ * Removes a class from an element.
+ * @example
+ * $('element').removeClass('classToRemove')
+ * @param {String} classToRemove - The class to remove from the element.
+ * @param {function} callback - A function to run when the function finishes.
+ * @returns {HTMLElement} Returns an html element.
+ */
+HTMLElement.prototype.removeClass = function (classToRemove, callback) {
+  this.classList.remove(classToRemove);
+  if (typeof callback === 'function') {
+    callback(this);
+  }
   return this;
 }
 
@@ -156,12 +209,16 @@ HTMLElement.prototype.css = function (property, value) {
  * Hides an element.
  * @example
  * $('element').hide()
- * @returns {HTMLElement} - Returns an HTMLElement.
+ * @param {function} callback - A function to run when the function finishes.
+ * @returns {HTMLElement} Returns the HTMLElement.
  */
-HTMLElement.prototype.hide = function () {
+HTMLElement.prototype.hide = function (callback) {
   let originalDisplay = this.css('display');
   this.data('originalDisplay', originalDisplay);
-  this.css('display', 'none')
+  this.css('display', 'none');
+  if (typeof callback === 'function') {
+    callback(this);
+  }
   return this;
 }
 
@@ -169,12 +226,50 @@ HTMLElement.prototype.hide = function () {
  * Shows an element.
  * @example
  * $('element').show()
- * @returns {HTMLElement} - Returns an HTMLElement.
+ * @param {function} callback - A function to run when the function finishes.
+ * @returns {HTMLElement} Returns the HTMLElement.
  */
-HTMLElement.prototype.show = function () {
+HTMLElement.prototype.show = function (callback) {
   let originalDisplay = this.data('originalDisplay') || 'initial';
-  console.log(originalDisplay);
   this.css('display', originalDisplay);
+  if (typeof callback === 'function') {
+    callback(this);
+  }
+  return this;
+}
+
+/**
+ * Fades in an element.
+ * @example
+ * $('element').fadeIn()
+ * @param {function} callback - A function to run when the function finishes.
+ * @returns {HTMLElement} Returns the HTMLElement.
+ */
+HTMLElement.prototype.fadeIn = function (callback) {
+  this.css('transition', 'opacity 0.5s');
+  this.css('opacity', '0');
+  this.show();
+  this.css('opacity', '1');
+  if (typeof callback === 'function') {
+    callback(this);
+  }
+  return this;
+}
+
+/**
+ * Fades out an element.
+ * @example
+ * $('element').fadeOut()
+ * @param {function} callback - A function to run when the function finishes.
+ * @returns {HTMLElement} Returns the HTMLElement.
+ */
+HTMLElement.prototype.fadeOut = function (callback) {
+  this.css('transition', 'opacity 0.5s');
+  this.css('opacity', '0');
+  this.hide();
+  if (typeof callback === 'function') {
+    callback(this);
+  }
   return this;
 }
 
