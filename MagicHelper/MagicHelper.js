@@ -217,7 +217,7 @@ HTMLElement.prototype.removeClass = function (classToRemove, callback) {
  * @returns {HTMLElement} Returns the HTMLElement.
  */
 HTMLElement.prototype.hide = function (callback) {
-  let originalDisplay = this.css('display') || 'initial';
+  const originalDisplay = this.css('display') || 'initial';
   this.data('originalDisplay', originalDisplay);
   this.css('display', 'none');
   if (typeof callback === 'function') {
@@ -234,7 +234,7 @@ HTMLElement.prototype.hide = function (callback) {
  * @returns {HTMLElement} Returns the HTMLElement.
  */
 HTMLElement.prototype.show = function (callback) {
-  let displayToShow = this.data('originalDisplay') || 'initial';
+  const displayToShow = this.data('originalDisplay') || 'initial';
   this.css('display', displayToShow);
   if (typeof callback === 'function') {
     callback(this);
@@ -246,12 +246,14 @@ HTMLElement.prototype.show = function (callback) {
  * Fades in an element.
  * @example
  * $('element').fadeIn()
+ * @param {String} fadeInSeconds - The amount of time for the fade in transition in seconds.
  * @param {function} callback - A function to run when the function finishes.
  * @returns {HTMLElement} Returns the HTMLElement.
  */
-HTMLElement.prototype.fadeIn = function (callback) {
+HTMLElement.prototype.fadeIn = function (fadeInSeconds, callback) {
+  const transitionTime = fadeInSeconds || '0.5';
   this.css('visibility', '0');
-  this.css('transition', 'opacity 0.5s');
+  this.css('transition', 'opacity ' + transitionTime + 's');
   this.show();
   this.css('opacity', '1');
   if (typeof callback === 'function') {
@@ -263,15 +265,17 @@ HTMLElement.prototype.fadeIn = function (callback) {
  * Fades out an element.
  * @example
  * $('element').fadeOut()
+ * @param {String} fadeOutSeconds - The amount of time for the fade out transition in seconds.
  * @param {function} callback - A function to run when the function finishes.
  * @returns {HTMLElement} Returns the HTMLElement.
  */
-HTMLElement.prototype.fadeOut = function (callback) {
-  this.css('transition', 'opacity 0.5s');
-  this.css('opacity', '0');
+HTMLElement.prototype.fadeOut = function (fadeOutSeconds, callback) {
+  const transitionTime = fadeOutSeconds || '0.5';
   const options = {
     once: true
   };
+  this.css('transition', 'opacity ' + transitionTime + 's');
+  this.css('opacity', '0');
   this.on('transitionend', this.hide, options);
   if (typeof callback === 'function') {
     callback(this);
