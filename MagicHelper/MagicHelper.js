@@ -210,6 +210,24 @@ HTMLElement.prototype.removeClass = function (classToRemove, callback) {
 }
 
 /**
+ * Toggles a class on an element.
+ * @example
+ * $('element').toggleClass('classToToggle')
+ * If the element does not have the class, the class is added.
+ * If the element has the class, the class is removed.
+ * @param {String} classToToggle - The class to toggle on the element.
+ * @param {function} callback - A function to run when the function finishes.
+ * @returns {HTMLElement} Returns an html element.
+ */
+HTMLElement.prototype.toggleClass = function (classToToggle, callback) {
+  this.classList.toggle(classToToggle);
+  if (typeof callback === 'function') {
+    callback(this);
+  }
+  return this;
+}
+
+/**
  * Hides an element.
  * @example
  * $('element').hide()
