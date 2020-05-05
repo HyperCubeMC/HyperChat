@@ -1,5 +1,5 @@
 // Import MagicHelper!
-import $ from './MagicHelper.js';
+import $ from './MagicHelper/MagicHelper.js';
 
 let notificationPermission = 'default';
 if ('serviceWorker' in navigator) {

@@ -1,0 +1,25 @@
+{
+  "tags": {
+    "allowUnknownTags": true
+  },
+  "source": {
+    "include": ["./MagicHelper/README.md", "./MagicHelper/MagicHelper.js"],
+    "includePattern": ".+\\.js(doc|x)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "sourceType": "module",
+  "plugins": ["plugins/markdown"],
+  "templates": {
+    "cleverLinks": true,
+    "monospaceLinks": false,
+    "default": {
+      "outputSourceFiles": true,
+      "showInheritedFrom": false
+    }
+  },
+  "opts": {
+    "destination": "./MagicHelper/docs/",
+    "recurse": true,
+    "title": "MagicHelper"
+  }
+}

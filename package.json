@@ -5,7 +5,9 @@
   "main": "Server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon Server.js"
+    "start": "nodemon Server.js",
+    "eslint": "./node_modules/.bin/eslint",
+    "jsdoc": "./node_modules/.bin/jsdoc -c ./MagicHelper/jsdoc.config.json"
   },
   "repository": {
     "type": "git",
