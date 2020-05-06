@@ -206,36 +206,36 @@ onVisibilityChange(function(visible) {
   pageVisible = visible;
 });
 
-function showSettingsPage() {
-  $('#chatPage').fadeOut();
-  $('#settingsPage').fadeIn()
+function showsettingsScreen() {
+  $('#chatScreen').fadeOut();
+  $('#settingsScreen').fadeIn()
 }
 
-function hideSettingsPage() {
-  $('#settingsPage').fadeOut();
-  $('#chatPage').fadeIn();
-  $('#settingsPage').removeEventListener('click', showSettingsPage);
+function hidesettingsScreen() {
+  $('#settingsScreen').fadeOut();
+  $('#chatScreen').fadeIn();
+  $('#settingsScreen').removeEventListener('click', showsettingsScreen);
 }
 
-function showReconnectingPage() {
+function showreconnectingScreen() {
   if (loggedIn) {
-    $('#chatPage').fadeOut();
-    $('#reconnectingPage').fadeIn();
+    $('#chatScreen').fadeOut();
+    $('#reconnectingScreen').fadeIn();
   }
   else {
-    $('#loginPage').fadeOut();
-    $('#reconnectingPage').fadeIn();
+    $('#loginScreen').fadeOut();
+    $('#reconnectingScreen').fadeIn();
   }
 }
 
-function hideReconnectingPage() {
+function hidereconnectingScreen() {
   if (loggedIn) {
-    $('#reconnectingPage').fadeOut();
-    $('#chatPage').fadeIn();
+    $('#reconnectingScreen').fadeOut();
+    $('#chatScreen').fadeIn();
   }
   else {
-    $('#reconnectingPage').fadeOut();
-    $('#loginPage').fadeIn();
+    $('#reconnectingScreen').fadeOut();
+    $('#loginScreen').fadeIn();
   }
 }
 
@@ -256,8 +256,8 @@ const submitLoginInfo = () => {
 
 socket.on('login authorized', () => {
   if (initialLogin) {
-    $('#loginPage').fadeOut();
-    $('#chatPage').fadeIn();
+    $('#loginScreen').fadeOut();
+    $('#chatScreen').fadeIn();
     currentInput = $('#inputMessage').focus();
     connected = true;
     loggedIn = true
@@ -563,10 +563,10 @@ $('#passwordInput').on('click',() => {
 $('#inputMessage').on('click', () => {$('#inputMessage').focus()});
 
 // Go to the settings page when the settings icon on the chat page is clicked
-$('#settingsIconInChat').on('click', showSettingsPage);
+$('#settingsIconInChat').on('click', showsettingsScreen);
 
 // Go to the chat page when the settings icon in settings is clicked
-$('#settingsIconInSettings').on('click', hideSettingsPage);
+$('#settingsIconInSettings').on('click', hidesettingsScreen);
 
 // Show the notification permission prompt when the notification bell is clicked
 $('#notificationBell').on('click', notificationPermissionPrompt);
@@ -628,11 +628,11 @@ socket.on('stop typing', (data) => {
 socket.on('disconnect', () => {
   log('You have been disconnected.');
   lostConnectionSound.play();
-  showReconnectingPage();
+  showreconnectingScreen();
 });
 
 socket.on('reconnect', () => {
-  hideReconnectingPage();
+  hidereconnectingScreen();
   regainedConnectionSound.play();
   log('You have been reconnected.');
   if (username) {
