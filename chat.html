@@ -5,7 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="HyperChat is a fast, open-source chat app developed by Justsnoopy30.">
     <title>HyperChat</title>
-    <link rel="stylesheet" href="./chat.css">
+    <!-- Load main stylesheets -->
+    <link rel="stylesheet" href="./stylesheets/login-screen.css">
+    <link rel="stylesheet" href="./stylesheets/chat-screen.css">
+    <link rel="stylesheet" href="./stylesheets/settings-screen.css">
+    <link rel="stylesheet" href="./stylesheets/reconnecting-screen.css">
+    <!-- App logos for different browsers and devices -->
     <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png">
@@ -13,6 +18,7 @@
     <link rel="shortcut icon" href="/assets/favicon.ico">
     <meta name="msapplication-TileColor" content="#00adff">
     <meta name="theme-color" content="#00adff">
+    <!-- Preload Assets -->
     <link rel="manifest" href="./manifest.json">
     <link rel="preload" href="./assets/WhiteNotificationBell.png" as="image">
     <link rel="preload" href="./assets/WhiteSettingsIcon.png" as="image">
@@ -28,6 +34,7 @@
     <link rel="preload" href="./assets/Stun.webm" as="audio">
     <!-- Fix Electron Support (before scripts) -->
     <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+    <!-- Load scripts -->
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
     <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js" defer></script>
     <script src="./node_modules/socket.io-client/dist/socket.io.js" defer></script>
@@ -51,56 +58,54 @@
         </h1>
       </center>
     </noscript>
-    <ul id="pages">
-      <li id="loginPage">
-        <div id="loginFormArea">
-          <h3 id="loginTitle">Login or Register (Main room is General)</h3>
-          <form id="loginForm">
-            <input id="usernameInput" type="text" autocomplete="username" placeholder="Username" maxlength="14" aria-label="Username"></input>
-            <input id="passwordInput" type="password" autocomplete="current-password" placeholder="Password" maxlength="14" aria-label="Password"></input>
-            <input id="roomInput" type="text" placeholder="Chat Room" maxlength="14" aria-label="Room"></input>
-          </form>
-        </div>
-      </li>
-      <li id="chatPage">
-        <div id="chatArea">
-          <img id="notificationBell" src="./assets/BlackNotificationBell.png" alt="Notification Bell" draggable="false">
-          <img class="settingsIcon" id="settingsIconInChat"  src="./assets/BlackSettingsIcon.png" alt="Settings Icon" draggable="false">
-          <ul id="messages"></ul>
-        </div>
-        <div id="userList">
-          <h3>User List</h3>
-          <ul id="userListContents"></ul>
-        </div>
-        <div id="typingMessageArea"></div>
-        <textarea id="inputMessage" placeholder="Type here..." cols="20" wrap="hard" maxlength="2000"></textarea>
-      </li>
-      <li id="settingsPage">
-        <div id="settingsArea">
-          <nav class="navbar" id="settingsTopBar">
-            <div class="container-fluid">
-              <a class="navbar-brand" href="#">
-                <img src="./assets/favicon.ico" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy" draggable="false">
-                HyperChat Settings
-              </a>
-            </div>
-          </nav>
-          <img class="settingsIcon" id="settingsIconInSettings" src="./assets/BlackSettingsIcon.png" alt="Settings Icon" draggable="false">
-          <div class="form-check form-control-lg">
-            <input class="form-check-input" type="radio" name="themeRadio" id="lightThemeRadio">
-            <label class="form-check-label" for="lightThemeRadio">Light Theme</label>
+    <section id="loginScreen">
+      <div id="loginFormArea">
+        <h3 id="loginTitle">Login or Register (Main room is General)</h3>
+        <form id="loginForm">
+          <input id="usernameInput" type="text" autocomplete="username" placeholder="Username" maxlength="14" aria-label="Username"></input>
+          <input id="passwordInput" type="password" autocomplete="current-password" placeholder="Password" maxlength="14" aria-label="Password"></input>
+          <input id="roomInput" type="text" placeholder="Chat Room" maxlength="14" aria-label="Room"></input>
+        </form>
+      </div>
+    </li>
+    <section id="chatScreen">
+      <div id="chatArea">
+        <img id="notificationBell" src="./assets/BlackNotificationBell.png" alt="Notification Bell" draggable="false">
+        <img class="settingsIcon" id="settingsIconInChat"  src="./assets/BlackSettingsIcon.png" alt="Settings Icon" draggable="false">
+        <ul id="messages"></ul>
+      </div>
+      <div id="userList">
+        <h3>User List</h3>
+        <ul id="userListContents"></ul>
+      </div>
+      <div id="typingMessageArea"></div>
+      <textarea id="inputMessage" placeholder="Type here..." cols="20" wrap="hard" maxlength="2000"></textarea>
+    </section>
+    <section id="settingsScreen">
+      <div id="settingsArea">
+        <nav class="navbar" id="settingsTopBar">
+          <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+              <img src="./assets/favicon.ico" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy" draggable="false">
+              HyperChat Settings
+            </a>
           </div>
-          <div class="form-check form-control-lg">
-            <input class="form-check-input" type="radio" name="themeRadio" id="darkThemeRadio">
-            <label class="form-check-label" for="darkThemeRadio">Dark Theme</label>
-          </div>
+        </nav>
+        <img class="settingsIcon" id="settingsIconInSettings" src="./assets/BlackSettingsIcon.png" alt="Settings Icon" draggable="false">
+        <div class="form-check form-control-lg">
+          <input class="form-check-input" type="radio" name="themeRadio" id="lightThemeRadio">
+          <label class="form-check-label" for="lightThemeRadio">Light Theme</label>
         </div>
-      </li>
-      <li id="reconnectingPage">
-        <div id="reconnectingArea">
-          <div id="reconnectingIcon" alt="Reconnecting..." aria-label="Reconnecting..."></div>
+        <div class="form-check form-control-lg">
+          <input class="form-check-input" type="radio" name="themeRadio" id="darkThemeRadio">
+          <label class="form-check-label" for="darkThemeRadio">Dark Theme</label>
         </div>
-      </li>
-    </ul>
+      </div>
+    </section>
+    <section id="reconnectingScreen">
+      <div id="reconnectingArea">
+        <div id="reconnectingIcon" alt="Reconnecting..." aria-label="Reconnecting..."></div>
+      </div>
+    </section>
   </body>
 </html>

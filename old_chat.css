@@ -30,101 +30,15 @@ ul {
   width: 100%;
 }
 
-/* Login Page */
-
-#loginPage {
-  background-color: #000;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-#loginFormArea {
-  height: 100px;
-  margin-top: -100px;
-  position: absolute;
-  text-align: center;
-  top: 50%;
-  width: 100%;
-}
-
-#loginTitle {
-  font-size: 200%;
-  font-weight: 100;
-  color: #fff;
-}
-
-#usernameInput {
-  background-color: transparent;
-  border: none;
-  border-bottom: 2px solid #fff;
-  outline: none;
-  padding-bottom: 15px;
-  text-align: center;
-  width: 400px;
-  font-size: 200%;
-  letter-spacing: 3px;
-  font-weight: 100;
-  color: #fff;
-}
-
-#passwordInput {
-  background-color: transparent;
-  border: none;
-  border-bottom: 2px solid #fff;
-  outline: none;
-  padding-bottom: 15px;
-  text-align: center;
-  width: 400px;
-  font-size: 200%;
-  letter-spacing: 3px;
-  color: #fff;
-  font-weight: 100;
-}
-
-#roomInput {
-  background-color: transparent;
-  border: none;
-  border-bottom: 2px solid #fff;
-  outline: none;
-  padding-bottom: 15px;
-  text-align: center;
-  width: 400px;
-  font-size: 200%;
-  letter-spacing: 3px;
-  color: #fff;
-  font-weight: 100;
-}
-
 /* Chat page */
 
-#chatPage {
+#chatScreen {
   display: none;
   width: 100%;
   height: 100%;
   position: absolute;
   top: 0;
   left: 0;
-}
-
-/* Settings page */
-
-#settingsPage {
-  display: none;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-#settingsArea {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  padding: 10px;
 }
 
 /* Font */
@@ -186,46 +100,6 @@ ul {
   max-height: 144px;
 }
 
-.lightThemeScrollbar::-webkit-scrollbar-track
-{
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-  border-radius: 10px;
-  background-color: #fff;
-}
-.lightThemeScrollbar::-webkit-scrollbar
-{
-  width: 12px;
-  border-radius: 10px;
-  background-color: #fff;
-}
-
-.lightThemeScrollbar::-webkit-scrollbar-thumb
-{
-  border-radius: 10px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-  background-color: #555;
-}
-
-.darkThemeScrollbar::-webkit-scrollbar-track
-{
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-  border-radius: 10px;
-  background-color: #555;
-}
-.darkThemeScrollbar::-webkit-scrollbar
-{
-  width: 12px;
-  border-radius: 10px;
-  background-color: #555;
-}
-
-.darkThemeScrollbar::-webkit-scrollbar-thumb
-{
-  border-radius: 10px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-  background-color: #202225;
-}
-
 /* User List */
 
 #userList {
@@ -257,21 +131,21 @@ ul {
   display: inline;
 }
 
-#notificationBell {
+#settingsIconInChat {
   margin: 10px;
   position: absolute;
   top: 0px;
-  right: 50px;
+  right: 0px;
   height: 50px;
   width: 50px;
   cursor: pointer;
 }
 
-.settingsIcon {
+#notificationBell {
   margin: 10px;
   position: absolute;
   top: 0px;
-  right: 0px;
+  right: 50px;
   height: 50px;
   width: 50px;
   cursor: pointer;
@@ -287,7 +161,7 @@ ul {
   font-size: 150%;
 }
 
-#reconnectingPage {
+#reconnectingScreen {
   display: none;
   width: 100%;
   height: 100%;
@@ -319,6 +193,6 @@ body .light, .light #inputMessage, .light #pages {
 }
 
 body .dark, .dark #inputMessage, .dark #pages {
-    background-color: #36393f;
-    color:#fff;
+  background-color: #36393f;
+  color:#fff;
 }
