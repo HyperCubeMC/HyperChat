@@ -2,12 +2,12 @@
   box-sizing: border-box;
 }
 
-body .light, .light #inputMessage, .light #pages {
+body .light, .light #chatScreen, .light #settingsScreen, .light #reconnectingScreen, .light #inputMessage {
   background-color: #fff;
   color: #212529
 }
 
-body .dark, .dark #inputMessage, .dark #pages {
+body .dark, .dark #chatScreen, .dark #settingsScreen, .dark #reconnectingScreen, .dark #inputMessage {
   background-color: #36393f;
   color:#fff;
 }
