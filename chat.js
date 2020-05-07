@@ -49,7 +49,7 @@ let room;
 let connected = false;
 let typing = false;
 let lastTypingTime;
-let UserListContents;
+let userListContents;
 let loggedIn;
 let cheatActivated;
 let notificationReplyMessage;
@@ -217,7 +217,7 @@ function hidesettingsScreen() {
   $('#settingsScreen').removeEventListener('click', showsettingsScreen);
 }
 
-function showreconnectingScreen() {
+function showReconnectingScreen() {
   if (loggedIn) {
     $('#Chat-Screen').fadeOut();
     $('#reconnectingScreen').fadeIn();
@@ -228,7 +228,7 @@ function showreconnectingScreen() {
   }
 }
 
-function hidereconnectingScreen() {
+function hideReconnectingScreen() {
   if (loggedIn) {
     $('#reconnectingScreen').fadeOut();
     $('#Chat-Screen').fadeIn();
@@ -275,8 +275,8 @@ socket.on('login denied', (data) => {
 });
 
 socket.on('user list', (data) => {
-  UserListContents = data.UserListContents;
-  syncUserList(UserListContents);
+  userListContents = data.userListContents;
+  syncUserList(userListContents);
 });
 
 socket.on('mute', () => {
@@ -359,13 +359,13 @@ const sendMessage = (message) => {
 }
 
 // Sync the content of the user list.
-const syncUserList = (UserListContents) => {
-  for (let user = 0; user < UserListContents.length; user++) {
-    if (UserListContents[user] !== undefined) {
+const syncUserList = (userListContents) => {
+  for (let user = 0; user < userListContents.length; user++) {
+    if (userListContents[user] !== undefined) {
       let userToAddToUserList = document.createElement('li');
       userToAddToUserList.addClass('userInUserList');
-      userToAddToUserList.text(UserListContents[user])
-      $('#UserListContents').appendChild(userToAddToUserList);
+      userToAddToUserList.text(userListContents[user])
+      $('#userListContents').appendChild(userToAddToUserList);
     }
   }
 }
@@ -383,7 +383,7 @@ const addToUserList = (user) => {
   let userToAddToUserList = document.createElement('li');
   userToAddToUserList.addClass('userInUserList')
   userToAddToUserList.text(user);
-  $('#UserListContents').appendChild(userToAddToUserList);
+  $('#userListContents').appendChild(userToAddToUserList);
 }
 
 // Remove a user from the user list.
@@ -628,18 +628,18 @@ socket.on('stop typing', (data) => {
 socket.on('disconnect', () => {
   log('You have been disconnected.');
   lostConnectionSound.play();
-  showreconnectingScreen();
+  showReconnectingScreen();
 });
 
 socket.on('reconnect', () => {
-  hidereconnectingScreen();
+  hideReconnectingScreen();
   regainedConnectionSound.play();
   log('You have been reconnected.');
   if (username) {
     initialLogin = false;
-    const UserListContents = document.getElementById('UserListContents');
-    while (UserListContents.firstChild) {
-      UserListContents.removeChild(UserListContents.firstChild);
+    const userListContents = document.getElementById('userListContents');
+    while (userListContents.firstChild) {
+      userListContents.removeChild(userListContents.firstChild);
     }
     socket.emit('login', { username, password, room });
   }

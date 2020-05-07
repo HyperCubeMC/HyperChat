@@ -1,5 +1,7 @@
 #Chat-Screen {
   display: grid;
+  width: 100vw;
+  height: 100vh;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
   gap: 1px 1px;
@@ -15,6 +17,53 @@
 #User-List { grid-area: User-List; }
 
 #Top-Bar { grid-area: Top-Bar; }
+
+#Message-Box {
+  font-size: 100%;
+  height: auto;
+  outline: none;
+  border: 1px solid #40444b;
+  padding-left: 10px;
+  width: 84.5%;
+  overflow-y: auto;
+  resize: none;
+  border-radius: 8px;
+  max-height: 144px;
+}
+
+#userListContents {
+  list-style: none;
+}
+
+#messages {
+  list-style: none;
+  margin: 0;
+  overflow-y: auto;
+  padding: 10px 20px 10px 20px;
+  font-size: 150%;
+}
+
+.log {
+  color: gray;
+  font-size: 70%;
+  margin: 5px;
+  text-align: left;
+}
+
+.message {
+  overflow: auto;
+}
+
+.typing {
+  color: gray;
+  overflow: auto;
+}
+
+.username {
+  font-weight: 700;
+  padding-right: 15px;
+  text-align: right;
+}
 
 #settingsIconInChat {
   width: 50px;
