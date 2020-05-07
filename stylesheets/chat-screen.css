@@ -15,6 +15,13 @@
     "Server-List Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area User-List";
 }
 
+#Top-Bar {
+  grid-area: Top-Bar;
+  display: flex;
+  justify-content: flex-end;
+  padding: 1%;
+}
+
 #Server-List { grid-area: Server-List; }
 
 #Chat-Area { grid-area: Chat-Area; }
@@ -28,8 +35,6 @@
 }
 
 #User-List { grid-area: User-List; }
-
-#Top-Bar { grid-area: Top-Bar; }
 
 #Message-Box {
   height: auto;
