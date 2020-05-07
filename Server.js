@@ -1,6 +1,6 @@
-const url = require('url')
-const path = require('path')
-const fs = require('fs')
+const url = require('url');
+const path = require('path');
+const fs = require('fs');
 const mongoose = require('mongoose');
 const Filter = require('bad-words'),
     filter = new Filter();
@@ -8,6 +8,9 @@ const compress = require('compression');
 const showdown = require('showdown');
 const xssFilter = require('showdown-xss-filter');
 const argon2 = require('argon2');
+
+// Set process title
+process.title = "HyperChat";
 
 // Options for SSL certificate and allowing http1
 const options = {

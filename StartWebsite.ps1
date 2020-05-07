@@ -1,2 +1,1 @@
-$Host.UI.RawUI.WindowTitle = "HyperChat"
-nodemon Server.js
+npm run start
