@@ -24,7 +24,6 @@
   outline: none;
   border: 1px solid #40444b;
   padding-left: 10px;
-  width: 84.5%;
   overflow-y: auto;
   resize: none;
   border-radius: 8px;
@@ -33,10 +32,12 @@
 
 #userListContents {
   list-style: none;
+  padding-left: 0;
 }
 
 #messages {
   list-style: none;
+  padding-left: 0;
   margin: 0;
   overflow-y: auto;
   padding: 10px 20px 10px 20px;
