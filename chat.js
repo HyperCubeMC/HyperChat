@@ -49,7 +49,7 @@ let room;
 let connected = false;
 let typing = false;
 let lastTypingTime;
-let userListContents;
+let UserListContents;
 let loggedIn;
 let cheatActivated;
 let notificationReplyMessage;
@@ -128,8 +128,8 @@ const changeTheme = (theme) => {
   $('#notificationBell').src = `./assets/${iconPrefix}NotificationBell.png`;
   $('#settingsTopBar').removeClass(`navbar-${inverse}`, `bg-${inverse}`);
   $('#settingsTopBar').addClass(`navbar-${theme}`, `bg-${theme}`);
-  $('#inputMessage').removeClass(`${inverse}ThemeScrollbar`);
-  $('#inputMessage').addClass(`${theme}ThemeScrollbar`);
+  $('#Message-Box').removeClass(`${inverse}ThemeScrollbar`);
+  $('#Message-Box').addClass(`${theme}ThemeScrollbar`);
   $('#messages').removeClass(`${inverse}ThemeScrollbar`);
   $('#messages').addClass(`${theme}ThemeScrollbar`);
 }
@@ -207,19 +207,19 @@ onVisibilityChange(function(visible) {
 });
 
 function showsettingsScreen() {
-  $('#chatScreen').fadeOut();
+  $('#Chat-Screen').fadeOut();
   $('#settingsScreen').fadeIn()
 }
 
 function hidesettingsScreen() {
   $('#settingsScreen').fadeOut();
-  $('#chatScreen').fadeIn();
+  $('#Chat-Screen').fadeIn();
   $('#settingsScreen').removeEventListener('click', showsettingsScreen);
 }
 
 function showreconnectingScreen() {
   if (loggedIn) {
-    $('#chatScreen').fadeOut();
+    $('#Chat-Screen').fadeOut();
     $('#reconnectingScreen').fadeIn();
   }
   else {
@@ -231,7 +231,7 @@ function showreconnectingScreen() {
 function hidereconnectingScreen() {
   if (loggedIn) {
     $('#reconnectingScreen').fadeOut();
-    $('#chatScreen').fadeIn();
+    $('#Chat-Screen').fadeIn();
   }
   else {
     $('#reconnectingScreen').fadeOut();
@@ -257,8 +257,8 @@ const submitLoginInfo = () => {
 socket.on('login authorized', () => {
   if (initialLogin) {
     $('#loginScreen').fadeOut();
-    $('#chatScreen').fadeIn();
-    currentInput = $('#inputMessage').focus();
+    $('#Chat-Screen').fadeIn();
+    currentInput = $('#Message-Box').focus();
     connected = true;
     loggedIn = true
     // Display the welcome message
@@ -275,17 +275,17 @@ socket.on('login denied', (data) => {
 });
 
 socket.on('user list', (data) => {
-  userListContents = data.userListContents;
-  syncUserList(userListContents);
+  UserListContents = data.UserListContents;
+  syncUserList(UserListContents);
 });
 
 socket.on('mute', () => {
-  $('#inputMessage').disabled = true;
+  $('#Message-Box').disabled = true;
   alert('You are now muted!');
 });
 
 socket.on('unmute', () => {
-  $('#inputMessage').disabled = false;
+  $('#Message-Box').disabled = false;
   alert('You are now unmuted!');
 });
 
@@ -350,7 +350,7 @@ if ('serviceWorker' in navigator && 'Notification' in window ) {
 // Sends a chat message
 const sendMessage = (message) => {
   if (message && connected && !cheatActivated) {
-    $('#inputMessage').value = '';
+    $('#Message-Box').value = '';
     socket.emit('new message', message);
   }
   else if (message && connected && cheatActivated) {
@@ -359,13 +359,13 @@ const sendMessage = (message) => {
 }
 
 // Sync the content of the user list.
-const syncUserList = (userListContents) => {
-  for (let user = 0; user < userListContents.length; user++) {
-    if (userListContents[user] !== undefined) {
+const syncUserList = (UserListContents) => {
+  for (let user = 0; user < UserListContents.length; user++) {
+    if (UserListContents[user] !== undefined) {
       let userToAddToUserList = document.createElement('li');
-      userToAddToUserList.addClass('userInUserlist');
-      userToAddToUserList.text(userListContents[user])
-      $('#userListContents').appendChild(userToAddToUserList);
+      userToAddToUserList.addClass('userInUserList');
+      userToAddToUserList.text(UserListContents[user])
+      $('#UserListContents').appendChild(userToAddToUserList);
     }
   }
 }
@@ -380,15 +380,15 @@ const log = (message, options) => {
 
 // Add a user to the user list.
 const addToUserList = (user) => {
-  let userToAddToUserlist = document.createElement('li');
-  userToAddToUserlist.addClass('userInUserList')
-  userToAddToUserlist.text(user);
-  $('#userListContents').appendChild(userToAddToUserlist);
+  let userToAddToUserList = document.createElement('li');
+  userToAddToUserList.addClass('userInUserList')
+  userToAddToUserList.text(user);
+  $('#UserListContents').appendChild(userToAddToUserList);
 }
 
 // Remove a user from the user list.
 const removeFromUserList = (user) => {
-  for (let userInUserList of document.querySelectorAll('#userList .userInUserList')) {
+  for (let userInUserList of document.querySelectorAll('#User-List .userInUserList')) {
     if (userInUserList.text() === user) {
       userInUserList.remove();
       break;
@@ -518,15 +518,15 @@ const getUsernameColor = (username) => {
 
 // Keyboard events
 
-$('#inputMessage').on('input', function (event) {
+$('#Message-Box').on('input', function (event) {
   this.css('height', 'auto');
   this.css('height', this.scrollHeight + 'px');
 });
 
-$('#inputMessage').on('keydown', function (event) {
+$('#Message-Box').on('keydown', function (event) {
   if (event.key=='Enter' && !event.shiftKey) {
     event.preventDefault()
-    sendMessage($('#inputMessage').value);
+    sendMessage($('#Message-Box').value);
     socket.emit('stop typing');
     typing = false;
     this.css('height', 'auto');
@@ -547,7 +547,7 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
-$('#inputMessage').on('input', updateTyping);
+$('#Message-Box').on('input', updateTyping);
 
 // Set focus to username input when clicked
 $('#usernameInput').on('click', () => {
@@ -560,7 +560,7 @@ $('#passwordInput').on('click',() => {
 });
 
 // Focus input when clicking on the message input's border
-$('#inputMessage').on('click', () => {$('#inputMessage').focus()});
+$('#Message-Box').on('click', () => {$('#Message-Box').focus()});
 
 // Go to the settings page when the settings icon on the chat page is clicked
 $('#settingsIconInChat').on('click', showsettingsScreen);
@@ -637,9 +637,9 @@ socket.on('reconnect', () => {
   log('You have been reconnected.');
   if (username) {
     initialLogin = false;
-    const userListContents = document.getElementById('userListContents');
-    while (userListContents.firstChild) {
-      userListContents.removeChild(userListContents.firstChild);
+    const UserListContents = document.getElementById('UserListContents');
+    while (UserListContents.firstChild) {
+      UserListContents.removeChild(UserListContents.firstChild);
     }
     socket.emit('login', { username, password, room });
   }

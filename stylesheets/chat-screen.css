@@ -1,3 +1,29 @@
-#chatScreen {
+#Chat-Screen {
   display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+  gap: 1px 1px;
+  grid-template-areas: "Server-List Top-Bar Top-Bar Top-Bar Top-Bar Top-Bar User-List" "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List" "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List" "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List" "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List" "Server-List Message-Box Message-Box Message-Box Message-Box Message-Box User-List";
+}
+
+#Server-List { grid-area: Server-List; }
+
+#Chat-Area { grid-area: Chat-Area; }
+
+#Message-Box { grid-area: Message-Box; }
+
+#User-List { grid-area: User-List; }
+
+#Top-Bar { grid-area: Top-Bar; }
+
+#settingsIconInChat {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+}
+
+#notificationBell {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
 }
