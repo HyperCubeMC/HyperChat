@@ -4,7 +4,6 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 const Filter = require('bad-words'),
     filter = new Filter();
-const compress = require('compression');
 const showdown = require('showdown');
 const xssFilter = require('showdown-xss-filter');
 const argon2 = require('argon2');
@@ -25,9 +24,6 @@ var io = require('socket.io')(app);
 app.listen(4434);
 
 function server (req, res) {
-  const defaultCompressOptions = function(){}, useDefaultOptions = {}
-  compress(useDefaultOptions)(req,res,defaultCompressOptions) // Mutates the response object to add compression
-
   var filePath = '.' + req.url;
   if (filePath == './')
     filePath = './chat.html';

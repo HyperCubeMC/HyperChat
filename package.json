@@ -24,7 +24,6 @@
     "bad-words": "^3.0.3",
     "bootstrap": "github:twbs/bootstrap#master-xmr-v5",
     "cheet.js": "^0.3.3",
-    "compression": "^1.7.4",
     "mongoose": "^5.9.7",
     "showdown": "^1.9.1",
     "showdown-xss-filter": "^0.2.0",
