@@ -2,8 +2,9 @@
   display: grid;
   width: 100vw;
   height: 100vh;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+  /* Use minmax(0, 1fr) instead of 1fr so that elements can be prevented from overflowing their grid areas. Refer to https://stackoverflow.com/a/52787826/8584806 */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
   gap: 1px 1px;
   grid-template-areas:
     "Server-List Top-Bar Top-Bar Top-Bar Top-Bar Top-Bar User-List"
@@ -11,29 +12,36 @@
     "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
     "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
     "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
-    "Server-List Message-Box Message-Box Message-Box Message-Box Message-Box User-List";
+    "Server-List Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area User-List";
 }
 
 #Server-List { grid-area: Server-List; }
 
 #Chat-Area { grid-area: Chat-Area; }
 
-#Message-Box { grid-area: Message-Box; }
+#Message-Box-Area {
+  grid-area: Message-Box-Area;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: flex-end;
+}
 
 #User-List { grid-area: User-List; }
 
 #Top-Bar { grid-area: Top-Bar; }
 
 #Message-Box {
-  font-size: 100%;
   height: auto;
+  width: 100%;
   outline: none;
+  font-size: 100%;
   border: 1px solid #40444b;
   padding-left: 10px;
   overflow-y: auto;
   resize: none;
   border-radius: 8px;
-  max-height: 144px;
+  max-height: 100%;
 }
 
 #userListContents {
