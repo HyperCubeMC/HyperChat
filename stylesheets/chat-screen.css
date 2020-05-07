@@ -5,7 +5,13 @@
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
   gap: 1px 1px;
-  grid-template-areas: "Server-List Top-Bar Top-Bar Top-Bar Top-Bar Top-Bar User-List" "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List" "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List" "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List" "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List" "Server-List Message-Box Message-Box Message-Box Message-Box Message-Box User-List";
+  grid-template-areas:
+    "Server-List Top-Bar Top-Bar Top-Bar Top-Bar Top-Bar User-List"
+    "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
+    "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
+    "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
+    "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
+    "Server-List Message-Box Message-Box Message-Box Message-Box Message-Box User-List";
 }
 
 #Server-List { grid-area: Server-List; }
