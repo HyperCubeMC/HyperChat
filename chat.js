@@ -446,10 +446,10 @@ const syncUsersTyping = (usersTypingArray) => {
     let element = document.createElement('span');
     element.addClass('typing');
     element.text(usersTypingText);
-    $('#typingMessageArea').html(element.outerHTML);
+    $('#User-Is-Typing-Area').html(element.outerHTML);
   }
   else {
-    $('#typingMessageArea').html('');
+    $('#User-Is-Typing-Area').html('');
   }
 }
 

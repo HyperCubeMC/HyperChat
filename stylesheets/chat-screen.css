@@ -34,8 +34,6 @@
   align-items: flex-end;
 }
 
-#User-List { grid-area: User-List; }
-
 #Message-Box {
   height: auto;
   width: 100%;
@@ -47,6 +45,19 @@
   resize: none;
   border-radius: 8px;
   max-height: 100%;
+}
+
+#User-Is-Typing-Area {
+  grid-area: Message-Box-Area;
+  display: flex;
+  padding-left: 10px;
+  font-size: 150%;
+}
+
+#User-List {
+  grid-area: User-List;
+  display: flex;
+  flex-direction: column;
 }
 
 #userListContents {
