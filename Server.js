@@ -18,13 +18,13 @@ const options = {
   allowHTTP1: true
 }
 
-var app = require('http2').createSecureServer(options, server);
-var io = require('socket.io')(app);
+const app = require('http2').createSecureServer(options, server);
+const io = require('socket.io')(app);
 
 app.listen(4434);
 
 function server (req, res) {
-  var filePath = '.' + req.url;
+  let filePath = '.' + req.url;
   if (filePath == './')
     filePath = './chat.html';
 
@@ -141,8 +141,8 @@ function arrayRemove(array, value) {
   });
 }
 
-var userListContents = [];
-var mutedList = [];
+let userListContents = [];
+let mutedList = [];
 
 const prefix = '/';
 const userMap = new Map();
