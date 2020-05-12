@@ -272,7 +272,13 @@ HTMLElement.prototype.fadeIn = function (fadeInSeconds, callback) {
   const transitionTime = fadeInSeconds || '0.5';
   this.css('opacity', '0');
   this.css('transition', 'opacity ' + transitionTime + 's');
-  this.show(function() {this.css('opacity', '1')});
+  this.show();
+  setTimeout(() => {
+    this.css('opacity', '1')
+    if (typeof callback === 'function') {
+      callback.call(this);
+    }
+  }, 1);
   if (typeof callback === 'function') {
     callback.call(this);
   }
