@@ -45,7 +45,7 @@ HTMLElement.prototype.attr = function (attribute, value, callback) {
   }
   this.setAttribute(attribute, value);
   if (typeof callback === 'function') {
-    callback(this);
+    callback.call(this);
   }
   return this;
 }
@@ -65,7 +65,7 @@ HTMLElement.prototype.html = function (html, callback) {
   }
   this.innerHTML = html;
   if (typeof callback === 'function') {
-    callback(this);
+    callback.call(this);
   }
   return this;
 }
@@ -85,7 +85,7 @@ HTMLElement.prototype.text = function (text, callback) {
   }
   this.textContent = text;
   if (typeof callback === 'function') {
-    callback(this);
+    callback.call(this);
   }
   return this;
 }
@@ -148,7 +148,7 @@ HTMLElement.prototype.data = function (data, value, callback) {
   }
   this.dataset[data] = value;
   if (typeof callback === 'function') {
-    callback(this);
+    callback.call(this);
   }
   return this;
 }
@@ -172,7 +172,7 @@ HTMLElement.prototype.css = function (property, value, callback) {
   }
   this.style.setProperty(property, value);
   if (typeof callback === 'function') {
-    callback(this);
+    callback.call(this);
   }
   return this;
 }
@@ -188,7 +188,7 @@ HTMLElement.prototype.css = function (property, value, callback) {
 HTMLElement.prototype.addClass = function (classToAdd, callback) {
   this.classList.add(classToAdd);
   if (typeof callback === 'function') {
-    callback(this);
+    callback.call(this);
   }
   return this;
 }
@@ -204,7 +204,7 @@ HTMLElement.prototype.addClass = function (classToAdd, callback) {
 HTMLElement.prototype.removeClass = function (classToRemove, callback) {
   this.classList.remove(classToRemove);
   if (typeof callback === 'function') {
-    callback(this);
+    callback.call(this);
   }
   return this;
 }
@@ -222,7 +222,7 @@ HTMLElement.prototype.removeClass = function (classToRemove, callback) {
 HTMLElement.prototype.toggleClass = function (classToToggle, callback) {
   this.classList.toggle(classToToggle);
   if (typeof callback === 'function') {
-    callback(this);
+    callback.call(this);
   }
   return this;
 }
@@ -239,7 +239,7 @@ HTMLElement.prototype.hide = function (callback) {
   this.data('originalDisplay', originalDisplay);
   this.css('display', 'none');
   if (typeof callback === 'function') {
-    callback(this);
+    callback.call(this);
   }
   return this;
 }
@@ -255,7 +255,7 @@ HTMLElement.prototype.show = function (callback) {
   const displayToShow = this.data('originalDisplay') || 'initial';
   this.css('display', displayToShow);
   if (typeof callback === 'function') {
-    callback(this);
+    callback.call(this);
   }
   return this;
 }
@@ -270,12 +270,11 @@ HTMLElement.prototype.show = function (callback) {
  */
 HTMLElement.prototype.fadeIn = function (fadeInSeconds, callback) {
   const transitionTime = fadeInSeconds || '0.5';
-  this.css('visibility', '0');
+  this.css('opacity', '0');
   this.css('transition', 'opacity ' + transitionTime + 's');
-  this.show();
-  this.css('opacity', '1');
+  this.show(function() {this.css('opacity', '1')});
   if (typeof callback === 'function') {
-    callback(this);
+    callback.call(this);
   }
 }
 
@@ -296,7 +295,7 @@ HTMLElement.prototype.fadeOut = function (fadeOutSeconds, callback) {
   this.css('opacity', '0');
   this.on('transitionend', this.hide, options);
   if (typeof callback === 'function') {
-    callback(this);
+    callback.call(this);
   }
   return this;
 }
