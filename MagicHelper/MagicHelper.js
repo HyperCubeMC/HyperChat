@@ -182,15 +182,13 @@ HTMLElement.prototype.css = function (property, value, callback) {
  * @example
  * $('element').addClass('classToAdd')
  * @param {String} classToAdd - The class to add to the element.
- * @param {function} callback - A function to run when the function finishes.
- * @returns {HTMLElement} Returns the HTMLElement.
+ * @returns {Promise} Returns a promise with the HTMLElement when the function is complete.
  */
 HTMLElement.prototype.addClass = function (classToAdd, callback) {
-  this.classList.add(classToAdd);
-  if (typeof callback === 'function') {
-    callback.call(this);
-  }
-  return this;
+  return new Promise((resolve, reject) => {
+    this.classList.add(classToAdd);
+    resolve(this);
+  });
 }
 
 /**
@@ -198,15 +196,13 @@ HTMLElement.prototype.addClass = function (classToAdd, callback) {
  * @example
  * $('element').removeClass('classToRemove')
  * @param {String} classToRemove - The class to remove from the element.
- * @param {function} callback - A function to run when the function finishes.
- * @returns {HTMLElement} Returns an html element.
+ * @returns {Promise} Returns a promise with the HTMLElement when the function is complete.
  */
-HTMLElement.prototype.removeClass = function (classToRemove, callback) {
-  this.classList.remove(classToRemove);
-  if (typeof callback === 'function') {
-    callback.call(this);
-  }
-  return this;
+HTMLElement.prototype.removeClass = function (classToRemove) {
+  return new Promise((resolve, reject) => {
+    this.classList.remove(classToRemove);
+    resolve(this);
+  });
 }
 
 /**
@@ -216,48 +212,42 @@ HTMLElement.prototype.removeClass = function (classToRemove, callback) {
  * If the element does not have the class, the class is added.
  * If the element has the class, the class is removed.
  * @param {String} classToToggle - The class to toggle on the element.
- * @param {function} callback - A function to run when the function finishes.
- * @returns {HTMLElement} Returns an html element.
+ * @returns {Promise} Returns a promise with the HTMLElement when the function is complete.
  */
-HTMLElement.prototype.toggleClass = function (classToToggle, callback) {
-  this.classList.toggle(classToToggle);
-  if (typeof callback === 'function') {
-    callback.call(this);
-  }
-  return this;
+HTMLElement.prototype.toggleClass = function (classToToggle) {
+  return new Promise((resolve, reject) => {
+    this.classList.toggle(classToToggle);
+    resolve(this);
+  });
 }
 
 /**
  * Hides an element.
  * @example
  * $('element').hide()
- * @param {function} callback - A function to run when the function finishes.
- * @returns {HTMLElement} Returns the HTMLElement.
+ * @returns {Promise} Returns a promise with the HTMLElement when the function is complete.
  */
-HTMLElement.prototype.hide = function (callback) {
-  const originalDisplay = this.css('display') || 'initial';
-  this.data('originalDisplay', originalDisplay);
-  this.css('display', 'none');
-  if (typeof callback === 'function') {
-    callback.call(this);
-  }
-  return this;
+HTMLElement.prototype.hide = function () {
+  return new Promise((resolve, reject) => {
+    const originalDisplay = this.css('display') || 'initial';
+    this.data('originalDisplay', originalDisplay);
+    this.css('display', 'none');
+    resolve(this);
+  });
 }
 
 /**
  * Shows an element.
  * @example
  * $('element').show()
- * @param {function} callback - A function to run when the function finishes.
- * @returns {HTMLElement} Returns the HTMLElement.
+ * @returns {Promise} Returns a promise with the HTMLElement when the function is complete.
  */
-HTMLElement.prototype.show = function (callback) {
-  const displayToShow = this.data('originalDisplay') || 'initial';
-  this.css('display', displayToShow);
-  if (typeof callback === 'function') {
-    callback.call(this);
-  }
-  return this;
+HTMLElement.prototype.show = function () {
+  return new Promise((resolve, reject) => {
+    const displayToShow = this.data('originalDisplay') || 'initial';
+    this.css('display', displayToShow);
+    resolve(this);
+  });
 }
 
 /**
@@ -265,23 +255,24 @@ HTMLElement.prototype.show = function (callback) {
  * @example
  * $('element').fadeIn()
  * @param {String} fadeInSeconds - The amount of time for the fade in transition in seconds.
- * @param {function} callback - A function to run when the function finishes.
- * @returns {HTMLElement} Returns the HTMLElement.
+ * @returns {Promise} Returns a promise with the HTMLElement when the function is complete.
  */
-HTMLElement.prototype.fadeIn = function (fadeInSeconds, callback) {
-  const transitionTime = fadeInSeconds || '0.5';
-  this.css('opacity', '0');
-  this.css('transition', 'opacity ' + transitionTime + 's');
-  this.show();
-  setTimeout(() => {
-    this.css('opacity', '1')
-    if (typeof callback === 'function') {
-      callback.call(this);
+HTMLElement.prototype.fadeIn = function (fadeInSeconds) {
+  return new Promise((resolve, reject) => {
+    const transitionTime = fadeInSeconds || '0.5';
+    const eventListenerOptions = {
+      once: true
     }
-  }, 1);
-  if (typeof callback === 'function') {
-    callback.call(this);
-  }
+    this.css('opacity', '0');
+    this.css('transition', 'opacity ' + transitionTime + 's');
+    this.show();
+    setTimeout(() => {
+      this.css('opacity', '1')
+      this.on('transitionend', () => {
+        resolve(this);
+      }, eventListenerOptions);
+    }, 1);
+  });
 }
 
 /**
@@ -289,21 +280,21 @@ HTMLElement.prototype.fadeIn = function (fadeInSeconds, callback) {
  * @example
  * $('element').fadeOut()
  * @param {String} fadeOutSeconds - The amount of time for the fade out transition in seconds.
- * @param {function} callback - A function to run when the function finishes.
- * @returns {HTMLElement} Returns the HTMLElement.
+ * @returns {Promise} Returns a promise with the HTMLElement when the function is complete.
  */
-HTMLElement.prototype.fadeOut = function (fadeOutSeconds, callback) {
-  const transitionTime = fadeOutSeconds || '0.5';
-  const options = {
-    once: true
-  };
-  this.css('transition', 'opacity ' + transitionTime + 's');
-  this.css('opacity', '0');
-  this.on('transitionend', this.hide, options);
-  if (typeof callback === 'function') {
-    callback.call(this);
-  }
-  return this;
+HTMLElement.prototype.fadeOut = function (fadeOutSeconds) {
+  return new Promise((resolve, reject) => {
+    const transitionTime = fadeOutSeconds || '0.5';
+    const eventListenerOptions = {
+      once: true
+    }
+    this.css('transition', 'opacity ' + transitionTime + 's');
+    this.css('opacity', '0');
+    this.on('transitionend', () => {
+      this.hide()
+      resolve(this);
+    }, eventListenerOptions);
+  });
 }
 
 // Set the default export to $.

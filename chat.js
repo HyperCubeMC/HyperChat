@@ -50,6 +50,7 @@ let connected = false;
 let typing = false;
 let lastTypingTime;
 let userListContents;
+let serverListContents;
 let loggedIn;
 let cheatActivated;
 let notificationReplyMessage;
@@ -165,13 +166,13 @@ function onVisibilityChange(callback) {
 
   function focused() {
     if (!visible) {
-        callback(visible = true);
+      callback(visible = true);
     }
   }
 
   function unfocused() {
     if (visible) {
-        callback(visible = false);
+      callback(visible = false);
     }
   }
 
@@ -206,15 +207,15 @@ onVisibilityChange(function(visible) {
   pageVisible = visible;
 });
 
-function showsettingsScreen() {
+function showSettingsScreen() {
   $('#Chat-Screen').fadeOut();
-  $('#settingsScreen').fadeIn()
+  $('#settingsScreen').fadeIn();
 }
 
-function hidesettingsScreen() {
+function hideSettingsScreen() {
   $('#settingsScreen').fadeOut();
   $('#Chat-Screen').fadeIn();
-  $('#settingsScreen').removeEventListener('click', showsettingsScreen);
+  $('#settingsScreen').removeEventListener('click', showSettingsScreen);
 }
 
 function showReconnectingScreen() {
@@ -279,6 +280,11 @@ socket.on('user list', (data) => {
   syncUserList(userListContents);
 });
 
+socket.on('server list', (data) => {
+  serverListContents = data.serverListContents;
+  syncServerList(serverListContents);
+});
+
 socket.on('mute', () => {
   $('#Message-Box').disabled = true;
   alert('You are now muted!');
@@ -290,26 +296,22 @@ socket.on('unmute', () => {
 });
 
 socket.on('flip', () => {
-  ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix) {
-    document.body.style[prefix + 'transform'] = 'rotate(180deg)';
-  });
+  document.body.style['transform'] = 'rotate(180deg)';
 });
 
 socket.on('unflip', () => {
-  ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix) {
-    document.body.style[prefix + 'transform'] = 'rotate(0deg)';
-  });
+  document.body.style['transform'] = 'rotate(0deg)';
 });
 
 socket.on('stupidify', () => {
   (function(){
-    let TEXT = 'When I looked in the mirror, the reflection showed Joe Mama. Then the mirror screamed, and shattered. '
-    Array.prototype.slice.call(document.querySelectorAll('input,textarea')).map(function(el){
-      el.onkeypress=function(evt){
+    let text = 'When I looked in the mirror, the reflection showed Joe Mama. Then the mirror screamed, and shattered. '
+    Array.prototype.slice.call(document.querySelectorAll('input,textarea')).map(function (element) {
+      element.onkeypress=function(evt){
         let charCode = typeof evt.which == 'number' ? evt.which : evt.keyCode;
         if (charCode && charCode > 31) {
           let start = this.selectionStart, end = this.selectionEnd;
-          this.value = this.value.slice(0, start) + TEXT[start % TEXT.length] + this.value.slice(end);
+          this.value = this.value.slice(0, start) + text[start % text.length] + this.value.slice(end);
           this.selectionStart = this.selectionEnd = start + 1;
         }
         return false;
@@ -319,10 +321,8 @@ socket.on('stupidify', () => {
 });
 
 socket.on('smash', () => {
-  ['', '-ms-', '-webkit-', '-o-', '-moz-'].forEach(function(prefix){
-    Array.prototype.slice.call(document.querySelectorAll('div,p,span,img,a,body')).map(function(el){
-      el.style[prefix + 'transform'] = 'rotate(' + (Math.floor(Math.random() * 10) - 1) + 'deg)';
-    });
+  Array.prototype.slice.call(document.querySelectorAll('div,p,span,img,a,body')).map(function (element) {
+    element.style['transform'] = 'rotate(' + (Math.floor(Math.random() * 10) - 1) + 'deg)';
   });
 });
 
@@ -347,6 +347,18 @@ if ('serviceWorker' in navigator && 'Notification' in window ) {
   });
 }
 
+// Sync the contents of the server list.
+const syncServerList = (serverListContents) => {
+  for (let server = 0; server < serverListContents.length; server++) {
+    if (serverListContents[server] !== undefined) {
+      let serverToAddToUserList = document.createElement('li');
+      serverToAddToUserList.addClass('serverInServerList');
+      serverToAddToUserList.text(serverListContents[server]);
+      $('#Server-List').appendChild(serverToAddToUserList);
+    }
+  }
+}
+
 // Sends a chat message
 const sendMessage = (message) => {
   if (message && connected && !cheatActivated) {
@@ -358,13 +370,13 @@ const sendMessage = (message) => {
   }
 }
 
-// Sync the content of the user list.
+// Sync the contents of the user list.
 const syncUserList = (userListContents) => {
   for (let user = 0; user < userListContents.length; user++) {
     if (userListContents[user] !== undefined) {
       let userToAddToUserList = document.createElement('li');
       userToAddToUserList.addClass('userInUserList');
-      userToAddToUserList.text(userListContents[user])
+      userToAddToUserList.text(userListContents[user]);
       $('#userListContents').appendChild(userToAddToUserList);
     }
   }
@@ -563,10 +575,10 @@ $('#passwordInput').on('click',() => {
 $('#Message-Box').on('click', () => {$('#Message-Box').focus()});
 
 // Go to the settings page when the settings icon on the chat page is clicked
-$('#settingsIconInChat').on('click', showsettingsScreen);
+$('#settingsIconInChat').on('click', showSettingsScreen);
 
 // Go to the chat page when the settings icon in settings is clicked
-$('#settingsIconInSettings').on('click', hidesettingsScreen);
+$('#settingsIconInSettings').on('click', hideSettingsScreen);
 
 // Show the notification permission prompt when the notification bell is clicked
 $('#notificationBell').on('click', notificationPermissionPrompt);

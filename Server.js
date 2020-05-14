@@ -133,26 +133,33 @@ function server (req, res) {
 }
 
 
-// Chat
-
+// Chat app
 function arrayRemove(array, value) {
   return array.filter(function(ele) {
     return ele != value;
   });
 }
 
-let userListContents = [];
 let mutedList = [];
+let userListContents = [];
+let serverListContents = [];
 
 const prefix = '/';
 const userMap = new Map();
 
 mongoose.connect('mongodb://localhost:27017/hyperchat', {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
-db.on('error', console.log.bind(console, "Connection error upon trying to connect to MongoDB!"));
+db.on('error', console.error.bind(console, "Connection error upon trying to connect to MongoDB!"));
 db.once('open', function(callback) {
   console.log("Connection to MongoDB successful!");
 })
+
+let Schema = mongoose.Schema;
+let userCredentialsSchema = new Schema({
+  username: String,
+  hashedPassword: String
+});
+let userCredentialsModel = mongoose.model('userCredentialsModel', userCredentialsSchema, 'credentials');
 
 io.on('connection', (socket) => {
   var addedUser = false;
@@ -182,38 +189,38 @@ io.on('connection', (socket) => {
     if (socket.username == 'Justsnoopy30') {
       switch (command) {
         case 'mute':
-          const mutePerson = args.join(" ");
+          const mutePerson = args.join(' ');
           mutedList.push(mutePerson);
           io.to(userMap.get(mutePerson)).emit('mute');
           break;
         case 'unmute':
-          const unmutePerson = args.join(" ");
+          const unmutePerson = args.join(' ');
           mutedList = arrayRemove(mutedList, unmutePerson);
           io.to(userMap.get(unmutePerson)).emit('unmute');
           break;
         case 'flip':
-          const flipPerson = args.join(" ");
+          const flipPerson = args.join(' ');
           io.to(userMap.get(flipPerson)).emit('flip');
           break;
         case 'unflip':
-          const unflipPerson = args.join(" ");
+          const unflipPerson = args.join(' ');
           io.to(userMap.get(unflipPerson)).emit('unflip');
           break;
         case 'stupidify':
-          const stupidifyPerson = args.join(" ");
+          const stupidifyPerson = args.join(' ');
           io.to(userMap.get(stupidifyPerson)).emit('stupidify');
           break;
         case 'smash':
-          const smashPerson = args.join(" ");
+          const smashPerson = args.join(' ');
           io.to(userMap.get(smashPerson)).emit('smash');
           break;
         case 'kick':
-          const kickPerson = args.join(" ");
+          const kickPerson = args.join(' ');
           io.to(userMap.get(kickPerson)).emit('kick');
           io.sockets.sockets[userMap.get(kickPerson)].disconnect();
           break;
         case 'stun':
-          const stunPerson = args.join(" ");
+          const stunPerson = args.join(' ');
           io.to(userMap.get(stunPerson)).emit('stun');
           break;
         default:
@@ -259,7 +266,7 @@ io.on('connection', (socket) => {
           }
         }
         catch (err) {
-          console.error('ERROR: Cannot verify password: ' + err);
+          return console.error('ERROR: Cannot verify password: ' + err);
         }
       }
 
@@ -268,14 +275,20 @@ io.on('connection', (socket) => {
         verifyLogin();
       });
 
+      // eslint-disable-next-line no-inner-declarations
       function verifyLogin() {
         db.collection('credentials').countDocuments({username: socket.username.toLowerCase(), hashedPassword: {$exists: true}}, function(err, count) {
-          var credentials = {
+          let credentials = {
             'username': socket.username.toLowerCase(),
             'hashedPassword': userHashedPassword
           }
 
-          if (err) throw err;
+          let userCredentialsDocument = new userCredentialsModel({
+            'username': socket.username.toLowerCase(),
+            'hashedPassword': userHashedPassword
+          })
+
+          if (err) return console.error(err);
           if (count > 0) {
             db.collection('credentials').findOne({username: socket.username.toLowerCase()}, function(err, user) {
               async function getUserVerification() {
@@ -295,8 +308,12 @@ io.on('connection', (socket) => {
             });
           }
           else {
-            db.collection('credentials').insertOne(credentials, function(err, collection) {
-              if (err) throw err;
+            // db.collection('credentials').insertOne(credentials, function(err, collection) {
+            //   if (err) throw err;
+            //   allowLogin();
+            // });
+            userCredentialsDocument.save(function (err, credentials) {
+              if (err) return console.error(err);
               allowLogin();
             });
           }
@@ -313,9 +330,15 @@ io.on('connection', (socket) => {
           if (typeof userListContents[socket.room] == 'undefined') {
             userListContents[socket.room] = [];
           }
+          if (typeof serverListContents[socket.username] == 'undefined') {
+            serverListContents[socket.username] = [];
+          }
           userListContents[socket.room].push(socket.username);
           socket.emit('user list', {
             userListContents: userListContents[socket.room]
+          });
+          socket.emit('server list', {
+            serverListContents: serverListContents[socket.username]
           });
           userMap.set(socket.username, socket.id);
         }

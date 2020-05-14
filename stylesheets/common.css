@@ -2,12 +2,12 @@
   box-sizing: border-box;
 }
 
-body .light, .light #Chat-Screen, .light #settingsScreen, .light #reconnectingScreen, .light #Message-Box {
+body .light, .light, .light #Chat-Screen, .light #settingsScreen, .light #reconnectingScreen, .light #Message-Box {
   background-color: #fff;
   color: #212529
 }
 
-body .dark, .dark #Chat-Screen, .dark #settingsScreen, .dark #reconnectingScreen, .dark #Message-Box {
+body .dark, .dark, .dark #Chat-Screen, .dark #settingsScreen, .dark #reconnectingScreen, .dark #Message-Box {
   background-color: #36393f;
   color:#fff;
 }

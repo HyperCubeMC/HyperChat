@@ -1,5 +1,5 @@
 #Chat-Screen {
-  display: grid;
+  display: none;
   width: 100vw;
   height: 100vh;
   /* Use minmax(0, 1fr) instead of 1fr so that elements can be prevented from overflowing their grid areas. Refer to https://stackoverflow.com/a/52787826/8584806 */
@@ -7,12 +7,12 @@
   grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
   gap: 1px 1px;
   grid-template-areas:
-    "Server-List Top-Bar Top-Bar Top-Bar Top-Bar Top-Bar User-List"
-    "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
-    "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
-    "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
-    "Server-List Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
-    "Server-List Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area User-List";
+    "Server-List-Area Top-Bar Top-Bar Top-Bar Top-Bar Top-Bar User-List"
+    "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
+    "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
+    "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
+    "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
+    "Server-List-Area Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area User-List";
 }
 
 #Top-Bar {
@@ -22,9 +22,18 @@
   padding: 1%;
 }
 
-#Server-List { grid-area: Server-List; }
+#Server-List-Area {
+  grid-area: Server-List-Area;
+  display: flex;
+  flex-direction: column;
+}
 
-#Chat-Area { grid-area: Chat-Area; }
+#Chat-Area {
+  grid-area: Chat-Area;
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
 
 #Message-Box-Area {
   grid-area: Message-Box-Area;
@@ -67,11 +76,19 @@
 
 #messages {
   list-style: none;
+  width: 100%;
+  height: fit-content;
+  max-height: 100%;
   padding-left: 0;
   margin: 0;
   overflow-y: auto;
   padding: 10px 20px 10px 20px;
   font-size: 150%;
+}
+
+#Server-List {
+  list-style: none;
+  padding-left: 0;
 }
 
 .log {
