@@ -22,9 +22,9 @@
   "dependencies": {
     "argon2": "^0.26.2",
     "bad-words": "^3.0.3",
-    "bootstrap": "github:twbs/bootstrap#master-xmr-v5",
+    "bootstrap": "github:twbs/bootstrap",
     "cheet.js": "^0.3.3",
-    "mongoose": "^5.9.13",
+    "mongoose": "^5.9.14",
     "showdown": "^1.9.1",
     "showdown-xss-filter": "^0.2.0",
     "socket.io": "^2.3.0",
