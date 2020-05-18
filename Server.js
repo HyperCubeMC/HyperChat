@@ -1,4 +1,4 @@
-const url = require('url');
+const { URL } = require('url');
 const path = require('path');
 const fs = require('fs');
 const mongoose = require('mongoose');
@@ -21,14 +21,35 @@ const options = {
 const app = require('http2').createSecureServer(options, server);
 const io = require('socket.io')(app);
 
-app.listen(4434);
+app.listen(5649); // Normally port 4434
 
 function server (req, res) {
-  let filePath = '.' + req.url;
-  if (filePath == './')
-    filePath = './chat.html';
+  if (req.url.indexOf('\0') !== -1 || req.url.indexOf('%00') !== -1) {
+    res.writeHead(400);
+    res.end('400 Bad Request\nPoison Null Bytes are evil.');
+    res.end();
+    return;
+  }
 
-  const extname = String(path.extname(filePath)).toLowerCase();
+  let reqURL;
+
+  const baseURL = 'https://' + req.headers.host + '/';
+
+  try {
+    reqURL = new URL(req.url, baseURL);
+  } catch (error) {
+    res.writeHead(400);
+    res.end('400 Bad Request\nBad URL supplied.');
+    res.end();
+    return;
+  }
+
+  if (reqURL.pathname == '/')
+    reqURL.pathname = '/chat.html';
+
+  const pathname = path.join(process.cwd(), reqURL.pathname);
+
+  const extname = String(path.extname(pathname)).toLowerCase();
   const mimeTypes = {
     '': 'text/html',
     '.7z': 'application/x-7z-compressed',
@@ -109,7 +130,7 @@ function server (req, res) {
 
   const contentType = mimeTypes[extname] || 'application/octet-stream';
 
-  fs.readFile(filePath, function (error, content) {
+  fs.readFile(pathname, function (error, content) {
     if (error) {
       if (error.code == 'ENOENT') {
         fs.readFile('./errors/404.html', function (error, content) {
