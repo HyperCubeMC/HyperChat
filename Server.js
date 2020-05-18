@@ -27,7 +27,6 @@ function server (req, res) {
   if (req.url.indexOf('\0') !== -1 || req.url.indexOf('%00') !== -1) {
     res.writeHead(400);
     res.end('400 Bad Request\nPoison Null Bytes are evil.');
-    res.end();
     return;
   }
 
@@ -39,8 +38,7 @@ function server (req, res) {
     reqURL = new URL(req.url, baseURL);
   } catch (error) {
     res.writeHead(400);
-    res.end('400 Bad Request\nBad URL supplied.');
-    res.end();
+    res.end('400 Bad Request\nInvalid URL supplied.');
     return;
   }
 
@@ -142,7 +140,6 @@ function server (req, res) {
       } else {
         res.writeHead(500);
         res.end('Error: ' + error.code + '\nSomething went wrong.');
-        res.end();
       }
     } else {
       res.writeHead(200, {
