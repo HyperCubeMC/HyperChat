@@ -232,6 +232,7 @@ io.on('connection', (socket) => {
       });
       return;
     }
+
     // Store login info in the local session
     socket.username = username;
     socket.password = password;
@@ -313,7 +314,6 @@ io.on('connection', (socket) => {
         });
         const allowLogin = function() {
           socket.join(socket.room);
-
           socket.emit('login authorized');
           addedUser = true;
           // Echo to the room that a person has connected
@@ -367,7 +367,16 @@ io.on('connection', (socket) => {
         loginDeniedReason: 'Room cannot be empty'
       });
     }
-    console.log(username + ' joined room: ' + socket.room);
+
+    const timestamp = new Date().toLocaleDateString(undefined, {
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+
+    console.log(timestamp + ' | ' + username + ' joined room: ' + socket.room);
   });
 
   // When the client emits 'typing', we broadcast it to others
