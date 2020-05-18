@@ -21,7 +21,7 @@ const options = {
 const app = require('http2').createSecureServer(options, server);
 const io = require('socket.io')(app);
 
-app.listen(5649); // Normally port 4434
+app.listen(4434);
 
 function server (req, res) {
   if (req.url.indexOf('\0') !== -1 || req.url.indexOf('%00') !== -1) {
