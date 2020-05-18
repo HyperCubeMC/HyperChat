@@ -98,8 +98,7 @@ function server (req, res) {
     '.woff': 'font/woff',
     '.woff2': 'font/woff2',
     '.xhtml': 'application/xhtml+xml',
-    '.xml': 'application/xml',
-    '.zip': 'application/zip'
+    '.xml': 'application/xml'
   };
 
   const contentType = mimeTypes[extname] || 'application/octet-stream';
