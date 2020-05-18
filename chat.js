@@ -486,7 +486,7 @@ const addMessageElement = (element, options) => {
     $('#messages').append(element);
   }
 
-  // $('#messages')[0].scrollTop = $('#messages')[0].scrollHeight;
+  $('#messages').scrollTop = $('#messages').scrollHeight;
 }
 
 // Prevents input from having injected markup

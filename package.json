@@ -20,6 +20,7 @@
   "author": "Justsnoopy30",
   "license": "AGPL-3.0",
   "dependencies": {
+    "@iconfu/svg-inject": "^1.2.3",
     "argon2": "^0.26.2",
     "bad-words": "^3.0.3",
     "bootstrap": "github:twbs/bootstrap",

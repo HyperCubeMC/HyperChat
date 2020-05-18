@@ -1,3 +1,4 @@
+/* Start with a mobile-first design */
 #Chat-Screen {
   display: none;
   width: 100vw;
@@ -7,25 +8,58 @@
   grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
   gap: 1px 1px;
   grid-template-areas:
-    "Server-List-Area Top-Bar Top-Bar Top-Bar Top-Bar Top-Bar User-List"
-    "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
-    "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
-    "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
-    "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
-    "Server-List-Area Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area User-List";
+    "Top-Bar Top-Bar Top-Bar Top-Bar Top-Bar Top-Bar Top-Bar"
+    "Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area"
+    "Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area"
+    "Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area"
+    "Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area"
+    "Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area";
+}
+
+#Server-List-Area {
+  display: none;
+}
+
+#User-List {
+  display: none;
+}
+
+/* Then, now that we have more screen space, take advantage of it */
+@media screen and (min-width: 677px) {
+  #Chat-Screen {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    /* Use minmax(0, 1fr) instead of 1fr so that elements can be prevented from overflowing their grid areas. Refer to https://stackoverflow.com/a/52787826/8584806 */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1px 1px;
+    grid-template-areas:
+      "Server-List-Area Top-Bar Top-Bar Top-Bar Top-Bar Top-Bar User-List"
+      "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
+      "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
+      "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
+      "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
+      "Server-List-Area Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area User-List";
+  }
+
+  #Server-List-Area {
+    grid-area: Server-List-Area;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #User-List {
+    grid-area: User-List;
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 #Top-Bar {
   grid-area: Top-Bar;
   display: flex;
-  justify-content: flex-end;
   padding: 1%;
-}
-
-#Server-List-Area {
-  grid-area: Server-List-Area;
-  display: flex;
-  flex-direction: column;
 }
 
 #Chat-Area {
@@ -63,12 +97,6 @@
   font-size: 150%;
 }
 
-#User-List {
-  grid-area: User-List;
-  display: flex;
-  flex-direction: column;
-}
-
 #userListContents {
   list-style: none;
   padding-left: 0;
@@ -102,6 +130,10 @@
   overflow: auto;
 }
 
+.messageBody p {
+  display: inline;
+}
+
 .typing {
   color: gray;
   overflow: auto;
@@ -113,13 +145,20 @@
   text-align: right;
 }
 
-#settingsIconInChat {
+#serverListIcon {
   width: 50px;
   height: 50px;
   cursor: pointer;
 }
 
 #notificationBell {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+#settingsIconInChat {
   width: 50px;
   height: 50px;
   cursor: pointer;
