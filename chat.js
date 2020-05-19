@@ -240,6 +240,10 @@ function hideReconnectingScreen() {
   }
 }
 
+function toggleServerList() {
+  // $('#Server-List-Area').toggleSlide(); Doesn't exist yet.
+}
+
 function arrayRemove(array, value) {
   return array.filter(function(ele) {
     return ele != value;
@@ -263,7 +267,7 @@ socket.on('login authorized', () => {
     connected = true;
     loggedIn = true
     // Display the welcome message
-    log('Welcome to ' + room + '!', {
+    log(`Welcome to ${room}!`, {
       prepend: true
     });
   }
@@ -338,7 +342,7 @@ socket.on('stun', () => {
 
 if ('serviceWorker' in navigator && 'Notification' in window ) {
   navigator.serviceWorker.addEventListener('message', function(event) {
-    console.log('Got message from service worker: ' + event.data);
+    console.log(`Got message from service worker: ${event.data}`);
     if (event.data.startsWith('Notification Quick Reply:')) {
       notificationReplyMessage = event.data;
       notificationReplyMessage = notificationReplyMessage.replace(/^(Notification Quick Reply\: )/,'');
@@ -532,7 +536,7 @@ const getUsernameColor = (username) => {
 
 $('#Message-Box').on('input', function (event) {
   this.css('height', 'auto');
-  this.css('height', this.scrollHeight + 'px');
+  this.css('height', `${this.scrollHeight}px`);
 });
 
 $('#Message-Box').on('keydown', function (event) {
@@ -583,6 +587,9 @@ $('#settingsIconInSettings').on('click', hideSettingsScreen);
 // Show the notification permission prompt when the notification bell is clicked
 $('#notificationBell').on('click', notificationPermissionPrompt);
 
+// Toggle server list slide-out drawer when the server list icon is tapped on mobile
+$('#serverListIcon').on('click', toggleServerList);
+
 // Socket events
 
 // Whenever the server emits 'new message', update the chat body
@@ -590,7 +597,7 @@ socket.on('new message', (data) => {
   if (data.username !== username) {
     addChatMessage(data);
     chatMessageSound.play();
-    if ('navigator.serviceWorker.controller' && notificationPermission === 'granted' && data.message.includes('@' + username)) { // Make sure we have the permission to send notifications and the user was mentioned
+    if ('navigator.serviceWorker.controller' && notificationPermission === 'granted' && data.message.includes(`@${username}`)) { // Make sure we have the permission to send notifications and the user was mentioned
       let notificationMessage = converter.makeMarkdown(data.message); // Convert html to markdown for the notification
       navigator.serviceWorker.ready.then(function(registration) {
         registration.showNotification(data.username, {
@@ -613,14 +620,14 @@ socket.on('new message', (data) => {
 
 // Whenever the server emits 'user joined', log it in the chat body
 socket.on('user joined', (data) => {
-  log(data.username + ' joined the chatroom.');
+  log(`${data.username} joined the chatroom.`);
   userJoinedChatSound.play();
   addToUserList(data.username);
 });
 
 // Whenever the server emits 'user left', log it in the chat body
 socket.on('user left', (data) => {
-  log(data.username + ' left the chatroom.');
+  log(`${data.username} left the chatroom.`);
   userLeftChatSound.play();
   removeFromUserList(data.username);
 });

@@ -32,7 +32,7 @@ function server (req, res) {
 
   let reqURL;
 
-  const baseURL = 'https://' + req.headers.host + '/';
+  const baseURL = `https://${req.headers.host}/`;
 
   try {
     reqURL = new URL(req.url, baseURL);
@@ -114,7 +114,7 @@ function server (req, res) {
         });
       } else {
         res.writeHead(500);
-        res.end('Error: ' + error.code + '\nSomething went wrong.');
+        res.end(`Error: ${error.code}\nSomething went wrong.`);
       }
     } else {
       res.writeHead(200, {
@@ -246,7 +246,7 @@ io.on('connection', (socket) => {
           return hashedPassword;
         }
         catch (err) {
-          console.error("ERROR: Cannot hash password: " + err);
+          console.error(`ERROR: Cannot hash password: ${err}`);
         }
       }
 
@@ -260,7 +260,7 @@ io.on('connection', (socket) => {
           }
         }
         catch (err) {
-          return console.error('ERROR: Cannot verify password: ' + err);
+          return console.error(`ERROR: Cannot verify password: ${err}`);
         }
       }
 
@@ -376,7 +376,7 @@ io.on('connection', (socket) => {
       minute: '2-digit'
     })
 
-    console.log(timestamp + ' | ' + username + ' joined room: ' + socket.room);
+    console.log(`${timestamp} | ${username} joined room: ${socket.room}`);
   });
 
   // When the client emits 'typing', we broadcast it to others

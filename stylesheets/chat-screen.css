@@ -18,10 +18,14 @@
 
 #Server-List-Area {
   display: none;
+  /* transition: all 0.2s linear 0s; */
+  z-index: 1;
 }
 
 #User-List {
   display: none;
+  /* transition: all 0.2s linear 0s; */
+  z-index: 1;
 }
 
 /* Then, now that we have more screen space, take advantage of it */
