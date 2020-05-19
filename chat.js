@@ -396,7 +396,6 @@ const syncServerList = (serverListContents) => {
       serverIconForServerList.attr('src', serverListContents[server].Image);
       serverIconForServerList.attr('title', serverListContents[server].ServerName);
       serverIconForServerList.attr('alt', serverListContents[server].ServerName);
-      serverIconForServerList.attr('aria-label', serverListContents[server].ServerName);
       serverIconForServerList.attr('draggable', 'false');
       serverForServerList.appendChild(serverIconForServerList);
       $('#Server-List').appendChild(serverForServerList);
