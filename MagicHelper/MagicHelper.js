@@ -19,6 +19,22 @@
  * Usage with context: $('element', $('parent_element'))
  */
 const $ = (selector, context = document) => context.querySelector(selector);
+/**
+ * Here I define the $$ helper.
+ * This is a multi-selector and selects multiple elements.
+ * You need to forEach it.
+ * @example
+ * Select an element by type: $$('element')
+ * Select an element by id: $$('#id')
+ * Select an element by class: $$('.class')
+ * This has optional an optional context that defaults to the document.
+ * The context allows you to select an element inside a selected parent element
+ * (selected as the second argument with the helper).
+ * Usage without context: $$('element')
+ * Usage with context: $$('element', $('parent_element'))
+ */
+const $$ = (selector, context = document) => context.querySelectorAll(selector);
+
 
 /**
  * This represents the HTMLElement interface for the docs.
@@ -299,3 +315,5 @@ HTMLElement.prototype.fadeOut = function (fadeOutSeconds) {
 
 // Set the default export to $.
 export default $;
+// Export $ selector and $$ multi-selector
+export { $, $$ };

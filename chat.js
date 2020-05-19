@@ -1,5 +1,5 @@
 // Import MagicHelper!
-import $ from './MagicHelper/MagicHelper.js';
+import { $, $$ } from './MagicHelper/MagicHelper.js';
 
 let notificationPermission = 'default';
 if ('serviceWorker' in navigator) {
@@ -315,6 +315,12 @@ socket.on('user list', (data) => {
 socket.on('server list', (data) => {
   serverListContents = data.serverListContents;
   syncServerList(serverListContents);
+  // Add an event listener go to the server when a server icon in the server list is clicked
+  $$('.serverIconInServerList').forEach(function(element) {
+    element.on('click', function() {
+      alert('test');
+    });
+  });
 });
 
 socket.on('mute', () => {
@@ -379,14 +385,21 @@ if ('serviceWorker' in navigator && 'Notification' in window ) {
   });
 }
 
-// Sync the contents of the server list.
+// Syncs the contents of the server list
 const syncServerList = (serverListContents) => {
   for (let server = 0; server < serverListContents.length; server++) {
     if (serverListContents[server] !== undefined) {
-      let serverToAddToUserList = document.createElement('li');
-      serverToAddToUserList.addClass('serverInServerList');
-      serverToAddToUserList.text(serverListContents[server]);
-      $('#Server-List').appendChild(serverToAddToUserList);
+      let serverForServerList = document.createElement('li');
+      serverForServerList.addClass('serverInServerList');
+      let serverIconForServerList = document.createElement('img');
+      serverIconForServerList.addClass('serverIconInServerList');
+      serverIconForServerList.attr('src', serverListContents[server].Image);
+      serverIconForServerList.attr('title', serverListContents[server].ServerName);
+      serverIconForServerList.attr('alt', serverListContents[server].ServerName);
+      serverIconForServerList.attr('aria-label', serverListContents[server].ServerName);
+      serverIconForServerList.attr('draggable', 'false');
+      serverForServerList.appendChild(serverIconForServerList);
+      $('#Server-List').appendChild(serverForServerList);
     }
   }
 }
@@ -690,6 +703,10 @@ socket.on('reconnect', () => {
     const userListContents = document.getElementById('userListContents');
     while (userListContents.firstChild) {
       userListContents.removeChild(userListContents.firstChild);
+    }
+    const serverListContents = document.getElementById('Server-List');
+    while (serverListContents.firstChild) {
+      serverListContents.removeChild(serverListContents.firstChild);
     }
     socket.emit('login', { username, password, room });
   }

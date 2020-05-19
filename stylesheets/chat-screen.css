@@ -3,6 +3,7 @@
 /* Start with a mobile-first design */
 #Chat-Screen {
   display: none;
+  position: absolute;
   width: 100vw;
   height: 100vh;
   /* Use minmax(0, 1fr) instead of 1fr so that elements can be prevented from overflowing their grid areas. Refer to https://stackoverflow.com/a/52787826/8584806 */
@@ -31,7 +32,8 @@
   opacity: 0;
   z-index: 1;
   border-right: 3px solid #40444b;
-  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 10px;
 }
 
 #User-List {
@@ -79,7 +81,8 @@
     transform: none;
     opacity: 1;
     border-right: 3px solid #40444b;
-    padding-right: 10px;
+    padding-left: 10px;
+    padding-top: 10px;
   }
 
   #User-List {
@@ -157,6 +160,14 @@
 #Server-List {
   list-style: none;
   padding-left: 0;
+}
+
+/* A server icon of a server in the server list */
+.serverIconInServerList {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 .log {

@@ -379,20 +379,24 @@ io.on('connection', (socket) => {
           if (typeof userListContents[socket.room] == 'undefined') {
             userListContents[socket.room] = [];
           }
-          // Create the server list contents for the user if it doesn't exist
-          if (typeof serverListContents[socket.username] == 'undefined') {
-            serverListContents[socket.username] = [];
-          }
           // Add the user to the user list contents for their room
           userListContents[socket.room].push(socket.username);
           // Send the user list contents to the user for their room
           socket.emit('user list', {
             userListContents: userListContents[socket.room]
           });
+
+          // Create the server list contents for the user if it doesn't exist
+          if (typeof serverListContents[socket.username] == 'undefined') {
+            serverListContents[socket.username] = [];
+            // The server list database is not implemented yet, so I'll put a server in the server list contents for the user
+            serverListContents[socket.username].push({ServerName: 'HyperLand', Image: './cdn/ServerIcons/HyperLand.png', Owner: 'Justsnoopy30'});
+          }
           // Send the server list contents for the user to the user
           socket.emit('server list', {
             serverListContents: serverListContents[socket.username]
           });
+
           // Map the user's username to a unique socket id
           userMap.set(socket.username, socket.id);
         }
