@@ -291,7 +291,7 @@ socket.on('login authorized', () => {
   if (initialLogin) {
     $('#loginScreen').fadeOut();
     $('#Chat-Screen').fadeIn();
-    currentInput = $('#Message-Box').focus();
+    currentInput = $('#Message-Box');
     connected = true;
     loggedIn = true
     // Display the welcome message
@@ -586,7 +586,7 @@ document.addEventListener('keydown', (event) => {
     }
   }
   // When the client hits ENTER on their keyboard
-  if (event.key == 'Enter' && !event.shiftKey && !username) {
+  if (event.key == 'Enter' && !event.shiftKey && !loggedIn) {
     submitLoginInfo();
   }
 });
@@ -595,12 +595,12 @@ $('#Message-Box').on('input', updateTyping);
 
 // Set focus to username input when clicked
 $('#usernameInput').on('click', () => {
-  currentInput = $('#usernameInput').focus();
+  currentInput = $('#usernameInput');
 });
 
 // Set focus to password input when clicked
 $('#passwordInput').on('click',() => {
-  currentInput = $('#passwordInput').focus();
+  currentInput = $('#passwordInput');
 });
 
 // Focus input when clicking on the message input's border
