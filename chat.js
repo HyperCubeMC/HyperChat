@@ -240,8 +240,36 @@ function hideReconnectingScreen() {
   }
 }
 
+// Shows or hides the server list
 function toggleServerList() {
-  // $('#Server-List-Area').toggleSlide(); Doesn't exist yet.
+  if ($('#Server-List-Area').data('state') == 'hidden' || $('#Server-List-Area').data('state') == undefined) {
+    $('#Server-List-Area').css('opacity', '1');
+    $('#Server-List-Area').css('transform', 'translateX(0%)');
+    $('#Server-List-Area').data('state', 'shown');
+    return 'nowShown';
+  }
+  else {
+    $('#Server-List-Area').css('opacity', '0');
+    $('#Server-List-Area').css('transform', 'translateX(-100%)');
+    $('#Server-List-Area').data('state', 'hidden');
+    return 'nowHidden';
+  }
+}
+
+// Shows or hides the user list
+function toggleUserList() {
+  if ($('#User-List').data('state') == 'hidden' || $('#User-List').data('state') == undefined) {
+    $('#User-List').css('opacity', '1');
+    $('#User-List').css('transform', 'translateX(0%)');
+    $('#User-List').data('state', 'shown');
+    return 'nowShown';
+  }
+  else {
+    $('#User-List').css('opacity', '0');
+    $('#User-List').css('transform', 'translateX(100%)');
+    $('#User-List').data('state', 'hidden');
+    return 'nowHidden';
+  }
 }
 
 function arrayRemove(array, value) {
@@ -588,7 +616,7 @@ $('#settingsIconInSettings').on('click', hideSettingsScreen);
 $('#notificationBell').on('click', notificationPermissionPrompt);
 
 // Toggle server list slide-out drawer when the server list icon is tapped on mobile
-$('#serverListIcon').on('click', toggleServerList);
+$('#serverListIconWrapper').on('click', toggleServerList);
 
 // Socket events
 

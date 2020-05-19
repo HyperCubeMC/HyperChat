@@ -17,15 +17,35 @@
 }
 
 #Server-List-Area {
-  display: none;
-  /* transition: all 0.2s linear 0s; */
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 84%;
+  width: 50%;
+  left: 0;
+  bottom: 0;
+  transition: all 0.2s linear 0s;
+  transform: translateX(-100%);
+  opacity: 0;
   z-index: 1;
+  border-right: 3px solid #40444b;
+  padding-right: 10px;
 }
 
 #User-List {
-  display: none;
-  /* transition: all 0.2s linear 0s; */
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 84%;
+  width: 50%;
+  right: 0;
+  bottom: 0;
+  transition: all 0.2s linear 0s;
+  transform: translateX(100%);
+  opacity: 0;
   z-index: 1;
+  border-left: 3px solid #40444b;
+  padding-left: 10px;
 }
 
 /* Then, now that we have more screen space, take advantage of it */
@@ -51,12 +71,26 @@
     grid-area: Server-List-Area;
     display: flex;
     flex-direction: column;
+    position: initial;
+    height: 100%;
+    width: 100%;
+    transform: none;
+    opacity: 1;
+    border-right: 3px solid #40444b;
+    padding-right: 10px;
   }
 
   #User-List {
     grid-area: User-List;
     display: flex;
     flex-direction: column;
+    position: initial;
+    height: 100%;
+    width: 100%;
+    transform: none;
+    opacity: 1;
+    border-left: 3px solid #40444b;
+    padding-left: 10px;
   }
 }
 
@@ -147,6 +181,11 @@
   font-weight: 700;
   padding-right: 15px;
   text-align: right;
+}
+
+#serverListIconWrapper {
+  width: fit-content;
+  height: fit-content;
 }
 
 #serverListIcon {

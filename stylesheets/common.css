@@ -9,7 +9,27 @@ body .light, .light, .light #Chat-Screen, .light #settingsScreen, .light #reconn
 
 body .dark, .dark, .dark #Chat-Screen, .dark #settingsScreen, .dark #reconnectingScreen, .dark #Message-Box, .dark #serverListIcon {
   background-color: #36393f;
-  color:#fff;
+  color: #fff;
+}
+
+.light #Server-List-Area {
+  background-color: #fff;
+  color: #212529
+}
+
+.light #User-List {
+  background-color: #fff;
+  color: #212529
+}
+
+.dark #Server-List-Area {
+  background-color: #2f3136;
+  color: #fff;
+}
+
+.dark #User-List {
+  background-color: #2f3136;
+  color: #fff;
 }
 
 /* Themed custom scrollbars */
