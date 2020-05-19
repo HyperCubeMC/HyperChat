@@ -183,17 +183,34 @@
   text-align: right;
 }
 
+/* Clickable wrapper for the server list icon */
 #serverListIconWrapper {
   width: fit-content;
   height: fit-content;
 }
 
+/* The server list icon */
 #serverListIcon {
   width: 50px;
   height: 50px;
   cursor: pointer;
 }
 
+/* Clickable wrapper for the user list icon */
+#userListIconWrapper {
+  width: fit-content;
+  height: fit-content;
+  margin-left: 1%;
+}
+
+/* The user list icon */
+#userListIcon {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+}
+
+/* The notification bell icon used to turn on notifications for mentions */
 #notificationBell {
   width: 50px;
   height: 50px;
@@ -201,6 +218,7 @@
   margin-left: auto;
 }
 
+/* The settigns icon used to go to the settings menu */
 #settingsIconInChat {
   width: 50px;
   height: 50px;

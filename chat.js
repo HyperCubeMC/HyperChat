@@ -618,6 +618,9 @@ $('#notificationBell').on('click', notificationPermissionPrompt);
 // Toggle server list slide-out drawer when the server list icon is tapped on mobile
 $('#serverListIconWrapper').on('click', toggleServerList);
 
+// Toggle user list slide-out drawer when the user list icon is tapped on mobile
+$('#userListIconWrapper').on('click', toggleUserList);
+
 // Socket events
 
 // Whenever the server emits 'new message', update the chat body
