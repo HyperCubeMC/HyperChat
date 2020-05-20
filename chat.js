@@ -242,7 +242,11 @@ function hideReconnectingScreen() {
 
 // Shows or hides the server list
 function toggleServerList() {
-  if ($('#Server-List-Area').data('state') == 'hidden' || $('#Server-List-Area').data('state') == undefined) {
+  if ($('#Server-List-Area').data('state') == undefined) {
+    const originalState = $('#Server-List-Area').css('--original-state');
+    $('#Server-List-Area').data('state', originalState);
+  }
+  if ($('#Server-List-Area').data('state') == 'hidden') {
     $('#Server-List-Area').css('opacity', '1');
     $('#Server-List-Area').css('transform', 'translateX(0%)');
     $('#Server-List-Area').data('state', 'shown');
@@ -258,7 +262,11 @@ function toggleServerList() {
 
 // Shows or hides the user list
 function toggleUserList() {
-  if ($('#User-List').data('state') == 'hidden' || $('#User-List').data('state') == undefined) {
+  if ($('#User-List').data('state') == undefined) {
+    const originalState = $('#User-List').css('--original-state');
+    $('#User-List').data('state', originalState);
+  }
+  if ($('#User-List').data('state') == 'hidden') {
     $('#User-List').css('opacity', '1');
     $('#User-List').css('transform', 'translateX(0%)');
     $('#User-List').data('state', 'shown');

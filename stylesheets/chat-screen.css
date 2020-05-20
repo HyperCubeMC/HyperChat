@@ -34,6 +34,7 @@
   border-right: 3px solid #40444b;
   padding-left: 10px;
   padding-top: 10px;
+  --original-state: hidden;
 }
 
 #User-List {
@@ -50,6 +51,7 @@
   z-index: 1;
   border-left: 3px solid #40444b;
   padding-left: 10px;
+  --original-state: hidden;
 }
 
 /* Then, now that we have more screen space, take advantage of it */
@@ -83,6 +85,7 @@
     border-right: 3px solid #40444b;
     padding-left: 10px;
     padding-top: 10px;
+    --original-state: shown;
   }
 
   #User-List {
@@ -96,6 +99,7 @@
     opacity: 1;
     border-left: 3px solid #40444b;
     padding-left: 10px;
+    --original-state: shown;
   }
 }
 
