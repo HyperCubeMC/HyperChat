@@ -157,6 +157,18 @@ $('#darkThemeRadio').on('change', function (event) {
   changeTheme('dark'); // Dark theme radio chosen, so change the theme to dark.
 });
 
+// If the server list area state is not set, set it to the original state which depends if the user is on desktop or mobile
+if ($('#Server-List-Area').data('state') == undefined) {
+  const originalState = $('#Server-List-Area').css('--original-state').trim();
+  $('#Server-List-Area').data('state', originalState);
+}
+
+// If the user list state is not set, set it to the original state which depends if the user is on desktop or mobile
+if ($('#User-List').data('state') == undefined) {
+  const originalState = $('#User-List').css('--original-state').trim();
+  $('#User-List').data('state', originalState);
+}
+
 function onVisibilityChange(callback) {
   let visible = true;
 
@@ -242,10 +254,6 @@ function hideReconnectingScreen() {
 
 // Shows or hides the server list
 function toggleServerList() {
-  if ($('#Server-List-Area').data('state') == undefined) {
-    const originalState = $('#Server-List-Area').css('--original-state');
-    $('#Server-List-Area').data('state', originalState);
-  }
   if ($('#Server-List-Area').data('state') == 'hidden') {
     $('#Server-List-Area').css('opacity', '1');
     $('#Server-List-Area').css('transform', 'translateX(0%)');
@@ -262,10 +270,6 @@ function toggleServerList() {
 
 // Shows or hides the user list
 function toggleUserList() {
-  if ($('#User-List').data('state') == undefined) {
-    const originalState = $('#User-List').css('--original-state');
-    $('#User-List').data('state', originalState);
-  }
   if ($('#User-List').data('state') == 'hidden') {
     $('#User-List').css('opacity', '1');
     $('#User-List').css('transform', 'translateX(0%)');
