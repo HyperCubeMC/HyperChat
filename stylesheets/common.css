@@ -2,6 +2,10 @@
   box-sizing: border-box;
 }
 
+body {
+  overflow-x: hidden;
+}
+
 body .light, .light, .light #Chat-Screen, .light #settingsScreen, .light #reconnectingScreen, .light #Message-Box, .light #serverListIcon {
   background-color: #fff;
   color: #212529
