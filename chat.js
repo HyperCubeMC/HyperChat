@@ -45,7 +45,7 @@ let colors = [
 let currentInput; // Current input focus variable
 let username;
 let password;
-let room;
+let server;
 let connected = false;
 let typing = false;
 let lastTypingTime;
@@ -294,9 +294,9 @@ function arrayRemove(array, value) {
 const submitLoginInfo = () => {
   username = cleanInput($('#usernameInput').value.trim());
   password = cleanInput($('#passwordInput').value.trim());
-  room = cleanInput($('#roomInput').value.trim());
-  // Tell the server your username, password, and room
-  socket.emit('login', { username, password, room });
+  server = cleanInput($('#serverInput').value.trim());
+  // Tell the server your username, password, and server
+  socket.emit('login', { username, password, server });
 }
 
 socket.on('login authorized', () => {
@@ -307,15 +307,23 @@ socket.on('login authorized', () => {
     connected = true;
     loggedIn = true
     // Display the welcome message
-    log(`Welcome to ${room}!`, {
+    log(`Welcome to ${server}!`, {
       prepend: true
     });
   }
 });
 
+// If the login has been denied...
 socket.on('login denied', (data) => {
-  let loginDeniedReason = data.loginDeniedReason;
+  const loginDeniedReason = data.loginDeniedReason;
   alert(loginDeniedReason);
+  location.reload();
+});
+
+// If the server switch has been denied...
+socket.on('server switch denied', (data) => {
+  let switchServerDeniedReason = data.switchServerDeniedReason;
+  alert(switchServerDeniedReason);
   location.reload();
 });
 
@@ -330,7 +338,9 @@ socket.on('server list', (data) => {
   // Add an event listener go to the server when a server icon in the server list is clicked
   $$('.serverIconInServerList').forEach(function(element) {
     element.on('click', function() {
-      alert('test');
+      const server = element.data('servername');
+      socket.emit('switch server', server);
+      // const serverName = serverListContents.find(server => server.ServerName === 'ServerNameHere').PropertyOfObjectToGet;
     });
   });
 });
@@ -378,7 +388,7 @@ socket.on('smash', () => {
 
 socket.on('kick', () => {
   kickSound.play();
-  alert('You have been kicked from the chatroom.');
+  alert('You have been kicked from the server.');
   location.reload();
 });
 
@@ -409,6 +419,7 @@ const syncServerList = (serverListContents) => {
       serverIconForServerList.attr('title', serverListContents[server].ServerName);
       serverIconForServerList.attr('alt', serverListContents[server].ServerName);
       serverIconForServerList.attr('draggable', 'false');
+      serverIconForServerList.data('servername', serverListContents[server].ServerName);
       serverForServerList.appendChild(serverIconForServerList);
       $('#Server-List').appendChild(serverForServerList);
     }
@@ -675,14 +686,14 @@ socket.on('new message', (data) => {
 
 // Whenever the server emits 'user joined', log it in the chat body
 socket.on('user joined', (data) => {
-  log(`${data.username} joined the chatroom.`);
+  log(`${data.username} joined the server.`);
   userJoinedChatSound.play();
   addToUserList(data.username);
 });
 
 // Whenever the server emits 'user left', log it in the chat body
 socket.on('user left', (data) => {
-  log(`${data.username} left the chatroom.`);
+  log(`${data.username} left the server.`);
   userLeftChatSound.play();
   removeFromUserList(data.username);
 });
@@ -719,7 +730,7 @@ socket.on('reconnect', () => {
     while (serverListContents.firstChild) {
       serverListContents.removeChild(serverListContents.firstChild);
     }
-    socket.emit('login', { username, password, room });
+    socket.emit('login', { username, password, server });
   }
 });
 

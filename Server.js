@@ -156,7 +156,7 @@ function arrayRemove(array, value) {
 
 // Define an array for the muted users list
 let mutedList = [];
-// Define an array for the user list contents for rooms
+// Define an array for the user list contents for servers
 let userListContents = [];
 // Define an array for the server list contents for a user
 let serverListContents = [];
@@ -199,21 +199,21 @@ io.on('connection', (socket) => {
     if (mutedList.includes(socket.username)) return;
     // Define a new showdown (markdown library) converter with options and an xss filter
     const converter = new showdown.Converter({extensions: [xssFilter], tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
-    // If the message length is less than 2000 characters, go ahead and filter the message, and then send it to the user's room
+    // If the message length is less than 2000 characters, go ahead and filter the message, and then send it to the user's server
     if (message.length <= 2000) {
       // Clean the message with a bad word filter
       message = filter.clean(message);
       // Convert markdown to html with showdown
       let messageHtml = converter.makeHtml(message);
-      // Send the message to everyone in the user's room
-      io.in(socket.room).emit('new message', {
+      // Send the message to everyone in the user's server
+      io.in(socket.server).emit('new message', {
         username: socket.username,
         message: messageHtml
       });
     }
     // Check if the message is over 2000 character, and if it is, change it to a predetermined message indicating that the message is too long
     else if (message.length > 2000) {
-      io.in(socket.room).emit('new message', {
+      io.in(socket.server).emit('new message', {
         username: socket.username,
         message: 'This message was removed because it was too long (over 2000 characters).'
       });
@@ -268,11 +268,11 @@ io.on('connection', (socket) => {
   });
 
   // When the client emits 'login', this listens and executes
-  socket.on('login', ({ username, password, room }) => {
+  socket.on('login', ({ username, password, server }) => {
     if (addedUser) return;
 
     // Check the client sent variables to make sure they are defined, and if any of them don't, deny their login
-    if (typeof username == 'undefined' || typeof password == 'undefined' || typeof room == 'undefined') {
+    if (typeof username == 'undefined' || typeof password == 'undefined' || typeof server == 'undefined') {
       socket.emit('login denied', {
         loginDeniedReason: 'Invalid login request.'
       });
@@ -282,11 +282,11 @@ io.on('connection', (socket) => {
     // Store login info in the local session
     socket.username = username;
     socket.password = password;
-    socket.room = room;
+    socket.server = server;
     var userHashedPassword;
 
     // Execute all this if the user has supplied credentials that could potentially be valid
-    if (socket.username.length <= 14 && socket.password.length <= 14 && socket.room.length <= 14 && socket.username.length > 0 && socket.password.length > 0 && socket.room.length > 0) {
+    if (socket.username.length <= 14 && socket.password.length <= 14 && socket.server.length <= 14 && socket.username.length > 0 && socket.password.length > 0 && socket.server.length > 0) {
       // Password-hashing helper function
       const hashPassword = async (password) => {
         try {
@@ -366,24 +366,24 @@ io.on('connection', (socket) => {
         });
         // Function to allow a user in
         const allowLogin = function() {
-          // Join the user to their room
-          socket.join(socket.room);
+          // Join the user to their server
+          socket.join(socket.server);
           // Tell the user that their login has been authorized
           socket.emit('login authorized');
           addedUser = true;
-          // Echo to the room that a person has connected
-          socket.to(socket.room).emit('user joined', {
+          // Echo to the server that a person has connected
+          socket.to(socket.server).emit('user joined', {
             username: socket.username,
           });
-          // Create the user list contents for the room if it doesn't exist
-          if (typeof userListContents[socket.room] == 'undefined') {
-            userListContents[socket.room] = [];
+          // Create the user list contents for the server if it doesn't exist
+          if (typeof userListContents[socket.server] == 'undefined') {
+            userListContents[socket.server] = [];
           }
-          // Add the user to the user list contents for their room
-          userListContents[socket.room].push(socket.username);
-          // Send the user list contents to the user for their room
+          // Add the user to the user list contents for their server
+          userListContents[socket.server].push(socket.username);
+          // Send the user list contents to the user for their server
           socket.emit('user list', {
-            userListContents: userListContents[socket.room]
+            userListContents: userListContents[socket.server]
           });
 
           // Create the server list contents for the user if it doesn't exist
@@ -414,10 +414,10 @@ io.on('connection', (socket) => {
         loginDeniedReason: 'Password cannot be longer than 14 characters'
       });
     }
-    // Check if the user used too many characters in their room
-    else if (socket.room.length > 14) {
+    // Check if the user used too many characters in their server
+    else if (socket.server.length > 14) {
       socket.emit('login denied', {
-        loginDeniedReason: 'Room cannot be longer than 14 characters'
+        loginDeniedReason: 'Server cannot be longer than 14 characters'
       });
     }
     // Check if the user did not enter a username
@@ -432,10 +432,10 @@ io.on('connection', (socket) => {
         loginDeniedReason: 'Password cannot be empty'
       });
     }
-    // Check if the user did not enter a room
-    else if (socket.room.length == 0) {
+    // Check if the user did not enter a server
+    else if (socket.server.length == 0) {
       socket.emit('login denied', {
-        loginDeniedReason: 'Room cannot be empty'
+        loginDeniedReason: 'Server cannot be empty'
       });
     }
 
@@ -449,39 +449,51 @@ io.on('connection', (socket) => {
     })
 
     // Usage logging
-    console.log(`${timestamp} | ${username} joined room: ${socket.room}`);
+    console.log(`${timestamp} | ${username} joined server: ${socket.server}`);
   });
 
   // When the client emits 'typing', we broadcast it to others
   socket.on('typing', () => {
-    // socket.to(socket.room).emit('typing', {
+    // socket.to(socket.server).emit('typing', {
     //   username: socket.username
     // });
-    io.in(socket.room).emit('typing', {
+    io.in(socket.server).emit('typing', {
       username: socket.username
     });
   });
 
   // When the client emits 'stop typing', we broadcast it to others
   socket.on('stop typing', () => {
-    // socket.to(socket.room).emit('stop typing', {
+    // socket.to(socket.server).emit('stop typing', {
     //   username: socket.username
     // });
-    io.in(socket.room).emit('stop typing', {
+    io.in(socket.server).emit('stop typing', {
       username: socket.username
     });
+  });
+
+  // When the client emits 'switch server', we switch their server
+  socket.on('switch server', (server) => {
+    if (typeof server == 'undefined') {
+      socket.emit('server switch denied', {
+        serverSwitchDeniedReason: 'Invalid server specified.'
+      });
+      return;
+    }
+    socket.server = server;
+    socket.join(socket.server);
   });
 
   // When the user disconnects, perform this
   socket.on('disconnect', () => {
     if (addedUser) {
-      userListContents[socket.room] = arrayRemove(userListContents[socket.room], socket.username);
-      // Echo globally in the room that this user has left
-      socket.to(socket.room).emit('user left', {
+      userListContents[socket.server] = arrayRemove(userListContents[socket.server], socket.username);
+      // Echo globally in the server that this user has left
+      socket.to(socket.server).emit('user left', {
         username: socket.username
       });
-      // Echo globally in the room that the user has stopped typing, since they left
-      socket.to(socket.room).emit('stop typing', {
+      // Echo globally in the server that the user has stopped typing, since they left
+      socket.to(socket.server).emit('stop typing', {
         username: socket.username
       });
       // Remove the username to socket id map entry for the user
