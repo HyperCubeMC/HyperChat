@@ -480,6 +480,8 @@ io.on('connection', (socket) => {
       });
       return;
     }
+    // Remove the user from their old server
+    socket.leave(socket.server);
     // Remove the user from the user list
     userListContents[socket.server] = arrayRemove(userListContents[socket.server], socket.username);
     // Echo globally in the server that this user has left
