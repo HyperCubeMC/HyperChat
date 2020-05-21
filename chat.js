@@ -322,7 +322,7 @@ socket.on('login denied', (data) => {
 
 // If the server switch has been denied...
 socket.on('server switch denied', (data) => {
-  let switchServerDeniedReason = data.switchServerDeniedReason;
+  const switchServerDeniedReason = data.switchServerDeniedReason;
   alert(switchServerDeniedReason);
   location.reload();
 });
@@ -532,6 +532,30 @@ const syncUsersTyping = (usersTypingArray) => {
   }
 }
 
+// Function to clear the user list
+function clearUserList() {
+  const userListContents = document.getElementById('userListContents');
+  while (userListContents.firstChild) {
+    userListContents.removeChild(userListContents.firstChild);
+  }
+}
+
+// Function to clear the server list
+function clearServerList() {
+  const serverListContents = document.getElementById('Server-List');
+  while (serverListContents.firstChild) {
+    serverListContents.removeChild(serverListContents.firstChild);
+  }
+}
+
+// Function to clear messages
+function clearMessages() {
+  const messageListContents = document.getElementById('messages');
+  while (messageListContents.firstChild) {
+    messageListContents.removeChild(messageListContents.firstChild);
+  }
+}
+
 // Adds a message element to the messages and scrolls to the bottom
 // element - The element to add as a message
 // options.prepend - If the element should prepend
@@ -710,6 +734,16 @@ socket.on('stop typing', (data) => {
   syncUsersTyping(usersTypingArray);
 });
 
+socket.on('server switch success', (data) => {
+  server = data.server;
+  clearUserList();
+  clearMessages();
+  // Display the welcome message
+  log(`Welcome to ${server}!`, {
+    prepend: true
+  });
+});
+
 socket.on('disconnect', () => {
   log('You have been disconnected.');
   lostConnectionSound.play();
@@ -722,14 +756,8 @@ socket.on('reconnect', () => {
   log('You have been reconnected.');
   if (username) {
     initialLogin = false;
-    const userListContents = document.getElementById('userListContents');
-    while (userListContents.firstChild) {
-      userListContents.removeChild(userListContents.firstChild);
-    }
-    const serverListContents = document.getElementById('Server-List');
-    while (serverListContents.firstChild) {
-      serverListContents.removeChild(serverListContents.firstChild);
-    }
+    clearUserList();
+    clearServerList();
     socket.emit('login', { username, password, server });
   }
 });

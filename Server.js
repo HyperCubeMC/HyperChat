@@ -480,13 +480,41 @@ io.on('connection', (socket) => {
       });
       return;
     }
+    // Remove the user from the user list
+    userListContents[socket.server] = arrayRemove(userListContents[socket.server], socket.username);
+    // Echo globally in the server that this user has left
+    socket.to(socket.server).emit('user left', {
+      username: socket.username
+    });
+    // Change the user's server to the requested server
     socket.server = server;
+    // Join the user to their requested server
     socket.join(socket.server);
+    // Tell the client that the server switch request has succeeded
+    socket.emit('server switch success', {
+      server: socket.server
+    });
+    // Echo to the server that a person has connected
+    socket.to(socket.server).emit('user joined', {
+      username: socket.username,
+    });
+    // Create the user list contents for the server if it doesn't exist
+    if (typeof userListContents[socket.server] == 'undefined') {
+      userListContents[socket.server] = [];
+    }
+    // Add the user to the user list contents for their server
+    userListContents[socket.server].push(socket.username);
+    // Send the user list contents to the user for their server
+    socket.emit('user list', {
+      userListContents: userListContents[socket.server]
+    });
+    socket.emit('switched server', server);
   });
 
   // When the user disconnects, perform this
   socket.on('disconnect', () => {
     if (addedUser) {
+      // Remove the user from the user list
       userListContents[socket.server] = arrayRemove(userListContents[socket.server], socket.username);
       // Echo globally in the server that this user has left
       socket.to(socket.server).emit('user left', {
