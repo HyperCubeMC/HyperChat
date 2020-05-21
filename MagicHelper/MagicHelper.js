@@ -270,14 +270,14 @@ HTMLElement.prototype.show = function () {
  * Fades in an element.
  * @example
  * $('element').fadeIn()
- * @param {String} fadeInSeconds - The amount of time for the fade in transition in seconds.
+ * @param {String} fadeInMilliseconds - The amount of time for the fade in transition in milliseconds.
  * @returns {Promise} Returns a promise with the HTMLElement when the function is complete.
  */
-HTMLElement.prototype.fadeIn = function (fadeInSeconds) {
+HTMLElement.prototype.fadeIn = function (fadeInMilliseconds) {
   return new Promise((resolve, reject) => {
-    const transitionTime = fadeInSeconds || 0.5;
+    const transitionTime = fadeInMilliseconds || 500;
     this.css('opacity', '0');
-    this.css('transition', 'opacity ' + transitionTime + 's');
+    this.css('transition', 'opacity ' + transitionTime + 'ms');
     this.show();
     setTimeout(() => {
       this.css('opacity', '1')
@@ -292,16 +292,16 @@ HTMLElement.prototype.fadeIn = function (fadeInSeconds) {
  * Fades out an element.
  * @example
  * $('element').fadeOut()
- * @param {String} fadeOutSeconds - The amount of time for the fade out transition in seconds.
+ * @param {String} fadeOutMilliseconds - The amount of time for the fade out transition in milliseconds.
  * @returns {Promise} Returns a promise with the HTMLElement when the function is complete.
  */
-HTMLElement.prototype.fadeOut = function (fadeOutSeconds) {
+HTMLElement.prototype.fadeOut = function (fadeOutMilliseconds) {
   return new Promise((resolve, reject) => {
-    const transitionTime = fadeOutSeconds || 0.5;
-    this.css('transition', 'opacity ' + transitionTime + 's');
+    const transitionTime = fadeOutMilliseconds || 500;
+    this.css('transition', 'opacity ' + transitionTime + 'ms');
     this.css('opacity', '0');
     setTimeout(() => {
-      this.hide;
+      this.hide();
       resolve(this);
     }, transitionTime);
   });
