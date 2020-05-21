@@ -185,6 +185,11 @@
   overflow: auto;
 }
 
+/* Change message background color on hover */
+.message:hover {
+  background-color: #202225;
+}
+
 .messageBody p {
   display: inline;
 }
