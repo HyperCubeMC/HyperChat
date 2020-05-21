@@ -275,18 +275,15 @@ HTMLElement.prototype.show = function () {
  */
 HTMLElement.prototype.fadeIn = function (fadeInSeconds) {
   return new Promise((resolve, reject) => {
-    const transitionTime = fadeInSeconds || '0.5';
-    const eventListenerOptions = {
-      once: true
-    }
+    const transitionTime = fadeInSeconds || 0.5;
     this.css('opacity', '0');
     this.css('transition', 'opacity ' + transitionTime + 's');
     this.show();
     setTimeout(() => {
       this.css('opacity', '1')
-      this.on('transitionend', () => {
+      setTimeout(() => {
         resolve(this);
-      }, eventListenerOptions);
+      }, transitionTime);
     }, 1);
   });
 }
@@ -300,16 +297,13 @@ HTMLElement.prototype.fadeIn = function (fadeInSeconds) {
  */
 HTMLElement.prototype.fadeOut = function (fadeOutSeconds) {
   return new Promise((resolve, reject) => {
-    const transitionTime = fadeOutSeconds || '0.5';
-    const eventListenerOptions = {
-      once: true
-    }
+    const transitionTime = fadeOutSeconds || 0.5;
     this.css('transition', 'opacity ' + transitionTime + 's');
     this.css('opacity', '0');
-    this.on('transitionend', () => {
-      this.hide()
+    setTimeout(() => {
+      this.hide;
       resolve(this);
-    }, eventListenerOptions);
+    }, transitionTime);
   });
 }
 
