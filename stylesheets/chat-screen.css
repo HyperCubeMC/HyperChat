@@ -183,6 +183,7 @@
 
 .message {
   overflow: auto;
+  overflow-wrap: break-word;
 }
 
 /* Change message background color on hover on light theme */
