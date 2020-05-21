@@ -510,7 +510,18 @@ io.on('connection', (socket) => {
     socket.emit('user list', {
       userListContents: userListContents[socket.server]
     });
-    socket.emit('switched server', server);
+
+    // Create timestamp for usage logging
+    const timestamp = new Date().toLocaleDateString(undefined, {
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+
+    // Usage logging
+    console.log(`${timestamp} | ${username} joined server: ${socket.server}`);
   });
 
   // When the user disconnects, perform this
