@@ -185,8 +185,13 @@
   overflow: auto;
 }
 
-/* Change message background color on hover */
-.message:hover {
+/* Change message background color on hover on light theme */
+.light .message:hover {
+  background-color: #f0e9e9;
+}
+
+/* Change message background color on hover on dark theme */
+.dark .message:hover {
   background-color: #202225;
 }
 
