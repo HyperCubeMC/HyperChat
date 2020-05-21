@@ -449,7 +449,7 @@ io.on('connection', (socket) => {
     })
 
     // Usage logging
-    console.log(`${timestamp} | ${username} joined server: ${socket.server}`);
+    console.log(`${timestamp} | ${socket.username} joined server: ${socket.server}`);
   });
 
   // When the client emits 'typing', we broadcast it to others
@@ -521,7 +521,7 @@ io.on('connection', (socket) => {
     })
 
     // Usage logging
-    console.log(`${timestamp} | ${username} joined server: ${socket.server}`);
+    console.log(`${timestamp} | ${socket.username} joined server: ${socket.server}`);
   });
 
   // When the user disconnects, perform this
