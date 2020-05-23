@@ -1,13 +1,17 @@
-// At the start, require the needed modules
-const { URL } = require('url');
-const path = require('path');
-const fs = require('fs');
-const mongoose = require('mongoose');
-const Filter = require('bad-words'),
-    filter = new Filter();
-const showdown = require('showdown');
-const xssFilter = require('showdown-xss-filter');
-const argon2 = require('argon2');
+// At the start, require and import the needed modules
+import { URL } from 'url';
+import path from 'path';
+import fs from 'fs';
+import http2 from 'http2';
+import socketio from 'socket.io';
+import mongoose from 'mongoose';
+import Filter from 'bad-words';
+import showdown from 'showdown';
+import xssFilter from 'showdown-xss-filter';
+import argon2 from 'argon2';
+
+// Define new bad-words Filter
+const filter = new Filter();
 
 // Set the process title
 process.title = 'HyperChat';
@@ -19,9 +23,10 @@ const options = {
   allowHTTP1: true
 }
 
-// Use http2 to create an https web server
-const app = require('http2').createSecureServer(options, server);
-const io = require('socket.io')(app);
+// Use http2 to create an secure http2 web server
+const app = http2.createSecureServer(options, server);
+// Define io as socket.io with our app
+const io = socketio(app);
 
 // Listen on this port
 app.listen(4434);
