@@ -2,33 +2,69 @@
 import { $, $$ } from './MagicHelper/MagicHelper.js';
 
 let notificationPermission = 'default';
-if ('serviceWorker' in navigator) {
+// Check if the browser supports service workers and make sure it supports the features I'm using
+if ('serviceWorker' in navigator && 'register' in navigator.serviceWorker && 'controller' in navigator.serviceWorker && 'ready' in navigator.serviceWorker) {
+  // If true, the service worker is controlling the site
   if (navigator.serviceWorker.controller) {
     console.log('Service worker is controlling the site.');
-    console.log('Sent \'Initial message to service worker.\' to service worker.')
-    navigator.serviceWorker.controller.postMessage('Initial message to service worker.');
-  }
-  else {
-    // Register the ServiceWorker
-    navigator.serviceWorker.register('service-worker.js', {
-      scope: './'
+    // Add message event listener to get messages from the service worker
+    navigator.serviceWorker.addEventListener('message', function(event) {
+      console.log(`Got message from service worker: ${event.data}`);
+      if (event.data.startsWith('Notification Quick Reply:')) {
+        notificationReplyMessage = event.data;
+        notificationReplyMessage = notificationReplyMessage.replace(/^(Notification Quick Reply\: )/,'');
+        sendMessage(notificationReplyMessage);
+        return;
+      }
     });
-    console.log('Service worker registered on the site.')
+    // Send initial message to service worker
+    navigator.serviceWorker.controller.postMessage('Initial message to service worker.');
+    console.log('Sent message to service worker: Initial message to service worker.')
+  }
+  // Else, the service worker is not controlling the site and needs to be registered
+  else {
+    // Register the Service Worker
+    navigator.serviceWorker.register('./service-worker.js', {
+      scope: './'
+    }).then(function(registration) {
+      // The service worker registration succeeded, so log it in console
+      console.log('Service worker registration succeeded:', registration);
+      // Add message event listener to get messages from the service worker
+      navigator.serviceWorker.addEventListener('message', function(event) {
+        console.log(`Got message from service worker: ${event.data}`);
+        if (event.data.startsWith('Notification Quick Reply:')) {
+          notificationReplyMessage = event.data;
+          notificationReplyMessage = notificationReplyMessage.replace(/^(Notification Quick Reply\: )/,'');
+          sendMessage(notificationReplyMessage);
+          return;
+        }
+      });
+      // Wait for the service worker to be ready
+      navigator.serviceWorker.ready.then(function(registration) {
+        // Send initial message to service worker
+        registration.active.postMessage('Initial message to service worker.');
+        console.log('Sent message to service worker: Initial message to service worker.');
+      });
+    }).catch(function(error) {
+      // The service worker registration failed, so show an error in console
+      console.error('Service worker registration failed:', error);
+    });
   }
 
   // Set the notification permission variable to the browser's notification permission state if the browser supports notifications.
-  if ('Notification' in window) {
+  if ('Notification' in window && typeof Notification.permission === 'string') {
     notificationPermission = Notification.permission;
   }
+}
+else {
+  console.log('Service workers are not supported on this browser or browser version.');
 }
 
 // eslint-disable-next-line no-unused-vars
 function notificationPermissionPrompt() {
-  if ('Notification' in window) {
+  if ('Notification' in window && typeof Notification.permission === 'string') {
     Notification.requestPermission(function(result) {
-      if (result === 'granted') {
-        notificationPermission = 'granted';
-      }
+      return notificationPermission = result;
     });
   }
 } // Used to show a permission prompt to grant access to notifications
@@ -396,17 +432,6 @@ socket.on('stun', () => {
   stunSound.play();
 });
 
-if ('serviceWorker' in navigator && 'Notification' in window ) {
-  navigator.serviceWorker.addEventListener('message', function(event) {
-    console.log(`Got message from service worker: ${event.data}`);
-    if (event.data.startsWith('Notification Quick Reply:')) {
-      notificationReplyMessage = event.data;
-      notificationReplyMessage = notificationReplyMessage.replace(/^(Notification Quick Reply\: )/,'');
-      sendMessage(notificationReplyMessage);
-    }
-  });
-}
-
 // Syncs the contents of the server list
 const syncServerList = (serverListContents) => {
   for (let server = 0; server < serverListContents.length; server++) {
@@ -687,8 +712,8 @@ socket.on('new message', (data) => {
   if (data.username !== username) {
     addChatMessage(data);
     chatMessageSound.play();
-    if ('navigator.serviceWorker.controller' && notificationPermission === 'granted' && data.message.includes(`@${username}`)) { // Make sure we have the permission to send notifications and the user was mentioned
-      let notificationMessage = converter.makeMarkdown(data.message); // Convert html to markdown for the notification
+    if (navigator.serviceWorker.controller && notificationPermission === 'granted' && data.message.includes(`@${username}`)) { // Make sure the service worker is controlling the site, we have the permission to send notifications, and the user was mentioned
+      const notificationMessage = converter.makeMarkdown(data.message); // Convert html to markdown for the notification
       navigator.serviceWorker.ready.then(function(registration) {
         registration.showNotification(data.username, {
           body: notificationMessage,
@@ -696,7 +721,7 @@ socket.on('new message', (data) => {
           vibrate: [200, 100, 200, 100, 200, 100, 200],
           tag: 'pingNotification',
           actions: [
-            {action: 'reply', title: 'Reply', type: 'text', placeholder: 'Type your reply.'},
+            {action: 'reply', title: 'Reply', type: 'text', placeholder: 'Type your reply...'},
             {action: 'close', title: 'Close notification'}
           ]
         });

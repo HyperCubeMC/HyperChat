@@ -1,82 +1,90 @@
-var mainCode;
 self.addEventListener('install', function(event) {
-  // Put `offline.html` page into cache
-  var offlineRequest = new Request('./errors/offline.html');
-  event.waitUntil(
-    fetch(offlineRequest).then(function(response) {
-      return caches.open('offline').then(function(cache) {
-        console.log('[oninstall] Cached offline page', response.url);
-        return cache.put(offlineRequest, response);
-      });
-    })
-  );
+  event.waitUntil(self.skipWaiting()); // Activate service worker immediately
+  event.waitUntil((async () => {
+    // Make sure we're online before attemping to add the offline page to the cache
+    if (navigator.onLine) {
+      const cache = await caches.open('HyperChat-Cache');
+      // Setting {cache: 'reload'} in the new request will ensure that the response
+      // isn't fulfilled from the HTTP cache; i.e., it will be from the network.
+      // Here we add the offline page to the cache for usage offline
+      await cache.add(new Request('./errors/offline.html', {cache: 'reload'}));
+    }
+  })());
 });
 
-self.addEventListener('fetch', function(event) {
-  // Only fall back for HTML documents.
-  var request = event.request;
-  // && request.headers.get('accept').includes('text/html')
-  if (request.method === 'GET') {
-    // `fetch()` will use the cache when possible, to this examples
-    // depends on cache-busting URL parameter to avoid the cache.
-    event.respondWith(
-      fetch(request).catch(function(error) {
-        // `fetch()` throws an exception when the server is unreachable but not
-        // for valid HTTP responses, even `4xx` or `5xx` range.
-        console.error(
-          '[onfetch] Failed. Serving cached offline fallback ' +
-          error
-        );
-        return caches.open('offline').then(function(cache) {
-          return cache.match('./errors/offline.html');
-        });
-      })
-    );
+self.addEventListener('activate', function(event) {
+  event.waitUntil(self.clients.claim()); // Become available to all pages
+});
+
+// Stale-while-revalidate service worker caching method
+self.addEventListener('fetch', (event) => {
+  // Make a new URL from the request URL
+  const reqURL = new URL(event.request.url);
+  // Let the browser handle it if it isn't a normal http/https request
+  if (!reqURL.protocol.startsWith('http') || reqURL.pathname == '/socket.io/') return;
+  // If we are offline, serve the offline page
+  if (!navigator.onLine) {
+    event.respondWith(async function() {
+      const cache = await caches.open('HyperChat-Cache');
+      const offlineResponse = await cache.match('./errors/offline.html');
+      return offlineResponse;
+    }());
   }
-  // Any other handlers come here. Without calls to `event.respondWith()` the
-  // request will be handled without the ServiceWorker.
+  event.respondWith(async function() {
+    const cache = await caches.open('HyperChat-Cache');
+    const cachedResponse = await cache.match(event.request);
+    const networkResponsePromise = fetch(event.request);
+
+    event.waitUntil(async function() {
+      const networkResponse = await networkResponsePromise;
+      await cache.put(event.request, networkResponse.clone());
+    }());
+
+    // Returned the cached response if we have one, otherwise return the network response.
+    return cachedResponse || networkResponsePromise;
+  }());
 });
 
-self.addEventListener("message", function(event) {
-  mainCode = event.source;
-  if (event.data === "Initial message to service worker.") {
-    event.source.postMessage("Initial message to main code.");
+self.addEventListener('message', function(event) {
+  self.mainCode = event.source;
+  if (event.data === 'Initial message to service worker.') {
+    event.source.postMessage('Initial message to main code.');
   }
 });
 
 self.addEventListener('notificationclick', function(event) {
   if (!event.action) {
-    event.notification.close();
+    event.notification.close();
     // This looks to see if the current is already open and
     // focuses if it is
-    event.waitUntil(clients.matchAll({
+    event.waitUntil(self.clients.matchAll({
       type: 'window'
     }).then(function(clientList) {
-      for (var i = 0; i < clientList.length; i++) {
-        var client = clientList[i];
+      for (let i = 0; i < clientList.length; i++) {
+        let client = clientList[i];
         if (client.url === '/' && 'focus' in client) {
           return client.focus();
         }
       }
-      if (clients.openWindow) {
-        return clients.openWindow('/');
+      if (self.clients.openWindow) {
+        return self.clients.openWindow('/');
       }
     }));
     return;
-  }
+  }
 
-  switch (event.action) {
-    case 'reply':
-      mainCode.postMessage("Notification Quick Reply: " + event.reply)
+  switch (event.action) {
+    case 'reply':
+      self.mainCode.postMessage(`Notification Quick Reply: ${event.reply}`);
       event.notification.close();
-      break;
-    case 'close':
-      console.log('Close');
+      break;
+    case 'close':
+    console.log('Close');
       event.notification.close();
-      break;
-    default:
+      break;
+    default:
       event.notification.close();
-      console.log(`Unknown action clicked: '${event.action}'`);
-      break;
-  }
+      console.log(`Unknown action clicked: '${event.action}'`);
+      break;
+    }
 });

@@ -9,6 +9,7 @@ import Filter from 'bad-words';
 import showdown from 'showdown';
 import xssFilter from 'showdown-xss-filter';
 import argon2 from 'argon2';
+import etag from 'etag';
 
 // Define new bad-words Filter
 const filter = new Filter();
@@ -130,7 +131,9 @@ function server (req, res) {
       if (error.code == 'ENOENT') {
         fs.readFile('./errors/404.html', function (error, content) {
           res.writeHead(404, {
-            'Content-Type': 'text/html'
+            'Content-Type': 'text/html',
+            'Content-Length': Buffer.byteLength(content),
+            'ETag': etag(content)
           });
           res.end(content, 'utf-8');
         });
@@ -142,7 +145,9 @@ function server (req, res) {
     // Yay, there's no error, so send the requested content back to the client
     } else {
       res.writeHead(200, {
-        'Content-Type': contentType
+        'Content-Type': contentType,
+        'Content-Length': Buffer.byteLength(content),
+        'ETag': etag(content)
       });
       res.end(content, 'utf-8');
     }
