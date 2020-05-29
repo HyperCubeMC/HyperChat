@@ -29,6 +29,7 @@ self.addEventListener('fetch', (event) => {
       const offlineResponse = await cache.match('./errors/offline.html');
       return offlineResponse;
     }());
+    return;
   }
   event.respondWith(async function() {
     const cache = await caches.open('HyperChat-Cache');
@@ -36,8 +37,11 @@ self.addEventListener('fetch', (event) => {
     const networkResponsePromise = fetch(event.request);
 
     event.waitUntil(async function() {
-      const networkResponse = await networkResponsePromise;
-      await cache.put(event.request, networkResponse.clone());
+      await networkResponsePromise.then(async function(networkResponse) {
+        await cache.put(event.request, networkResponse.clone());
+      }).catch(function(error) {
+        console.error(`Error fetching resource ${event.request.url} due to error: ${error}`)
+      });
     }());
 
     // Returned the cached response if we have one, otherwise return the network response.

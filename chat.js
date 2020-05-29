@@ -501,23 +501,45 @@ const removeFromUserList = (user) => {
 }
 
 // Adds the visual chat message to the message list
-const addChatMessage = (data, options) => {
-  options = options || {};
-  let usernameDiv = document.createElement('span');
-  usernameDiv.addClass('username')
-  usernameDiv.innerText = data.username;
-  usernameDiv.style.color = getUsernameColor(data.username);
+const addChatMessage = (data) => {
+  let usernameSpan = document.createElement('span');
+  usernameSpan.addClass('username')
+  usernameSpan.innerText = data.username;
+  // If the message is special, set a special username color
+  if (data.special) {
+    usernameSpan.style.color = '#00b0f4';
+  }
+  // Otherwise, just continue and use the normal getUsernameColor()
+  else {
+    usernameSpan.style.color = getUsernameColor(data.username);
+  }
 
-  let messageBodyDiv = document.createElement('span');
-  messageBodyDiv.addClass('messageBody');
-  messageBodyDiv.innerHTML = data.message;
+  let userBadge;
+  // If the message is special, add the badge from the type
+  if (data.special) {
+    userBadge = document.createElement('span');
+    userBadge.addClass('userBadge');
+    userBadge.innerText = data.type;
+  }
 
-  let messageDiv = document.createElement('li');
-  messageDiv.addClass('message');
-  messageDiv.setAttribute('data-username', data.username);
-  messageDiv.append(usernameDiv, messageBodyDiv);
+  let messageBodySpan = document.createElement('span');
+  messageBodySpan.addClass('messageBody');
+  messageBodySpan.innerHTML = data.message;
 
-  addMessageElement(messageDiv, options);
+  let messageItem = document.createElement('li');
+  messageItem.addClass('message');
+  messageItem.data('username', data.username);
+  // If the message is special, add the special class and append the badge
+  if (data.special) {
+    messageItem.addClass('special');
+    messageItem.append(usernameSpan, userBadge, messageBodySpan);
+  }
+  // Otherwise, just continue like normal
+  else {
+    messageItem.append(usernameSpan, messageBodySpan);
+  }
+
+  addMessageElement(messageItem);
 }
 
 // Sync the user typing message
@@ -587,9 +609,7 @@ function clearMessages() {
 //   all other messages (default = false)
 const addMessageElement = (element, options) => {
   // Setup default options
-  if (!options) {
-    options = {};
-  }
+  options = options || {};
 
   if (typeof options.prepend === 'undefined') {
     options.prepend = false;

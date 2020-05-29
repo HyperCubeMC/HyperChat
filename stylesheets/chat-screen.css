@@ -182,7 +182,7 @@
 }
 
 .message {
-  overflow: auto;
+  overflow: visible;
   overflow-wrap: break-word;
 }
 
@@ -196,6 +196,10 @@
   background-color: #2f3136;
 }
 
+.messageBody {
+  padding-left: 10px;
+}
+
 .messageBody p {
   display: inline;
 }
@@ -205,12 +209,27 @@
   overflow: auto;
 }
 
-.username {
+.message .username {
+  overflow: hidden;
   font-weight: 700;
-  padding-right: 15px;
+  padding-right: 5px;
   text-align: right;
 }
 
+.message.special .userBadge {
+  display: inline-block;
+  background-color: #7289da;
+  color: #fff;
+  border-radius: 5px;
+  padding-left: 3px;
+  padding-right: 3px;
+  padding-top: 2px;
+  padding-bottom: 5px;
+  font-size: 0.75em;
+  line-height: 80%;
+  vertical-align: middle;
+  margin-bottom: 3px;
+}
 /* Clickable wrapper for the server list icon */
 #serverListIconWrapper {
   width: fit-content;
