@@ -20,6 +20,12 @@ const filter = new Filter();
 // Define a new showdown (markdown library) converter with options and an xss filter
 const converter = new showdown.Converter({extensions: [xssFilter], tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
 
+// Define a new array of objects of special users
+let specialUsers = [];
+
+// Put the special users with details in the special user array
+specialUsers.push({Username: 'Justsnoopy30', Type: 'Owner'});
+
 function handleMessage({io, socket, message}) {
   // Stop right there if the user tries to send a null or non-string message
   if (typeof message !== 'string' || message == null) return;
@@ -39,14 +45,15 @@ function handleMessage({io, socket, message}) {
   // Clean the message with a bad word filter
   message = filter.clean(message);
   // Convert markdown to html with the showdown markdown converter
-  let messageHtml = converter.makeHtml(message);
-  // Send the message to everyone in the user's server
-  if (socket.username === 'Justsnoopy30') {
+  const messageHtml = converter.makeHtml(message);
+  // Perform special user checking and then send the message to everyone in the user's server
+  const specialUser = specialUsers.find(specialUser => specialUser.Username === socket.username);
+  if (specialUser) {
     io.in(socket.server).emit('new message', {
       username: socket.username,
       message: messageHtml,
       special: true,
-      type: 'owner'
+      type: specialUser.Type
     });
   }
   else {
