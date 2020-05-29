@@ -507,7 +507,7 @@ const addChatMessage = (data) => {
   usernameSpan.innerText = data.username;
   // If the message is special, set a special username color
   if (data.special) {
-    usernameSpan.style.color = '#00b0f4';
+    usernameSpan.style.color = data.usernameColor || '#00b0f4';
   }
   // Otherwise, just continue and use the normal getUsernameColor()
   else {
@@ -519,6 +519,7 @@ const addChatMessage = (data) => {
   if (data.special) {
     userBadge = document.createElement('span');
     userBadge.addClass('userBadge');
+    userBadge.css('background-color', data.badgeColor || '#7289da')
     userBadge.innerText = data.type;
   }
 

@@ -24,7 +24,7 @@ const converter = new showdown.Converter({extensions: [xssFilter], tables: true,
 let specialUsers = [];
 
 // Put the special users with details in the special user array
-specialUsers.push({Username: 'Justsnoopy30', Type: 'Owner'});
+specialUsers.push({Username: 'Justsnoopy30', Type: 'Owner', UsernameColor: '#00b0f4', BadgeColor: '#7289da'},{Username: 'kmisterk', Type: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#691785'});
 
 function handleMessage({io, socket, message}) {
   // Stop right there if the user tries to send a null or non-string message
@@ -53,7 +53,9 @@ function handleMessage({io, socket, message}) {
       username: socket.username,
       message: messageHtml,
       special: true,
-      type: specialUser.Type
+      type: specialUser.Type,
+      usernameColor: specialUser.UsernameColor,
+      badgeColor: specialUser.BadgeColor
     });
   }
   else {
