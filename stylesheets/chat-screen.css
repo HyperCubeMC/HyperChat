@@ -198,6 +198,7 @@
 
 .messageBody {
   padding-left: 10px;
+  overflow: hidden;
 }
 
 .messageBody p {
