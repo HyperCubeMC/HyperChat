@@ -90,7 +90,7 @@ function handleMessage({io, socket, message}) {
       username: 'HyperChat',
       message: 'The user specified in the command is not in the room.',
       special: true,
-      type: 'server'
+      type: 'Server'
     });
     return;
   }
@@ -102,7 +102,19 @@ function handleMessage({io, socket, message}) {
       username: 'HyperChat',
       message: 'Access Denied.',
       special: true,
-      type: 'server'
+      type: 'Server'
+    });
+    return;
+  }
+
+  // Function to send a server message indicating that the user specified an
+  // invalid command, and return
+  function invalidCommand() {
+    io.in(socket.server).emit('new message', {
+      username: 'HyperChat',
+      message: 'Invalid command.',
+      special: true,
+      type: 'Server'
     });
     return;
   }
@@ -217,12 +229,7 @@ function handleMessage({io, socket, message}) {
       break;
     }
     default: {
-      io.in(socket.server).emit('new message', {
-        username: 'HyperChat',
-        message: 'Invalid command.',
-        special: true,
-        type: 'server'
-      });
+      invalidCommand();
       break;
     }
   }
