@@ -445,8 +445,8 @@ const syncServerList = (serverListContents) => {
       serverIconForServerList.alt = serverListContents[server].ServerName;
       serverIconForServerList.draggable = 'false';
       serverIconForServerList.data('servername', serverListContents[server].ServerName);
-      serverForServerList.appendChild(serverIconForServerList.getElement());
-      grab('#Server-List').appendChild(serverForServerList.getElement());
+      serverForServerList.appendChild(serverIconForServerList);
+      grab('#Server-List').appendChild(serverForServerList);
     }
   }
 }
@@ -469,7 +469,7 @@ const syncUserList = (userListContents) => {
       let userToAddToUserList = newElement('li');
       userToAddToUserList.classList.add('userInUserList');
       userToAddToUserList.textContent = userListContents[user];
-      grab('#userListContents').appendChild(userToAddToUserList.getElement());
+      grab('#userListContents').appendChild(userToAddToUserList);
     }
   }
 }
@@ -487,7 +487,7 @@ const addToUserList = (user) => {
   let userToAddToUserList = newElement('li');
   userToAddToUserList.classList.add('userInUserList')
   userToAddToUserList.textContent = user;
-  grab('#userListContents').appendChild(userToAddToUserList.getElement());
+  grab('#userListContents').appendChild(userToAddToUserList);
 }
 
 // Remove a user from the user list.
@@ -533,11 +533,11 @@ const addChatMessage = (data) => {
   // If the message is special, add the special class and append the badge
   if (data.special) {
     messageItem.classList.add('special');
-    messageItem.append(usernameSpan.getElement(), userBadge.getElement(), messageBodySpan.getElement());
+    messageItem.append(usernameSpan, userBadge, messageBodySpan);
   }
   // Otherwise, just continue like normal
   else {
-    messageItem.append(usernameSpan.getElement(), messageBodySpan.getElement());
+    messageItem.append(usernameSpan, messageBodySpan);
   }
 
   addMessageElement(messageItem);
@@ -617,10 +617,10 @@ const addMessageElement = (element, options) => {
   }
 
   if (options.prepend) {
-    grab('#messages').prepend(element.getElement());
+    grab('#messages').prepend(element);
   }
   else {
-    grab('#messages').append(element.getElement());
+    grab('#messages').append(element);
   }
 
   grab('#messages').scrollTop = grab('#messages').scrollHeight;

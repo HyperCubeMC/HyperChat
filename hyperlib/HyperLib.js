@@ -7,13 +7,55 @@
  * @license AGPL-3.0
  */
 
+/*
+Start hacks.
+Nessesary for native DOM methods like append, appendChild and insertBefore
+to work on the Proxy elements.
+*/
+const targetNode = Symbol('targetNode');
+const normalInsertBefore = Node.prototype.insertBefore;
+const normalAppendChild = Node.prototype.appendChild;
+const normalPrepend = Element.prototype.prepend;
+const normalAppend = Element.prototype.append;
+Node.prototype.insertBefore = function(...args) {
+  if (args[0][targetNode]) {
+    args[0] = args[0][targetNode];
+    console.log(args[0]);
+  }
+  normalInsertBefore.apply(this, args);
+}
+Node.prototype.appendChild = function(...args) {
+  if (args[0][targetNode]) {
+    args[0] = args[0][targetNode];
+    console.log(args[0]);
+  }
+  normalAppendChild.apply(this, args);
+}
+Element.prototype.prepend = function(...args) {
+  args.forEach((arg, index) => {
+    if (arg[targetNode]) {
+      args[index] = args[index][targetNode];
+    }
+    console.log(`Argument ${index}:`, args[index]);
+  });
+  normalPrepend.apply(this, args);
+}
+Element.prototype.append = function(...args) {
+  args.forEach((arg, index) => {
+    if (arg[targetNode]) {
+      args[index] = args[index][targetNode];
+    }
+    console.log(`Argument ${index}:`, args[index]);
+  });
+  normalAppend.apply(this, args);
+}
+/* End hacks */
+
 const handleElement = {
   get: function(element, property) {
     switch (property) {
-      case 'getElement': {
-        return () => {
-          return element;
-        }
+      case targetNode: {
+        return element;
       }
       case 'getParent': {
         return () => {
