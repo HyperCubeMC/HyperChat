@@ -1,5 +1,5 @@
 // Import MagicHelper!
-import { $, $$ } from './MagicHelper/MagicHelper.js';
+import { grab, grabAll, newElement } from './hyperlib/HyperLib.js';
 
 let notificationPermission = 'default';
 // Check if the browser supports service workers and make sure it supports the features I'm using
@@ -158,17 +158,17 @@ const changeTheme = (theme) => {
     inverse = 'light';
     iconPrefix = 'White';
   }
-  $('body').addClass(theme);
-  $('body').removeClass(inverse);
-  $('#settingsIconInChat').src = `./assets/${iconPrefix}SettingsIcon.png`;
-  $('#settingsIconInSettings').src = `./assets/${iconPrefix}SettingsIcon.png`;
-  $('#notificationBell').src = `./assets/${iconPrefix}NotificationBell.png`;
-  $('#settingsTopBar').removeClass(`navbar-${inverse}`, `bg-${inverse}`);
-  $('#settingsTopBar').addClass(`navbar-${theme}`, `bg-${theme}`);
-  $('#Message-Box').removeClass(`${inverse}ThemeScrollbar`);
-  $('#Message-Box').addClass(`${theme}ThemeScrollbar`);
-  $('#messages').removeClass(`${inverse}ThemeScrollbar`);
-  $('#messages').addClass(`${theme}ThemeScrollbar`);
+  grab('body').classList.add(theme);
+  grab('body').classList.remove(inverse);
+  grab('#settingsIconInChat').src = `./assets/${iconPrefix}SettingsIcon.png`;
+  grab('#settingsIconInSettings').src = `./assets/${iconPrefix}SettingsIcon.png`;
+  grab('#notificationBell').src = `./assets/${iconPrefix}NotificationBell.png`;
+  grab('#settingsTopBar').classList.remove(`navbar-${inverse}`, `bg-${inverse}`);
+  grab('#settingsTopBar').classList.add(`navbar-${theme}`, `bg-${theme}`);
+  grab('#Message-Box').classList.remove(`${inverse}ThemeScrollbar`);
+  grab('#Message-Box').classList.add(`${theme}ThemeScrollbar`);
+  grab('#messages').classList.remove(`${inverse}ThemeScrollbar`);
+  grab('#messages').classList.add(`${theme}ThemeScrollbar`);
 }
 
 if (store('theme') == null) {
@@ -176,33 +176,33 @@ if (store('theme') == null) {
 }
 
 if (store('theme') == 'light') {
-  $('#lightThemeRadio').checked = true; // Set the light theme radio to checked if the theme is light on page load
+  grab('#lightThemeRadio').checked = true; // Set the light theme radio to checked if the theme is light on page load
   changeTheme('light');
 }
 
 if (store('theme') == 'dark') {
-  $('#darkThemeRadio').checked = true; // Set the dark theme radio to checked if the theme is dark on page load
+  grab('#darkThemeRadio').checked = true; // Set the dark theme radio to checked if the theme is dark on page load
   changeTheme('dark');
 }
 
-$('#lightThemeRadio').on('change', function (event) {
+grab('#lightThemeRadio').addEventListener('change', function (event) {
   changeTheme('light'); // Light theme radio chosen, so change the theme to light.
 });
 
-$('#darkThemeRadio').on('change', function (event) {
+grab('#darkThemeRadio').addEventListener('change', function (event) {
   changeTheme('dark'); // Dark theme radio chosen, so change the theme to dark.
 });
 
 // If the server list area state is not set, set it to the original state which depends if the user is on desktop or mobile
-if ($('#Server-List-Area').data('state') == undefined) {
-  const originalState = $('#Server-List-Area').css('--original-state').trim();
-  $('#Server-List-Area').data('state', originalState);
+if (grab('#Server-List-Area').data('state') == undefined) {
+  const originalState = grab('#Server-List-Area').css('--original-state').trim();
+  grab('#Server-List-Area').data('state', originalState);
 }
 
 // If the user list state is not set, set it to the original state which depends if the user is on desktop or mobile
-if ($('#User-List').data('state') == undefined) {
-  const originalState = $('#User-List').css('--original-state').trim();
-  $('#User-List').data('state', originalState);
+if (grab('#User-List').data('state') == undefined) {
+  const originalState = grab('#User-List').css('--original-state').trim();
+  grab('#User-List').data('state', originalState);
 }
 
 function onVisibilityChange(callback) {
@@ -256,66 +256,66 @@ onVisibilityChange(function(visible) {
 });
 
 function showSettingsScreen() {
-  $('#Chat-Screen').fadeOut();
-  $('#settingsScreen').fadeIn();
+  grab('#Chat-Screen').fadeOut();
+  grab('#settingsScreen').fadeIn();
 }
 
 function hideSettingsScreen() {
-  $('#settingsScreen').fadeOut();
-  $('#Chat-Screen').fadeIn();
-  $('#settingsScreen').removeEventListener('click', showSettingsScreen);
+  grab('#settingsScreen').fadeOut();
+  grab('#Chat-Screen').fadeIn();
+  grab('#settingsScreen').removeEventListener('click', showSettingsScreen);
 }
 
 function showReconnectingScreen() {
   if (loggedIn) {
-    $('#Chat-Screen').fadeOut();
-    $('#reconnectingScreen').fadeIn();
+    grab('#Chat-Screen').fadeOut();
+    grab('#reconnectingScreen').fadeIn();
   }
   else {
-    $('#loginScreen').fadeOut();
-    $('#reconnectingScreen').fadeIn();
+    grab('#loginScreen').fadeOut();
+    grab('#reconnectingScreen').fadeIn();
   }
 }
 
 function hideReconnectingScreen() {
   if (loggedIn) {
-    $('#reconnectingScreen').fadeOut();
-    $('#Chat-Screen').fadeIn();
+    grab('#reconnectingScreen').fadeOut();
+    grab('#Chat-Screen').fadeIn();
   }
   else {
-    $('#reconnectingScreen').fadeOut();
-    $('#loginScreen').fadeIn();
+    grab('#reconnectingScreen').fadeOut();
+    grab('#loginScreen').fadeIn();
   }
 }
 
 // Shows or hides the server list
 function toggleServerList() {
-  if ($('#Server-List-Area').data('state') == 'hidden') {
-    $('#Server-List-Area').css('opacity', '1');
-    $('#Server-List-Area').css('transform', 'translateX(0%)');
-    $('#Server-List-Area').data('state', 'shown');
+  if (grab('#Server-List-Area').data('state') == 'hidden') {
+    grab('#Server-List-Area').css('opacity', '1');
+    grab('#Server-List-Area').css('transform', 'translateX(0%)');
+    grab('#Server-List-Area').data('state', 'shown');
     return 'nowShown';
   }
   else {
-    $('#Server-List-Area').css('opacity', '0');
-    $('#Server-List-Area').css('transform', 'translateX(-100%)');
-    $('#Server-List-Area').data('state', 'hidden');
+    grab('#Server-List-Area').css('opacity', '0');
+    grab('#Server-List-Area').css('transform', 'translateX(-100%)');
+    grab('#Server-List-Area').data('state', 'hidden');
     return 'nowHidden';
   }
 }
 
 // Shows or hides the user list
 function toggleUserList() {
-  if ($('#User-List').data('state') == 'hidden') {
-    $('#User-List').css('opacity', '1');
-    $('#User-List').css('transform', 'translateX(0%)');
-    $('#User-List').data('state', 'shown');
+  if (grab('#User-List').data('state') == 'hidden') {
+    grab('#User-List').css('opacity', '1');
+    grab('#User-List').css('transform', 'translateX(0%)');
+    grab('#User-List').data('state', 'shown');
     return 'nowShown';
   }
   else {
-    $('#User-List').css('opacity', '0');
-    $('#User-List').css('transform', 'translateX(100%)');
-    $('#User-List').data('state', 'hidden');
+    grab('#User-List').css('opacity', '0');
+    grab('#User-List').css('transform', 'translateX(100%)');
+    grab('#User-List').data('state', 'hidden');
     return 'nowHidden';
   }
 }
@@ -328,18 +328,18 @@ function arrayRemove(array, value) {
 
 // Submits the credentials to the server
 const submitLoginInfo = () => {
-  username = cleanInput($('#usernameInput').value.trim());
-  password = cleanInput($('#passwordInput').value.trim());
-  server = cleanInput($('#serverInput').value.trim());
+  username = cleanInput(grab('#usernameInput').value.trim());
+  password = cleanInput(grab('#passwordInput').value.trim());
+  server = cleanInput(grab('#serverInput').value.trim());
   // Tell the server your username, password, and server
   socket.emit('login', { username, password, server });
 }
 
 socket.on('login authorized', () => {
   if (initialLogin) {
-    $('#loginScreen').fadeOut();
-    $('#Chat-Screen').fadeIn();
-    currentInput = $('#Message-Box');
+    grab('#loginScreen').fadeOut();
+    grab('#Chat-Screen').fadeIn();
+    currentInput = grab('#Message-Box');
     connected = true;
     loggedIn = true
     // Display the welcome message
@@ -372,9 +372,9 @@ socket.on('server list', (data) => {
   serverListContents = data.serverListContents;
   syncServerList(serverListContents);
   // Add an event listener go to the server when a server icon in the server list is clicked
-  $$('.serverIconInServerList').forEach(function(element) {
-    element.on('click', function() {
-      const server = element.data('servername');
+  grabAll('.serverIconInServerList').forEach(function(element) {
+    element.addEventListener('click', function() {
+      const server = element.dataset['servername'];
       socket.emit('switch server', server);
       // const serverName = serverListContents.find(server => server.ServerName === 'ServerNameHere').PropertyOfObjectToGet;
     });
@@ -382,12 +382,12 @@ socket.on('server list', (data) => {
 });
 
 socket.on('mute', () => {
-  $('#Message-Box').disabled = true;
+  grab('#Message-Box').disabled = true;
   alert('You are now muted!');
 });
 
 socket.on('unmute', () => {
-  $('#Message-Box').disabled = false;
+  grab('#Message-Box').disabled = false;
   alert('You are now unmuted!');
 });
 
@@ -436,17 +436,17 @@ socket.on('stun', () => {
 const syncServerList = (serverListContents) => {
   for (let server = 0; server < serverListContents.length; server++) {
     if (serverListContents[server] !== undefined) {
-      let serverForServerList = document.createElement('li');
-      serverForServerList.addClass('serverInServerList');
-      let serverIconForServerList = document.createElement('img');
-      serverIconForServerList.addClass('serverIconInServerList');
-      serverIconForServerList.attr('src', serverListContents[server].Image);
-      serverIconForServerList.attr('title', serverListContents[server].ServerName);
-      serverIconForServerList.attr('alt', serverListContents[server].ServerName);
-      serverIconForServerList.attr('draggable', 'false');
+      let serverForServerList = newElement('li');
+      serverForServerList.classList.add('serverInServerList');
+      let serverIconForServerList = newElement('img');
+      serverIconForServerList.classList.add('serverIconInServerList');
+      serverIconForServerList.src = serverListContents[server].Image;
+      serverIconForServerList.title = serverListContents[server].ServerName;
+      serverIconForServerList.alt = serverListContents[server].ServerName;
+      serverIconForServerList.draggable = 'false';
       serverIconForServerList.data('servername', serverListContents[server].ServerName);
-      serverForServerList.appendChild(serverIconForServerList);
-      $('#Server-List').appendChild(serverForServerList);
+      serverForServerList.appendChild(serverIconForServerList.getElement());
+      grab('#Server-List').appendChild(serverForServerList.getElement());
     }
   }
 }
@@ -454,7 +454,7 @@ const syncServerList = (serverListContents) => {
 // Sends a chat message
 const sendMessage = (message) => {
   if (message && connected && !cheatActivated) {
-    $('#Message-Box').value = '';
+    grab('#Message-Box').value = '';
     socket.emit('new message', message);
   }
   else if (message && connected && cheatActivated) {
@@ -466,34 +466,34 @@ const sendMessage = (message) => {
 const syncUserList = (userListContents) => {
   for (let user = 0; user < userListContents.length; user++) {
     if (userListContents[user] !== undefined) {
-      let userToAddToUserList = document.createElement('li');
-      userToAddToUserList.addClass('userInUserList');
-      userToAddToUserList.text(userListContents[user]);
-      $('#userListContents').appendChild(userToAddToUserList);
+      let userToAddToUserList = newElement('li');
+      userToAddToUserList.classList.add('userInUserList');
+      userToAddToUserList.textContent = userListContents[user];
+      grab('#userListContents').appendChild(userToAddToUserList.getElement());
     }
   }
 }
 
 // Log a message
 const log = (message, options) => {
-  let messageElement = document.createElement('li');
-  messageElement.addClass('log')
-  messageElement.text(message);
+  let messageElement = newElement('li');
+  messageElement.classList.add('log')
+  messageElement.textContent = message;
   addMessageElement(messageElement, options);
 }
 
 // Add a user to the user list.
 const addToUserList = (user) => {
-  let userToAddToUserList = document.createElement('li');
-  userToAddToUserList.addClass('userInUserList')
-  userToAddToUserList.text(user);
-  $('#userListContents').appendChild(userToAddToUserList);
+  let userToAddToUserList = newElement('li');
+  userToAddToUserList.classList.add('userInUserList')
+  userToAddToUserList.textContent = user;
+  grab('#userListContents').appendChild(userToAddToUserList.getElement());
 }
 
 // Remove a user from the user list.
 const removeFromUserList = (user) => {
   for (let userInUserList of document.querySelectorAll('#User-List .userInUserList')) {
-    if (userInUserList.text() === user) {
+    if (userInUserList.textContent === user) {
       userInUserList.remove();
       break;
     }
@@ -502,9 +502,9 @@ const removeFromUserList = (user) => {
 
 // Adds the visual chat message to the message list
 const addChatMessage = (data) => {
-  let usernameSpan = document.createElement('span');
-  usernameSpan.addClass('username')
-  usernameSpan.innerText = data.username;
+  let usernameSpan = newElement('span');
+  usernameSpan.classList.add('username')
+  usernameSpan.textContent = data.username;
   // If the message is special, set a special username color
   if (data.special) {
     usernameSpan.style.color = data.usernameColor || '#00b0f4';
@@ -517,27 +517,27 @@ const addChatMessage = (data) => {
   let userBadge;
   // If the message is special, add the badge from the type
   if (data.special) {
-    userBadge = document.createElement('span');
-    userBadge.addClass('userBadge');
+    userBadge = newElement('span');
+    userBadge.classList.add('userBadge');
     userBadge.css('background-color', data.badgeColor || '#7289da')
-    userBadge.innerText = data.type;
+    userBadge.textContent = data.type;
   }
 
-  let messageBodySpan = document.createElement('span');
-  messageBodySpan.addClass('messageBody');
+  let messageBodySpan = newElement('span');
+  messageBodySpan.classList.add('messageBody');
   messageBodySpan.innerHTML = data.message;
 
-  let messageItem = document.createElement('li');
-  messageItem.addClass('message');
+  let messageItem = newElement('li');
+  messageItem.classList.add('message');
   messageItem.data('username', data.username);
   // If the message is special, add the special class and append the badge
   if (data.special) {
-    messageItem.addClass('special');
-    messageItem.append(usernameSpan, userBadge, messageBodySpan);
+    messageItem.classList.add('special');
+    messageItem.append(usernameSpan.getElement(), userBadge.getElement(), messageBodySpan.getElement());
   }
   // Otherwise, just continue like normal
   else {
-    messageItem.append(usernameSpan, messageBodySpan);
+    messageItem.append(usernameSpan.getElement(), messageBodySpan.getElement());
   }
 
   addMessageElement(messageItem);
@@ -570,13 +570,13 @@ const syncUsersTyping = (usersTypingArray) => {
   let usersTypingText = formatUsersTyping(usersTypingArray);
 
   if (usersTypingText !== '') {
-    let element = document.createElement('span');
-    element.addClass('typing');
-    element.text(usersTypingText);
-    $('#User-Is-Typing-Area').html(element.outerHTML);
+    let element = newElement('span');
+    element.classList.add('typing');
+    element.textContent = usersTypingText;
+    grab('#User-Is-Typing-Area').innerHTML = element.outerHTML;
   }
   else {
-    $('#User-Is-Typing-Area').html('');
+    grab('#User-Is-Typing-Area').innerHTML = '';
   }
 }
 
@@ -617,18 +617,18 @@ const addMessageElement = (element, options) => {
   }
 
   if (options.prepend) {
-    $('#messages').prepend(element);
+    grab('#messages').prepend(element.getElement());
   }
   else {
-    $('#messages').append(element);
+    grab('#messages').append(element.getElement());
   }
 
-  $('#messages').scrollTop = $('#messages').scrollHeight;
+  grab('#messages').scrollTop = grab('#messages').scrollHeight;
 }
 
 // Prevents input from having injected markup
 const cleanInput = (input) => {
-  let tmp = document.createElement('div');
+  let tmp = newElement('div');
   tmp.innerHTML = input;
   return tmp.textContent || tmp.innerText || '';
 }
@@ -667,18 +667,18 @@ const getUsernameColor = (username) => {
 
 // Keyboard events
 
-$('#Message-Box').on('input', function (event) {
-  this.css('height', 'auto');
-  this.css('height', `${this.scrollHeight}px`);
+grab('#Message-Box').addEventListener('input', function (event) {
+  grab('#Message-Box').css('height', 'auto');
+  grab('#Message-Box').css('height', `${this.scrollHeight}px`);
 });
 
-$('#Message-Box').on('keydown', function (event) {
+grab('#Message-Box').addEventListener('keydown', function (event) {
   if (event.key=='Enter' && !event.shiftKey) {
     event.preventDefault()
-    sendMessage($('#Message-Box').value);
+    sendMessage(grab('#Message-Box').value);
     socket.emit('stop typing');
     typing = false;
-    this.css('height', 'auto');
+    grab('#Message-Box').css('height', 'auto');
   }
 });
 
@@ -696,35 +696,35 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
-$('#Message-Box').on('input', updateTyping);
+grab('#Message-Box').addEventListener('input', updateTyping);
 
 // Set focus to username input when clicked
-$('#usernameInput').on('click', () => {
-  currentInput = $('#usernameInput');
+grab('#usernameInput').addEventListener('click', () => {
+  currentInput = grab('#usernameInput');
 });
 
 // Set focus to password input when clicked
-$('#passwordInput').on('click',() => {
-  currentInput = $('#passwordInput');
+grab('#passwordInput').addEventListener('click',() => {
+  currentInput = grab('#passwordInput');
 });
 
 // Focus input when clicking on the message input's border
-$('#Message-Box').on('click', () => {$('#Message-Box').focus()});
+grab('#Message-Box').addEventListener('click', () => {grab('#Message-Box').focus()});
 
 // Go to the settings page when the settings icon on the chat page is clicked
-$('#settingsIconInChat').on('click', showSettingsScreen);
+grab('#settingsIconInChat').addEventListener('click', showSettingsScreen);
 
 // Go to the chat page when the settings icon in settings is clicked
-$('#settingsIconInSettings').on('click', hideSettingsScreen);
+grab('#settingsIconInSettings').addEventListener('click', hideSettingsScreen);
 
 // Show the notification permission prompt when the notification bell is clicked
-$('#notificationBell').on('click', notificationPermissionPrompt);
+grab('#notificationBell').addEventListener('click', notificationPermissionPrompt);
 
 // Toggle server list slide-out drawer when the server list icon is tapped on mobile
-$('#serverListIconWrapper').on('click', toggleServerList);
+grab('#serverListIconWrapper').addEventListener('click', toggleServerList);
 
 // Toggle user list slide-out drawer when the user list icon is tapped on mobile
-$('#userListIconWrapper').on('click', toggleUserList);
+grab('#userListIconWrapper').addEventListener('click', toggleUserList);
 
 // Socket events
 
