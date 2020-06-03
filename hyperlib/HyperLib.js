@@ -9,7 +9,7 @@
 
 /*
 Start hacks.
-Nessesary for native DOM methods like append, appendChild and insertBefore
+Nessesary for native DOM methods like prepend, append, appendChild and insertBefore
 to work on the Proxy elements.
 */
 const targetNode = Symbol('targetNode');
