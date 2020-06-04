@@ -18,6 +18,8 @@ self.addEventListener('activate', function(event) {
 
 // Stale-while-revalidate service worker caching method
 self.addEventListener('fetch', (event) => {
+  // Opening devtools will trigger these o-i-c requests, which the service worker can't handle, so return
+  if (event.request.cache === 'only-if-cached' && event.request.mode !== 'same-origin') return;
   // Make a new URL from the request URL
   const reqURL = new URL(event.request.url);
   // Let the browser handle it if it isn't a normal http/https request
