@@ -1,4 +1,4 @@
-// Import MagicHelper!
+// Import dependencies
 import { grab, grabAll, newElement } from './hyperlib/HyperLib.js';
 
 let notificationPermission = 'default';
@@ -96,7 +96,6 @@ let pageVisible;
 let systemTheme;
 let usersTypingArray = [];
 let socket; // Socket.io, placeholder letiable until assigned later below.
-const converter = new showdown.Converter({tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
 
 // Initialize sounds for the chat app.
 const chatMessageSound = new Audio('./assets/ChatMessageSound.webm');
@@ -734,7 +733,10 @@ socket.on('new message', (data) => {
     addChatMessage(data);
     chatMessageSound.play();
     if (navigator.serviceWorker.controller && notificationPermission === 'granted' && data.message.includes(`@${username}`)) { // Make sure the service worker is controlling the site, we have the permission to send notifications, and the user was mentioned
-      const notificationMessage = converter.makeMarkdown(data.message); // Convert html to markdown for the notification
+      // Convert html to markdown using AgentMarkdown for the notification
+      // const notificationMessage = turndown(data.message);
+      // No html to markdown converter yet because of issues
+      const notificationMessage = data.message;
       navigator.serviceWorker.ready.then(function(registration) {
         registration.showNotification(data.username, {
           body: notificationMessage,

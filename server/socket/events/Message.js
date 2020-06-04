@@ -7,8 +7,8 @@
  */
 
  // At the start, import the needed modules
-import showdown from 'showdown';
-import xssFilter from 'showdown-xss-filter';
+import marked from 'marked';
+import sanitizeHtml from 'sanitize-html';
 import Filter from 'bad-words';
 
 // Set the message command prefix
@@ -16,9 +16,6 @@ const prefix = '/';
 
 // Define new bad-words Filter
 const filter = new Filter();
-
-// Define a new showdown (markdown library) converter with options and an xss filter
-const converter = new showdown.Converter({extensions: [xssFilter], tables: true, strikethrough: true, emoji: true, underline: true, simplifiedAutoLink: true, encodeEmails: false, openLinksInNewWindow: true, simpleLineBreaks: true, backslashEscapesHTMLTags: true, ghMentions: true});
 
 // Define a new array of objects of special users
 let specialUsers = [];
@@ -41,17 +38,21 @@ function handleMessage({io, socket, message}) {
     });
     return;
   }
-  // Go ahead and filter the message, and then send it to the user's server
   // Clean the message with a bad word filter
-  message = filter.clean(message);
-  // Convert markdown to html with the showdown markdown converter
-  const messageHtml = converter.makeHtml(message);
-  // Perform special user checking and then send the message to everyone in the user's server
+  const filteredMessage = filter.clean(message);
+
+  // Convert markdown to html with the Marked markdown library
+  const messageHtml = marked(filteredMessage);
+
+  // Sanitize the message html with the sanitize-html library
+  const finalMessage = sanitizeHtml(messageHtml);
+
+  // Perform special user checking and then send the final message to everyone in the user's server
   const specialUser = specialUsers.find(specialUser => specialUser.Username === socket.username);
   if (specialUser) {
     io.in(socket.server).emit('new message', {
       username: socket.username,
-      message: messageHtml,
+      message: finalMessage,
       special: true,
       type: specialUser.Type,
       usernameColor: specialUser.UsernameColor,
@@ -61,7 +62,7 @@ function handleMessage({io, socket, message}) {
   else {
     io.in(socket.server).emit('new message', {
       username: socket.username,
-      message: messageHtml,
+      message: finalMessage,
       type: 'normal'
     });
   }
