@@ -147,7 +147,7 @@ function handleLogin({io, socket, username, password, server}) {
           year: 'numeric',
           hour: '2-digit',
           minute: '2-digit'
-        })
+        });
 
         // Usage logging
         console.log(`${timestamp} | ${socket.username} joined server: ${socket.server}`);
