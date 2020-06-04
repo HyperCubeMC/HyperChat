@@ -1,5 +1,7 @@
 // Import dependencies
 import { grab, grabAll, newElement } from './hyperlib/HyperLib.js';
+import store from './es_modules/store2/store2.js';
+import cheet from './es_modules/cheet.js/cheet.js';
 
 let notificationPermission = 'default';
 // Check if the browser supports service workers and make sure it supports the features I'm using
