@@ -39,7 +39,7 @@
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
     <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js" defer></script>
     <script src="./node_modules/socket.io-client/dist/socket.io.js" defer></script>
-    <script src="./node_modules/@iconfu/svg-inject/dist/svg-inject.min.js"></script>
+    <script src="./node_modules/@iconfu/svg-inject/dist/svg-inject.min.js" defer></script>
     <script type="module" src="./chat.js" defer></script>
     <!-- Fix Electron Support (after scripts) -->
     <script>if (window.module) module = window.module;</script>
@@ -66,12 +66,12 @@
     <section id="Chat-Screen" data-original-display="grid">
       <div id="Top-Bar">
         <div id="serverListIconWrapper">
-          <img id="serverListIcon" src="./assets/ServerListIcon.svg" title="Server List Icon" alt="Server List Icon" draggable="false" onload="SVGInject(this)">
+          <img id="serverListIcon" src="./assets/ServerListIcon.svg" title="Server List Icon" alt="Server List Icon" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
         </div>
         <img id="notificationBell" src="./assets/BlackNotificationBell.png" title="Notification Bell" alt="Notification Bell" draggable="false">
         <img class="settingsIcon" id="settingsIconInChat" src="./assets/BlackSettingsIcon.png" title="Settings Icon" alt="Settings Icon" draggable="false">
         <div id="userListIconWrapper">
-          <img id="userListIcon" src="./assets/UserListIcon.svg" title="User List Icon" alt="User List Icon" draggable="false" onload="SVGInject(this)">
+          <img id="userListIcon" src="./assets/UserListIcon.svg" title="User List Icon" alt="User List Icon" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
         </div>
       </div>
       <div id="Server-List-Area">
