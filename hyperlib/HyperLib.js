@@ -68,6 +68,11 @@ const handleElement = {
           return new Proxy(element.parentElement, handleElement);
         }
       }
+      case 'attr': {
+        return (attribute, value) => {
+          return attr(element, attribute, value);
+        }
+      }
       case 'data': {
         return (property, value) => {
           return data(element, property, value);
@@ -126,15 +131,15 @@ const newElement = function(newElementString) {
  return new Proxy(element, handleElement);
 }
 
-function css(element, property, value) {
+function attr(element, attribute, value) {
   if (typeof value === 'undefined') {
-    if (typeof property === 'undefined') {
-      return window.getComputedStyle(element);
+    if (typeof attribute === 'undefined') {
+      return element.attributes;
     }
-    return window.getComputedStyle(element).getPropertyValue(property);
+    return element.getAttribute(attribute);
   }
-  element.style.setProperty(property, value);
-  return new Proxy(element, handleElement);
+  element.setAttribute(attribute, value);
+  return this;
 }
 
 function data(element, property, value) {
@@ -145,6 +150,17 @@ function data(element, property, value) {
     return element.dataset[property];
   }
   element.dataset[property] = value;
+  return new Proxy(element, handleElement);
+}
+
+function css(element, property, value) {
+  if (typeof value === 'undefined') {
+    if (typeof property === 'undefined') {
+      return window.getComputedStyle(element);
+    }
+    return window.getComputedStyle(element).getPropertyValue(property);
+  }
+  element.style.setProperty(property, value);
   return new Proxy(element, handleElement);
 }
 
