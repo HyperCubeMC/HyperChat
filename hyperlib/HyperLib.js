@@ -7,6 +7,12 @@
  * @license AGPL-3.0
  */
 
+// Import dependencies
+import debug from '/es_modules/debug/debug.js';
+
+// Set debug logger
+const logDebug = debug('HyperLib:debug');
+
 /*
 Start hacks.
 Nessesary for native DOM methods like prepend, append, appendChild and insertBefore
@@ -20,14 +26,14 @@ const normalAppend = Element.prototype.append;
 Node.prototype.insertBefore = function(...args) {
   if (args[0][targetNode]) {
     args[0] = args[0][targetNode];
-    console.log(args[0]);
+    logDebug(args[0]);
   }
   normalInsertBefore.apply(this, args);
 }
 Node.prototype.appendChild = function(...args) {
   if (args[0][targetNode]) {
     args[0] = args[0][targetNode];
-    console.log(args[0]);
+    logDebug(args[0]);
   }
   normalAppendChild.apply(this, args);
 }
@@ -36,7 +42,7 @@ Element.prototype.prepend = function(...args) {
     if (arg[targetNode]) {
       args[index] = args[index][targetNode];
     }
-    console.log(`Argument ${index}:`, args[index]);
+    logDebug(`Argument ${index}:`, args[index]);
   });
   normalPrepend.apply(this, args);
 }
@@ -45,7 +51,7 @@ Element.prototype.append = function(...args) {
     if (arg[targetNode]) {
       args[index] = args[index][targetNode];
     }
-    console.log(`Argument ${index}:`, args[index]);
+    logDebug(`Argument ${index}:`, args[index]);
   });
   normalAppend.apply(this, args);
 }
