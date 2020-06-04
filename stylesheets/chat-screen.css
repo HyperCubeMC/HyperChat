@@ -4,8 +4,8 @@
 #Chat-Screen {
   display: none;
   position: absolute;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   /* Use minmax(0, 1fr) instead of 1fr so that elements can be prevented from overflowing their grid areas. Refer to https://stackoverflow.com/a/52787826/8584806 */
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
@@ -58,8 +58,8 @@
 @media screen and (min-width: 677px) {
   #Chat-Screen {
     display: none;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     /* Use minmax(0, 1fr) instead of 1fr so that elements can be prevented from overflowing their grid areas. Refer to https://stackoverflow.com/a/52787826/8584806 */
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
