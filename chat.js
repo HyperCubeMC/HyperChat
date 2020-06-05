@@ -347,9 +347,11 @@ import('./es_modules/emoji-button/emoji-button.js').then(({default: EmojiButton}
     document.querySelector('#Message-Box').value += emoji;
   });
 
-  //
+  // When the emoji button is clicked, toggle the emoji picker
   button.addEventListener('click', () => {
     picker.togglePicker(button);
+    grab('.emoji-picker').classList.remove('light');
+    grab('.emoji-picker').classList.add(store('theme'));
   });
 });
 
