@@ -58,12 +58,37 @@ function handleMessage({io, socket, message}) {
       usernameColor: specialUser.UsernameColor,
       badgeColor: specialUser.BadgeColor
     });
+    // Create the mongoose document for messages using the message model
+    const messageDocument = new messageModel({
+      username: socket.username,
+      message: finalMessage,
+      special: true,
+      type: specialUser.Type,
+      usernameColor: specialUser.UsernameColor,
+      badgeColor: specialUser.BadgeColor
+    });
+    serverModel.findOne({serverName: socket.server}, function(err, server) {
+      if (err) console.error(err);
+      server.messages.push(messageDocument);
+      server.save(function (err, server) {
+        if (err) console.error(err);
+      });
+    });
   }
   else {
     io.in(socket.server).emit('new message', {
       username: socket.username,
       message: finalMessage,
       type: 'normal'
+    });
+    // Create the mongoose document for messages using the message model
+    const messageDocument = new messageModel({
+      user: socket.username,
+      message: finalMessage,
+      type: 'normal',
+    });
+    messageDocument.save(function (err, credentials) {
+      if (err) return console.error(err);
     });
   }
 

@@ -794,6 +794,13 @@ socket.on('server switch success', (data) => {
   });
 });
 
+socket.on('initial message list', (messages) => {
+  console.log(messages);
+  messages.forEach((message) => {
+    addChatMessage(message);
+  });
+});
+
 socket.on('disconnect', () => {
   log('You have been disconnected.');
   lostConnectionSound.play();

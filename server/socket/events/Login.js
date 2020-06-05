@@ -137,6 +137,34 @@ function handleLogin({io, socket, username, password, server}) {
           serverListContents: serverListContents[socket.username]
         });
 
+        serverModel.countDocuments({serverName: socket.server}, function(err, count) {
+          // Server is already in the database, so return
+          if (count > 0) {
+            return;
+          }
+          // Else, make a new entry of the server
+          else {
+            // Create the mongoose document for a server using the server model
+            const serverDocument = new serverModel({
+              serverName: socket.server,
+              serverImage: 'none',
+              serverOwner: socket.username
+            });
+
+            serverDocument.save(function (err, server) {
+              if (err) console.error(err);
+            });
+          }
+        });
+
+        serverModel.findOne({serverName: socket.server}).then((server) => {
+          // Send the initial message list to the client (array of messages)
+          socket.emit('initial message list', server.messages);
+        }).catch((error) => {
+          // Catch and show an error in console if there is one
+          console.error(error);
+        });
+
         // Map the user's username to a unique socket id
         userMap.set(socket.username, socket.id);
 

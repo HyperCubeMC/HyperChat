@@ -62,8 +62,33 @@ const userCredentialsSchema = new Schema({
   hashedPassword: String
 });
 
+// Create a new schema for messages
+const messageSchema = new Schema({
+  username: String,
+  message: String,
+  type: String,
+  special: {type: Boolean, required: false},
+  usernameColor: {type: String, required: false},
+  badgeColor: {type: String, required: false},
+  timestamp: {type: Number, default: Date.now()}
+});
+
+// Create a new schema for servers
+const serverSchema = new Schema({
+  serverName: String,
+  serverImage: String,
+  serverOwner: String,
+  messages: [messageSchema]
+});
+
 // Use the user credentials Schema to make a Mongoose Model as a shared global variable
 global.userCredentialsModel = mongoose.model('userCredentialsModel', userCredentialsSchema, 'credentials');
+
+// Use the message Schema to make a Mongoose Model as a shared global variable
+global.messageModel = mongoose.model('messageModel', messageSchema);
+
+// Use the server Schema to make a Mongoose Model as a shared global variable
+global.serverModel = mongoose.model('serverModel', serverSchema, 'servers');
 
 // And everything starts here where a user makes a connection to the socket.io server...
 io.on('connection', (socket) => {
