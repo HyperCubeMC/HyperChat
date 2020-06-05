@@ -16,7 +16,7 @@ function arrayRemove(array, value) {
 function handleDisconnect({io, socket}) {
   if (socket.addedUser) {
     // Remove the user from the user list
-    userListContents[socket.server] = arrayRemove(userListContents[socket.server], socket.username);
+    global.userListContents[socket.server] = arrayRemove(global.userListContents[socket.server], socket.username);
     // Echo globally in the server that this user has left
     socket.to(socket.server).emit('user left', {
       username: socket.username
@@ -26,7 +26,7 @@ function handleDisconnect({io, socket}) {
       username: socket.username
     });
     // Remove the username to socket id map entry for the user
-    userMap.delete(socket.username);
+    global.userMap.delete(socket.username);
   }
 }
 

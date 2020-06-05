@@ -59,7 +59,7 @@ function handleMessage({io, socket, message}) {
       badgeColor: specialUser.BadgeColor
     });
     // Create the mongoose document for messages using the message model
-    const messageDocument = new messageModel({
+    const messageDocument = new global.messageModel({
       username: socket.username,
       message: finalMessage,
       special: true,
@@ -67,7 +67,8 @@ function handleMessage({io, socket, message}) {
       usernameColor: specialUser.UsernameColor,
       badgeColor: specialUser.BadgeColor
     });
-    serverModel.findOne({serverName: socket.server}, function(err, server) {
+    // Find the user's server and add the new message to the server's messages
+    global.serverModel.findOne({serverName: socket.server}, function(err, server) {
       if (err) console.error(err);
       server.messages.push(messageDocument);
       server.save(function (err, server) {
@@ -82,12 +83,12 @@ function handleMessage({io, socket, message}) {
       type: 'normal'
     });
     // Create the mongoose document for messages using the message model
-    const messageDocument = new messageModel({
+    const messageDocument = new global.messageModel({
       username: socket.username,
       message: finalMessage,
       type: 'normal'
     });
-    serverModel.findOne({serverName: socket.server}, function(err, server) {
+    global.serverModel.findOne({serverName: socket.server}, function(err, server) {
       if (err) console.error(err);
       server.messages.push(messageDocument);
       server.save(function (err, server) {
@@ -157,12 +158,12 @@ function handleMessage({io, socket, message}) {
         return commandAccessDenied();
       }
       // If the user to execute the command in isn't in the room, return with commandNonexistingUserSpecified()
-      if (!userListContents[socket.server].includes(commandArgument)) {
+      if (!global.userListContents[socket.server].includes(commandArgument)) {
         return commandNonexistingUserSpecified();
       }
       const userToMute = commandArgument;
-      mutedList.push(userToMute);
-      io.to(userMap.get(userToMute)).emit('mute');
+      global.mutedList.push(userToMute);
+      io.to(global.userMap.get(userToMute)).emit('mute');
       break;
     }
     case 'unmute': {
@@ -171,12 +172,12 @@ function handleMessage({io, socket, message}) {
         return commandAccessDenied();
       }
       // If the user to execute the command in isn't in the room, return with commandNonexistingUserSpecified()
-      if (!userListContents[socket.server].includes(commandArgument)) {
+      if (!global.userListContents[socket.server].includes(commandArgument)) {
         return commandNonexistingUserSpecified();
       }
       const userToUnmute = commandArgument;
-      mutedList = arrayRemove(mutedList, userToUnmute);
-      io.to(userMap.get(userToUnmute)).emit('unmute');
+      global.mutedList = global.arrayRemove(global.mutedList, userToUnmute);
+      io.to(global.userMap.get(userToUnmute)).emit('unmute');
       break;
     }
     case 'flip': {
@@ -185,11 +186,11 @@ function handleMessage({io, socket, message}) {
         return commandAccessDenied();
       }
       // If the user to execute the command in isn't in the room, return with commandNonexistingUserSpecified()
-      if (!userListContents[socket.server].includes(commandArgument)) {
+      if (!global.userListContents[socket.server].includes(commandArgument)) {
         return commandNonexistingUserSpecified();
       }
       const userToFlip = commandArgument;
-      io.to(userMap.get(userToFlip)).emit('flip');
+      io.to(global.userMap.get(userToFlip)).emit('flip');
       break;
     }
     case 'unflip': {
@@ -198,11 +199,11 @@ function handleMessage({io, socket, message}) {
         return commandAccessDenied();
       }
       // If the user to execute the command in isn't in the room, return with commandNonexistingUserSpecified()
-      if (!userListContents[socket.server].includes(commandArgument)) {
+      if (!global.userListContents[socket.server].includes(commandArgument)) {
         return commandNonexistingUserSpecified();
       }
       const userToUnflip = commandArgument;
-      io.to(userMap.get(userToUnflip)).emit('unflip');
+      io.to(global.userMap.get(userToUnflip)).emit('unflip');
       break;
     }
     case 'stupidify': {
@@ -211,11 +212,11 @@ function handleMessage({io, socket, message}) {
         return commandAccessDenied();
       }
       // If the user to execute the command in isn't in the room, return with commandNonexistingUserSpecified()
-      if (!userListContents[socket.server].includes(commandArgument)) {
+      if (!global.userListContents[socket.server].includes(commandArgument)) {
         return commandNonexistingUserSpecified();
       }
       const userToStupidify = commandArgument;
-      io.to(userMap.get(userToStupidify)).emit('stupidify');
+      io.to(global.userMap.get(userToStupidify)).emit('stupidify');
       break;
     }
     case 'smash': {
@@ -224,11 +225,11 @@ function handleMessage({io, socket, message}) {
         return commandAccessDenied();
       }
       // If the user to execute the command in isn't in the room, return with commandNonexistingUserSpecified()
-      if (!userListContents[socket.server].includes(commandArgument)) {
+      if (!global.userListContents[socket.server].includes(commandArgument)) {
         return commandNonexistingUserSpecified();
       }
       const userToSmash = commandArgument;
-      io.to(userMap.get(userToSmash)).emit('smash');
+      io.to(global.userMap.get(userToSmash)).emit('smash');
       break;
     }
     case 'kick': {
@@ -237,11 +238,11 @@ function handleMessage({io, socket, message}) {
         return commandAccessDenied();
       }
       // If the user to execute the command in isn't in the room, return with commandNonexistingUserSpecified()
-      if (!userListContents[socket.server].includes(commandArgument)) {
+      if (!global.userListContents[socket.server].includes(commandArgument)) {
         return commandNonexistingUserSpecified();
       }
       const userToKick = commandArgument;
-      io.to(userMap.get(userToKick)).emit('kick');
+      io.to(global.userMap.get(userToKick)).emit('kick');
       io.sockets.sockets[userMap.get(userToKick)].disconnect();
       break;
     }
@@ -251,11 +252,11 @@ function handleMessage({io, socket, message}) {
         return commandAccessDenied();
       }
       // If the user to execute the command in isn't in the room, return with commandNonexistingUserSpecified()
-      if (!userListContents[socket.server].includes(commandArgument)) {
+      if (!global.userListContents[socket.server].includes(commandArgument)) {
         return commandNonexistingUserSpecified();
       }
       const userToStun = commandArgument;
-      io.to(userMap.get(userToStun)).emit('stun');
+      io.to(global.userMap.get(userToStun)).emit('stun');
       break;
     }
     default: {

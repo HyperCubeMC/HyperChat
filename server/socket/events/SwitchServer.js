@@ -26,7 +26,7 @@ function handleSwitchServer({io, socket, server}) {
   // Remove the user from their old server
   socket.leave(socket.server);
   // Remove the user from the user list
-  userListContents[socket.server] = arrayRemove(userListContents[socket.server], socket.username);
+  global.userListContents[socket.server] = arrayRemove(userListContents[socket.server], socket.username);
   // Echo globally in the server that this user has left
   socket.to(socket.server).emit('user left', {
     username: socket.username
@@ -44,14 +44,14 @@ function handleSwitchServer({io, socket, server}) {
     username: socket.username,
   });
   // Create the user list contents for the server if it doesn't exist
-  if (typeof userListContents[socket.server] == 'undefined') {
-    userListContents[socket.server] = [];
+  if (typeof global.userListContents[socket.server] == 'undefined') {
+    global.userListContents[socket.server] = [];
   }
   // Add the user to the user list contents for their server
-  userListContents[socket.server].push(socket.username);
+  global.userListContents[socket.server].push(socket.username);
   // Send the user list contents to the user for their server
   socket.emit('user list', {
-    userListContents: userListContents[socket.server]
+    userListContents: global.userListContents[socket.server]
   });
 
   // Create timestamp for usage logging

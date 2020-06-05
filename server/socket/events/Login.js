@@ -58,7 +58,7 @@ function handleLogin({io, socket, username, password, server}) {
     // Verify the user's login attempt
     // eslint-disable-next-line no-inner-declarations
     function verifyLogin() {
-      db.collection('credentials').countDocuments({username: username.toLowerCase(), hashedPassword: {$exists: true}}, function(err, count) {
+      global.db.collection('credentials').countDocuments({username: username.toLowerCase(), hashedPassword: {$exists: true}}, function(err, count) {
         // Create an object with the user credentials
         const credentials = {
           'username': username.toLowerCase(),
@@ -75,7 +75,7 @@ function handleLogin({io, socket, username, password, server}) {
         if (err) return console.error(err);
         // If a match is found for the username, perform credential checking and either deny or allow login
         if (count > 0) {
-          db.collection('credentials').findOne({username: username.toLowerCase()}, function(err, user) {
+          global.db.collection('credentials').findOne({username: username.toLowerCase()}, function(err, user) {
             async function getUserVerification() {
               var userVerification = await verifyPassword(user.hashedPassword, password);
               return userVerification;
@@ -116,31 +116,31 @@ function handleLogin({io, socket, username, password, server}) {
           username: socket.username,
         });
         // Create the user list contents for the server if it doesn't exist
-        if (typeof userListContents[socket.server] == 'undefined') {
-          userListContents[socket.server] = [];
+        if (typeof global.userListContents[socket.server] == 'undefined') {
+          global.userListContents[socket.server] = [];
         }
         // Add the user to the user list contents for their server
-        userListContents[socket.server].push(socket.username);
+        global.userListContents[socket.server].push(socket.username);
         // Send the user list contents to the user for their server
         socket.emit('user list', {
-          userListContents: userListContents[socket.server]
+          userListContents: global.userListContents[socket.server]
         });
 
         // Create the server list contents for the user if it doesn't exist
-        if (typeof serverListContents[socket.username] == 'undefined') {
-          serverListContents[socket.username] = [];
+        if (typeof global.serverListContents[socket.username] == 'undefined') {
+          global.serverListContents[socket.username] = [];
           // The server list database is not implemented yet, so I'll put a server in the server list contents for the user
-          serverListContents[socket.username].push({ServerName: 'HyperLand', Image: './cdn/ServerIcons/HyperLand.png', Owner: 'Justsnoopy30'});
+          global.serverListContents[socket.username].push({ServerName: 'HyperLand', Image: './cdn/ServerIcons/HyperLand.png', Owner: 'Justsnoopy30'});
         }
         // Send the server list contents for the user to the user
         socket.emit('server list', {
-          serverListContents: serverListContents[socket.username]
+          serverListContents: global.serverListContents[socket.username]
         });
 
-        serverModel.countDocuments({serverName: socket.server}, function(err, count) {
+        global.serverModel.countDocuments({serverName: socket.server}, function(err, count) {
           // Server is already in the database, so send the client the initial message list and return
           if (count > 0) {
-            serverModel.findOne({serverName: socket.server}).then((server) => {
+            global.serverModel.findOne({serverName: socket.server}).then((server) => {
               // Send the initial message list to the client (array of messages)
               socket.emit('initial message list', server.messages);
             }).catch((error) => {
@@ -152,7 +152,7 @@ function handleLogin({io, socket, username, password, server}) {
           // Else, make a new entry of the server
           else {
             // Create the mongoose document for a server using the server model
-            const serverDocument = new serverModel({
+            const serverDocument = new global.serverModel({
               serverName: socket.server,
               serverImage: 'none',
               serverOwner: socket.username
@@ -165,7 +165,7 @@ function handleLogin({io, socket, username, password, server}) {
         });
 
         // Map the user's username to a unique socket id
-        userMap.set(socket.username, socket.id);
+        global.userMap.set(socket.username, socket.id);
 
         // Create timestamp for usage logging
         const timestamp = new Date().toLocaleDateString(undefined, {
