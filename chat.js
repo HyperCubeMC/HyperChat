@@ -795,9 +795,16 @@ socket.on('server switch success', (data) => {
 });
 
 socket.on('initial message list', (messages) => {
+  // Add each message to the message list
   messages.forEach((message) => {
     addChatMessage(message);
   });
+});
+
+socket.on('new server', () => {
+  // If this is a new server, tell the user so
+  log('Hi there, welcome to your new server!');
+  log('Send the first message!');
 });
 
 socket.on('disconnect', () => {

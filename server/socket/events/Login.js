@@ -159,9 +159,13 @@ function handleLogin({io, socket, username, password, server}) {
               serverOwner: socket.username
             });
 
+            // Save the server in the database
             serverDocument.save(function (err, server) {
               if (err) console.error(err);
             });
+
+            // Tell the user this is a new server
+            socket.emit('new server');
           }
         });
 
