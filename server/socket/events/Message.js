@@ -10,6 +10,7 @@
 import marked from 'marked';
 import sanitizeHtml from 'sanitize-html';
 import Filter from 'bad-words';
+import emoji from 'node-emoji';
 
 // Set the message command prefix
 const prefix = '/';
@@ -52,7 +53,7 @@ function handleMessage({io, socket, message}) {
   if (specialUser) {
     io.in(socket.server).emit('new message', {
       username: socket.username,
-      message: finalMessage,
+      message: emoji.emojify(finalMessage),
       special: true,
       badge: specialUser.Badge,
       usernameColor: specialUser.UsernameColor,
@@ -79,7 +80,7 @@ function handleMessage({io, socket, message}) {
   else {
     io.in(socket.server).emit('new message', {
       username: socket.username,
-      message: finalMessage,
+      message: emoji.emojify(finalMessage),
       badge: 'none'
     });
     // Create the mongoose document for messages using the message model
