@@ -21,20 +21,20 @@ const filter = new Filter();
 let specialUsers = [];
 
 // Put the special users with details in the special user array
-specialUsers.push({Username: 'Justsnoopy30', Type: 'Owner', UsernameColor: '#00b0f4', BadgeColor: '#7289da'},{Username: 'kmisterk', Type: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#691785'});
+specialUsers.push({Username: 'Justsnoopy30', Badge: 'Owner', UsernameColor: '#00b0f4', BadgeColor: '#7289da'},{Username: 'kmisterk', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#691785'});
 
 function handleMessage({io, socket, message}) {
   // Stop right there if the user tries to send a null or non-string message
   if (typeof message !== 'string' || message == null) return;
   // If the muted list includes the user trying to send the message, stop right there
-  if (mutedList.includes(socket.username)) return;
+  if (global.mutedList.includes(socket.username)) return;
   // Check if the message is over 2000 character, and if it is, change it to a
   // ...predetermined message indicating that the message is too long and return
   if (message.length > 2000) {
     io.in(socket.server).emit('new message', {
       username: socket.username,
       message: 'This message was removed because it was too long (over 2000 characters).',
-      type: 'normal'
+      badge: 'normal'
     });
     return;
   }
@@ -54,7 +54,7 @@ function handleMessage({io, socket, message}) {
       username: socket.username,
       message: finalMessage,
       special: true,
-      type: specialUser.Type,
+      badge: specialUser.Badge,
       usernameColor: specialUser.UsernameColor,
       badgeColor: specialUser.BadgeColor
     });
@@ -63,7 +63,7 @@ function handleMessage({io, socket, message}) {
       username: socket.username,
       message: finalMessage,
       special: true,
-      type: specialUser.Type,
+      badge: specialUser.Badge,
       usernameColor: specialUser.UsernameColor,
       badgeColor: specialUser.BadgeColor
     });
@@ -80,13 +80,13 @@ function handleMessage({io, socket, message}) {
     io.in(socket.server).emit('new message', {
       username: socket.username,
       message: finalMessage,
-      type: 'normal'
+      badge: 'none'
     });
     // Create the mongoose document for messages using the message model
     const messageDocument = new global.messageModel({
       username: socket.username,
       message: finalMessage,
-      type: 'normal'
+      badge: 'none'
     });
     global.serverModel.findOne({serverName: socket.server}, function(err, server) {
       if (err) console.error(err);
@@ -121,7 +121,7 @@ function handleMessage({io, socket, message}) {
       username: 'HyperChat',
       message: 'The user specified in the command is not in the room.',
       special: true,
-      type: 'Server'
+      badge: 'Server'
     });
     return;
   }
@@ -133,7 +133,7 @@ function handleMessage({io, socket, message}) {
       username: 'HyperChat',
       message: 'Access Denied.',
       special: true,
-      type: 'Server'
+      badge: 'Server'
     });
     return;
   }
@@ -145,7 +145,7 @@ function handleMessage({io, socket, message}) {
       username: 'HyperChat',
       message: 'Invalid command.',
       special: true,
-      type: 'Server'
+      badge: 'Server'
     });
     return;
   }

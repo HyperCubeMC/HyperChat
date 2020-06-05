@@ -66,7 +66,7 @@ const userCredentialsSchema = new Schema({
 const messageSchema = new Schema({
   username: String,
   message: String,
-  type: String,
+  badge: String,
   special: {type: Boolean, required: false},
   usernameColor: {type: String, required: false},
   badgeColor: {type: String, required: false},

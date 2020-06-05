@@ -516,12 +516,12 @@ const addChatMessage = (data) => {
   }
 
   let userBadge;
-  // If the message is special, add the badge from the type
+  // If the message is special, add the badge from the badge property
   if (data.special) {
     userBadge = newElement('span');
     userBadge.classList.add('userBadge');
     userBadge.css('background-color', data.badgeColor || '#7289da')
-    userBadge.textContent = data.type;
+    userBadge.textContent = data.badge;
   }
 
   let messageBodySpan = newElement('span');
