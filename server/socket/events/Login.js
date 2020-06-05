@@ -138,8 +138,15 @@ function handleLogin({io, socket, username, password, server}) {
         });
 
         serverModel.countDocuments({serverName: socket.server}, function(err, count) {
-          // Server is already in the database, so return
+          // Server is already in the database, so send the client the initial message list and return
           if (count > 0) {
+            serverModel.findOne({serverName: socket.server}).then((server) => {
+              // Send the initial message list to the client (array of messages)
+              socket.emit('initial message list', server.messages);
+            }).catch((error) => {
+              // Catch and show an error in console if there is one
+              console.error(error);
+            });
             return;
           }
           // Else, make a new entry of the server
@@ -155,14 +162,6 @@ function handleLogin({io, socket, username, password, server}) {
               if (err) console.error(err);
             });
           }
-        });
-
-        serverModel.findOne({serverName: socket.server}).then((server) => {
-          // Send the initial message list to the client (array of messages)
-          socket.emit('initial message list', server.messages);
-        }).catch((error) => {
-          // Catch and show an error in console if there is one
-          console.error(error);
         });
 
         // Map the user's username to a unique socket id
