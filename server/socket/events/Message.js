@@ -85,10 +85,14 @@ function handleMessage({io, socket, message}) {
     const messageDocument = new messageModel({
       user: socket.username,
       message: finalMessage,
-      type: 'normal',
+      type: 'normal'
     });
-    messageDocument.save(function (err, credentials) {
-      if (err) return console.error(err);
+    serverModel.findOne({serverName: socket.server}, function(err, server) {
+      if (err) console.error(err);
+      server.messages.push(messageDocument);
+      server.save(function (err, server) {
+        if (err) console.error(err);
+      });
     });
   }
 
