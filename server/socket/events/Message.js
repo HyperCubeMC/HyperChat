@@ -83,7 +83,7 @@ function handleMessage({io, socket, message}) {
     });
     // Create the mongoose document for messages using the message model
     const messageDocument = new messageModel({
-      user: socket.username,
+      username: socket.username,
       message: finalMessage,
       type: 'normal'
     });
