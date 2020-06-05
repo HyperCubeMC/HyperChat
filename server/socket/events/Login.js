@@ -137,6 +137,7 @@ function handleLogin({io, socket, username, password, server}) {
           serverListContents: global.serverListContents[socket.username]
         });
 
+        // Count amount of servers in the database with the server name the user is in
         global.serverModel.countDocuments({serverName: socket.server}, function(err, count) {
           // Server is already in the database, so send the client the initial message list and return
           if (count > 0) {

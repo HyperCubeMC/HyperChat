@@ -49,9 +49,38 @@ function handleSwitchServer({io, socket, server}) {
   }
   // Add the user to the user list contents for their server
   global.userListContents[socket.server].push(socket.username);
+
   // Send the user list contents to the user for their server
   socket.emit('user list', {
     userListContents: global.userListContents[socket.server]
+  });
+
+  // Count amount of servers in the database with the server name the user is in
+  global.serverModel.countDocuments({serverName: socket.server}, function(err, count) {
+    // Server is already in the database, so send the client the initial message list and return
+    if (count > 0) {
+      global.serverModel.findOne({serverName: socket.server}).then((server) => {
+        // Send the initial message list to the client (array of messages)
+        socket.emit('initial message list', server.messages);
+      }).catch((error) => {
+        // Catch and show an error in console if there is one
+        console.error(error);
+      });
+      return;
+    }
+    // Else, make a new entry of the server
+    else {
+      // Create the mongoose document for a server using the server model
+      const serverDocument = new global.serverModel({
+        serverName: socket.server,
+        serverImage: 'none',
+        serverOwner: socket.username
+      });
+
+      serverDocument.save(function (err, server) {
+        if (err) console.error(err);
+      });
+    }
   });
 
   // Create timestamp for usage logging
