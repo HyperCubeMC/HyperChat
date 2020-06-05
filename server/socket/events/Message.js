@@ -243,7 +243,7 @@ function handleMessage({io, socket, message}) {
       }
       const userToKick = commandArgument;
       io.to(global.userMap.get(userToKick)).emit('kick');
-      io.sockets.sockets[userMap.get(userToKick)].disconnect();
+      io.sockets.sockets[global.userMap.get(userToKick)].disconnect();
       break;
     }
     case 'stun': {
