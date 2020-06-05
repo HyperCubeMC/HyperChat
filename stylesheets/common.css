@@ -7,35 +7,25 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
-body .light, .light, .light #Chat-Screen, .light #settingsScreen, .light #reconnectingScreen, .light #Message-Box, .light #serverListIcon {
+body .light, .light, .light #Chat-Screen, .light #settingsScreen, .light #reconnectingScreen, .light #Message-Box, .light #emoji-button, .light #serverListIcon {
   background-color: #fff;
   color: #212529
 }
 
-body .dark, .dark, .dark #Chat-Screen, .dark #settingsScreen, .dark #reconnectingScreen, .dark #Message-Box, .dark #serverListIcon {
+body .dark, .dark, .dark #Chat-Screen, .dark #settingsScreen, .dark #reconnectingScreen, .dark #Message-Box, .dark #emoji-button, .dark #serverListIcon {
   background-color: #36393f;
   color: #fff;
 }
 
-.light #Server-List-Area {
+.light #Server-List-Area, .light #User-List {
   background-color: #fff;
   color: #212529
 }
 
-.light #User-List {
-  background-color: #fff;
-  color: #212529
-}
-
-.dark #Server-List-Area {
-  background-color: #2f3136;
-  color: #fff;
-}
-
-.dark #User-List {
+.dark #Server-List-Area, .dark #User-List {
   background-color: #2f3136;
   color: #fff;
 }

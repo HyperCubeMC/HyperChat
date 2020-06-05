@@ -327,6 +327,32 @@ function arrayRemove(array, value) {
   });
 }
 
+// Import the emoji button asyncronously with a dynamic import
+import('./es_modules/emoji-button/emoji-button.js').then(({default: EmojiButton}) => {
+  // Setup the emoji button
+
+  // Define button as the emoji button on the page
+  const button = document.querySelector('#emoji-button');
+
+  // Set the emoji button options
+  const options = {
+    style: 'twemoji'
+  }
+
+  // Define picker while initializing the emoji button with options
+  const picker = new EmojiButton(options);
+
+  // Add the emoji to the message box when an emoji in the picker is clicked
+  picker.on('emoji', emoji => {
+    document.querySelector('#Message-Box').value += emoji;
+  });
+
+  //
+  button.addEventListener('click', () => {
+    picker.togglePicker(button);
+  });
+});
+
 // Submits the credentials to the server
 const submitLoginInfo = () => {
   username = cleanInput(grab('#usernameInput').value.trim());

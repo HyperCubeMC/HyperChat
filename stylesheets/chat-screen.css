@@ -272,3 +272,18 @@
   height: 50px;
   cursor: pointer;
 }
+
+/* The emoji button */
+#emoji-button {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  font-size: 2rem;
+  outline: none;
+  border: none;
+}
+
+/* Any emoji that came from the emoji button */
+.emoji {
+  height: 1em;
+  width: 1em;
+}
