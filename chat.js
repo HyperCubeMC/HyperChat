@@ -362,11 +362,9 @@ import('./es_modules/emoji-button/emoji-button.js').then(({default: EmojiButton}
   // in the emoji picker is clicked
   picker.on('emoji', emoji => {
     if (textPosition) {
-      console.log('if' + textPosition);
       textPosition.insertNode(textPosition.createContextualFragment(emoji))
     }
     else {
-      console.log('else' + textPosition);
       grab('#Message-Box').insertAdjacentHTML('beforeend', emoji);
     }
   });
