@@ -25,7 +25,14 @@ const sanitizeHtmlOptions = {
   allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ]),
   allowedAttributes: {
     a: [ 'href', 'name', 'target' ],
-    img: [ 'src', 'srcset', 'draggable', 'alt', 'class' ]
+    img: [
+      'src', 'srcset', 'draggable', 'alt', 'class',
+      {
+        name: 'crossorigin',
+        multiple: false,
+        values: ['anonymous']
+      }
+    ]
   }
 }
 
