@@ -333,7 +333,7 @@ import('./es_modules/emoji-button/emoji-button.js').then(({default: EmojiButton}
 
   // Set textPosition as a placeholder variable for the user's cursor position in the
   // message box before they click the emoji button
-  let textPosition = false;
+  let messageBoxTextPosition = false;
 
   // Define button as the emoji button on the page
   const button = document.querySelector('#emoji-button');
@@ -348,8 +348,8 @@ import('./es_modules/emoji-button/emoji-button.js').then(({default: EmojiButton}
 
   // When the emoji button is clicked, toggle the emoji picker
   button.addEventListener('click', () => {
-    if (getSelection().rangeCount > 0) {
-      textPosition = getSelection().getRangeAt(0);
+    if (getSelection().rangeCount > 0 && getSelection().containsNode(document.querySelector('#Message-Box'))) {
+      messageBoxTextPosition = getSelection().getRangeAt(0);
     }
     picker.togglePicker(button);
     grab('.emoji-picker').classList.remove('light');
@@ -361,8 +361,8 @@ import('./es_modules/emoji-button/emoji-button.js').then(({default: EmojiButton}
   // Add the emoji to the user's cursor position in the message box when an emoji
   // in the emoji picker is clicked
   picker.on('emoji', emoji => {
-    if (textPosition) {
-      textPosition.insertNode(textPosition.createContextualFragment(emoji))
+    if (messageBoxTextPosition) {
+      messageBoxTextPosition.insertNode(textPosition.createContextualFragment(emoji))
     }
     else {
       grab('#Message-Box').insertAdjacentHTML('beforeend', emoji);
