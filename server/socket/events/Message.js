@@ -20,6 +20,15 @@ const filter = new Filter();
 // Define a new array of objects of special users
 let specialUsers = [];
 
+// Set sanitizeHtmlOptions for sanitize-html
+const sanitizeHtmlOptions = {
+  allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ]),
+  allowedAttributes: {
+    a: [ 'href', 'name', 'target' ],
+    img: [ 'src', 'srcset', 'draggable', 'alt', 'class' ]
+  }
+}
+
 // Put the special users with details in the special user array
 specialUsers.push({Username: 'Justsnoopy30', Badge: 'Owner', UsernameColor: '#00b0f4', BadgeColor: '#7289da'},{Username: 'kmisterk', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#691785'});
 
@@ -45,7 +54,7 @@ function handleMessage({io, socket, message}) {
   const messageHtml = marked(filteredMessage);
 
   // Sanitize the message html with the sanitize-html library
-  const finalMessage = sanitizeHtml(messageHtml);
+  const finalMessage = sanitizeHtml(messageHtml, sanitizeHtmlOptions);
 
   // Perform special user checking and then send the final message to everyone in the user's server
   const specialUser = specialUsers.find(specialUser => specialUser.Username === socket.username);

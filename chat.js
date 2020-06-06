@@ -482,13 +482,7 @@ const syncServerList = (serverListContents) => {
 
 // Sends a chat message
 const sendMessage = (message) => {
-  if (message && connected && !cheatActivated) {
-    grab('#Message-Box').value = '';
-    socket.emit('new message', message);
-  }
-  else if (message && connected && cheatActivated) {
-    socket.emit('new message', message);
-  }
+  socket.emit('new message', message);
 }
 
 // Sync the contents of the user list.
@@ -696,18 +690,16 @@ const getUsernameColor = (username) => {
 
 // Keyboard events
 
-grab('#Message-Box').addEventListener('input', function (event) {
-  grab('#Message-Box').css('height', 'auto');
-  grab('#Message-Box').css('height', `${this.scrollHeight}px`);
-});
-
 grab('#Message-Box').addEventListener('keydown', function (event) {
   if (event.key=='Enter' && !event.shiftKey) {
     event.preventDefault()
-    sendMessage(grab('#Message-Box').value);
+    const message = grab('#Message-Box').textContent;
+    sendMessage(message);
+    if (!cheatActivated) {
+      grab('#Message-Box').textContent = '';
+    }
     socket.emit('stop typing');
     typing = false;
-    grab('#Message-Box').css('height', 'auto');
   }
 });
 
