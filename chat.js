@@ -331,6 +331,10 @@ function arrayRemove(array, value) {
 import('./es_modules/emoji-button/emoji-button.js').then(({default: EmojiButton}) => {
   // Setup the emoji button
 
+  // Set textPosition as a placeholder variable for the user's cursor position in the
+  // message box before they click the emoji button
+  let textPosition;
+
   // Define button as the emoji button on the page
   const button = document.querySelector('#emoji-button');
 
@@ -339,19 +343,25 @@ import('./es_modules/emoji-button/emoji-button.js').then(({default: EmojiButton}
     style: 'twemoji'
   }
 
-  // Define picker while initializing the emoji button with options
+  // Define picker as emoji picker button with options
   const picker = new EmojiButton(options);
-
-  // Add the emoji to the message box when an emoji in the picker is clicked
-  picker.on('emoji', emoji => {
-    document.querySelector('#Message-Box').innerHTML += emoji;
-  });
 
   // When the emoji button is clicked, toggle the emoji picker
   button.addEventListener('click', () => {
+    if (getSelection().rangeCount > 0) {
+      textPosition = getSelection().getRangeAt(0);
+    }
     picker.togglePicker(button);
     grab('.emoji-picker').classList.remove('light');
     grab('.emoji-picker').classList.add(store('theme'));
+    currentInput = grab('.emoji-picker');
+  });
+
+
+  // Add the emoji to the uer's cursor position in the message box when an emoji
+  // in the emoji picker is clicked
+  picker.on('emoji', emoji => {
+    textPosition?.insertNode(textPosition.createContextualFragment(emoji)) || grab('#Message-Box').insertAdjacentHTML('beforeend', emoji);
   });
 });
 
