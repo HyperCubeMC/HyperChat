@@ -274,6 +274,12 @@
   cursor: pointer;
 }
 
+/* Placeholder for the message box */
+#Message-Box:empty:before {
+  content: attr(data-placeholder);
+  color: gray;
+}
+
 /* The emoji button */
 #emoji-button {
   border-top-right-radius: 5px;
