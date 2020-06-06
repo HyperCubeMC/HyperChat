@@ -344,7 +344,7 @@ import('./es_modules/emoji-button/emoji-button.js').then(({default: EmojiButton}
 
   // Add the emoji to the message box when an emoji in the picker is clicked
   picker.on('emoji', emoji => {
-    document.querySelector('#Message-Box').value += emoji;
+    document.querySelector('#Message-Box').innerHTML += emoji;
   });
 
   // When the emoji button is clicked, toggle the emoji picker
@@ -693,7 +693,7 @@ const getUsernameColor = (username) => {
 grab('#Message-Box').addEventListener('keydown', function (event) {
   if (event.key=='Enter' && !event.shiftKey) {
     event.preventDefault()
-    const message = grab('#Message-Box').textContent;
+    const message = grab('#Message-Box').innerHTML;
     sendMessage(message);
     if (!cheatActivated) {
       grab('#Message-Box').textContent = '';
