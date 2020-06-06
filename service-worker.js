@@ -20,6 +20,8 @@ self.addEventListener('activate', function(event) {
 self.addEventListener('fetch', (event) => {
   // Opening devtools will trigger these o-i-c requests, which the service worker can't handle, so return
   if (event.request.cache === 'only-if-cached' && event.request.mode !== 'same-origin') return;
+  // If the request method isn't GET, let the browser handle it
+  if (event.request.method !== 'GET') return;
   // Make a new URL from the request URL
   const reqURL = new URL(event.request.url);
   // Let the browser handle it if it isn't a normal http/https request
