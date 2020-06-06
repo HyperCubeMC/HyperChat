@@ -691,12 +691,15 @@ const getUsernameColor = (username) => {
 // Keyboard events
 
 grab('#Message-Box').addEventListener('keydown', function (event) {
-  if (event.key=='Enter' && !event.shiftKey) {
+  if (this.innerHTML.length >= 2000 && !(event.key === 'Backspace' || event.key === 'Delete')) {
+    event.preventDefault();
+  }
+  if (event.key == 'Enter' && !event.shiftKey) {
     event.preventDefault()
     const message = grab('#Message-Box').innerHTML;
     sendMessage(message);
     if (!cheatActivated) {
-      grab('#Message-Box').textContent = '';
+      this.textContent = '';
     }
     socket.emit('stop typing');
     typing = false;
