@@ -37,7 +37,7 @@ const sanitizeHtmlOptions = {
 }
 
 // Put the special users with details in the special user array
-specialUsers.push({Username: 'Justsnoopy30', Badge: 'Owner', UsernameColor: '#00b0f4', BadgeColor: '#7289da'},{Username: 'kmisterk', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#691785'});
+specialUsers.push({Username: 'Justsnoopy30', Badge: 'Owner', UsernameColor: '#00b0f4', BadgeColor: '#7289da'},{Username: 'kmisterk', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#691785'},{Username: 'OliviaTheVampire', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#7b3c96'});
 
 function handleMessage({io, socket, message}) {
   // Stop right there if the user tries to send a null or non-string message

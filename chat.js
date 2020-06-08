@@ -486,7 +486,7 @@ const syncServerList = (serverListContents) => {
       serverForServerList.classList.add('serverInServerList');
       let serverIconForServerList = newElement('img');
       serverIconForServerList.classList.add('serverIconInServerList');
-      serverIconForServerList.src = serverListContents[server].Image;
+      serverIconForServerList.src = `/cdn/ServerIcons/${serverListContents[server].ServerName}.webp`;
       serverIconForServerList.title = serverListContents[server].ServerName;
       serverIconForServerList.alt = serverListContents[server].ServerName;
       serverIconForServerList.draggable = 'false';

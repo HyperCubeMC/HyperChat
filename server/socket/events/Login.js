@@ -130,7 +130,7 @@ function handleLogin({io, socket, username, password, server}) {
         if (typeof global.serverListContents[socket.username] == 'undefined') {
           global.serverListContents[socket.username] = [];
           // The server list database is not implemented yet, so I'll put a server in the server list contents for the user
-          global.serverListContents[socket.username].push({ServerName: 'HyperLand', Image: './cdn/ServerIcons/HyperLand.png', Owner: 'Justsnoopy30'});
+          global.serverListContents[socket.username].push({ServerName: 'General', Owner: 'Justsnoopy30'},{ServerName: 'HyperLand', Owner: 'Justsnoopy30'});
         }
         // Send the server list contents for the user to the user
         socket.emit('server list', {
@@ -155,7 +155,6 @@ function handleLogin({io, socket, username, password, server}) {
             // Create the mongoose document for a server using the server model
             const serverDocument = new global.serverModel({
               serverName: socket.server,
-              serverImage: 'none',
               serverOwner: socket.username
             });
 

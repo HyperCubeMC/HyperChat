@@ -73,7 +73,6 @@ function handleSwitchServer({io, socket, server}) {
       // Create the mongoose document for a server using the server model
       const serverDocument = new global.serverModel({
         serverName: socket.server,
-        serverImage: 'none',
         serverOwner: socket.username
       });
 

@@ -76,7 +76,6 @@ const messageSchema = new Schema({
 // Create a new schema for servers
 const serverSchema = new Schema({
   serverName: String,
-  serverImage: String,
   serverOwner: String,
   messages: [messageSchema]
 });
