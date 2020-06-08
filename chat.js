@@ -362,11 +362,13 @@ import('./es_modules/emoji-button/emoji-button.js').then(({default: EmojiButton}
   // in the emoji picker is clicked
   picker.on('emoji', emoji => {
     if (messageBoxTextPosition) {
-      messageBoxTextPosition.insertNode(textPosition.createContextualFragment(emoji))
+      messageBoxTextPosition.insertNode(messageBoxTextPosition.createContextualFragment(emoji))
     }
     else {
       grab('#Message-Box').insertAdjacentHTML('beforeend', emoji);
     }
+    currentInput = grab('#Message-Box');
+    setTimeout(function() { grab('#Message-Box').focus() }, 200);
   });
 });
 
@@ -723,15 +725,16 @@ grab('#Message-Box').addEventListener('keydown', function (event) {
 
 
 document.addEventListener('keydown', (event) => {
+  // When the client hits ENTER on their keyboard and they're not logged in, submit their credentials
+  if (event.key == 'Enter' && !loggedIn) {
+    submitLoginInfo();
+    return;
+  }
   if (loggedIn) {
     // Auto-focus the current input when a key is typed
-    if (!(event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) && currentInput) {
+    if (currentInput && !(event.ctrlKey || event.metaKey || event.altKey || event.ctrlKey)) {
       currentInput.focus();
     }
-  }
-  // When the client hits ENTER on their keyboard
-  if (event.key == 'Enter' && !event.shiftKey && !loggedIn) {
-    submitLoginInfo();
   }
 });
 
