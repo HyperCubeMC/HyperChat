@@ -197,22 +197,29 @@
   background-color: #2f3136;
 }
 
-.messageBody {
-  padding-left: 10px;
+/* Containing span for a profile picture */
+.profilePicture {
   display: inline-block;
+  padding-right: 10px;
+  cursor: pointer;
+}
+
+/* Profile picture icon */
+.profilePictureIcon {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+}
+
+/* Body of a message */
+.messageBody {
   overflow: auto;
   word-break: break-word;
-  vertical-align: top;
   max-height: 10em;
 }
 
 .messageBody p {
   display: inline;
-}
-
-.typing {
-  color: gray;
-  overflow: auto;
 }
 
 .message .username {
@@ -236,6 +243,12 @@
   vertical-align: middle;
   margin-bottom: 3px;
 }
+
+.typing {
+  color: gray;
+  overflow: auto;
+}
+
 /* Clickable wrapper for the server list icon */
 #serverListIconWrapper {
   width: fit-content;

@@ -542,6 +542,19 @@ const removeFromUserList = (user) => {
 
 // Adds the visual chat message to the message list
 const addChatMessage = (data) => {
+  // Make a new span for the profile picture span
+  let profilePicture = newElement('span');
+  profilePicture.classList.add('profilePicture');
+
+  // Make a new img for the profile picture icon
+  let profilePictureIcon = newElement('img');
+  profilePictureIcon.classList.add('profilePictureIcon');
+  profilePictureIcon.src = `/cdn/UserProfilePictures/${data.username}.webp`;
+
+  // Add the profile picture icon to the profile picture span
+  profilePicture.append(profilePictureIcon);
+
+  // Make a new span for the username
   let usernameSpan = newElement('span');
   usernameSpan.classList.add('username')
   usernameSpan.textContent = data.username;
@@ -557,15 +570,16 @@ const addChatMessage = (data) => {
   let userBadge;
   // If the message is special, add the badge from the badge property
   if (data.special) {
+    // Make a new span for the user badge
     userBadge = newElement('span');
     userBadge.classList.add('userBadge');
     userBadge.css('background-color', data.badgeColor || '#7289da')
     userBadge.textContent = data.badge;
   }
 
-  let messageBodySpan = newElement('span');
-  messageBodySpan.classList.add('messageBody');
-  messageBodySpan.innerHTML = data.message;
+  let messageBodyDiv = newElement('div');
+  messageBodyDiv.classList.add('messageBody');
+  messageBodyDiv.innerHTML = data.message;
 
   let messageItem = newElement('li');
   messageItem.classList.add('message');
@@ -573,11 +587,11 @@ const addChatMessage = (data) => {
   // If the message is special, add the special class and append the badge
   if (data.special) {
     messageItem.classList.add('special');
-    messageItem.append(usernameSpan, userBadge, messageBodySpan);
+    messageItem.append(profilePicture, usernameSpan, userBadge, messageBodyDiv);
   }
   // Otherwise, just continue like normal
   else {
-    messageItem.append(usernameSpan, messageBodySpan);
+    messageItem.append(profilePicture, usernameSpan, messageBodyDiv);
   }
 
   addMessageElement(messageItem);

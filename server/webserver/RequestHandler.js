@@ -54,25 +54,43 @@ function handleRequest (req, res) {
   fs.readFile(pathname, function (error, content) {
     // If there's an error, handle it
     if (error) {
-      // If the error is that the file is not found, send the 404 Not Found page
+      // If the error is that the file is not found, handle it
       if (error.code == 'ENOENT') {
-        fs.readFile('./errors/404.html', function (error, content) {
-          res.writeHead(404, {
-            'Content-Type': 'text/html',
-            'Content-Length': Buffer.byteLength(content),
-            'ETag': etag(content)
+        // If the path is a user profile picture, and the profile picture for the user
+        // does not exist, then serve the generic profile picture
+        if (reqURL.pathname.startsWith('/cdn/UserProfilePictures/')) {
+          fs.readFile('./cdn/UserProfilePictures/generic.webp', function (error, content) {
+            res.writeHead(200, {
+              'Content-Type': contentType,
+              'Content-Length': Buffer.byteLength(content),
+              'ETag': etag(content)
+            });
+            res.end(content, 'utf-8');
+            return;
           });
-          res.end(content, 'utf-8');
-          return;
-        });
+        }
+        // Otherwise, if it's not a user profile picture requested, serve the 404 Not Found page
+        else {
+          fs.readFile('./errors/404.html', function (error, content) {
+            res.writeHead(404, {
+              'Content-Type': 'text/html',
+              'Content-Length': Buffer.byteLength(content),
+              'ETag': etag(content)
+            });
+            res.end(content, 'utf-8');
+            return;
+          });
+        }
       // If the error code is not file not found, send a generic 500 error indicating something went wrong
-      } else {
+      }
+      else {
         res.writeHead(500);
         res.end(`Error: ${error.code}\nSomething went wrong.`);
         return;
       }
     // Yay, there's no error, so send the requested content back to the client
-    } else {
+    }
+    else {
       res.writeHead(200, {
         'Content-Type': contentType,
         'Content-Length': Buffer.byteLength(content),
