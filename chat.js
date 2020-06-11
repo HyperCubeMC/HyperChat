@@ -1,4 +1,5 @@
 // Import dependencies
+import 'https://polyfill.io/v3/polyfill.min.js';
 import { grab, grabAll, newElement } from './hyperlib/HyperLib.js';
 import store from './es_modules/store2/store2.js';
 import cheet from './es_modules/cheet.js/cheet.js';
