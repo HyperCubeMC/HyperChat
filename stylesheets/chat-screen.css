@@ -162,9 +162,15 @@
   font-size: 150%;
 }
 
+/* The server list ul */
 #Server-List {
   list-style: none;
   padding-left: 0;
+}
+
+/* Selecting the server li's inside the server list ul */
+#Server-List li {
+  padding-bottom: 1em;
 }
 
 /* A server icon of a server in the server list */
