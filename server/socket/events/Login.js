@@ -141,9 +141,9 @@ function handleLogin({io, socket, username, password, server}) {
         global.serverModel.countDocuments({serverName: socket.server}, function(err, count) {
           // Server is already in the database, so send the client the initial message list and return
           if (count > 0) {
-            global.messageModel.find({server: socket.server}).then((server) => {
+            global.messageModel.find({server: socket.server}).then((servers) => {
               // Send the initial message list to the client (array of messages)
-              socket.emit('initial message list', server);
+              socket.emit('initial message list', servers);
             }).catch((error) => {
               // Catch and show an error in console if there is one
               console.error(error);
