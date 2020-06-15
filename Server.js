@@ -66,25 +66,26 @@ const userCredentialsSchema = new Schema({
 const messageSchema = new Schema({
   username: String,
   message: String,
+  server: String,
   badge: String,
   special: {type: Boolean, required: false},
   usernameColor: {type: String, required: false},
   badgeColor: {type: String, required: false},
-  timestamp: {type: Number, default: Date.now()}
+  timestamp: {type: Date, default: Date.now}
 });
 
 // Create a new schema for servers
 const serverSchema = new Schema({
   serverName: String,
   serverOwner: String,
-  messages: [messageSchema]
+  timestamp: {type: Date, default: Date.now}
 });
 
 // Use the user credentials Schema to make a Mongoose Model as a shared global variable
 global.userCredentialsModel = mongoose.model('userCredentialsModel', userCredentialsSchema, 'credentials');
 
 // Use the message Schema to make a Mongoose Model as a shared global variable
-global.messageModel = mongoose.model('messageModel', messageSchema);
+global.messageModel = mongoose.model('messageModel', messageSchema, 'messages');
 
 // Use the server Schema to make a Mongoose Model as a shared global variable
 global.serverModel = mongoose.model('serverModel', serverSchema, 'servers');

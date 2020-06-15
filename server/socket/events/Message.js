@@ -78,18 +78,15 @@ function handleMessage({io, socket, message}) {
     const messageDocument = new global.messageModel({
       username: socket.username,
       message: finalMessage,
+      server: socket.server,
       special: true,
       badge: specialUser.Badge,
       usernameColor: specialUser.UsernameColor,
       badgeColor: specialUser.BadgeColor
     });
-    // Find the user's server and add the new message to the server's messages
-    global.serverModel.findOne({serverName: socket.server}, function(err, server) {
+    // Add a new message to the database
+    messageDocument.save(function (err, message) {
       if (err) console.error(err);
-      server.messages.push(messageDocument);
-      server.save(function (err, server) {
-        if (err) console.error(err);
-      });
     });
   }
   else {
@@ -102,14 +99,12 @@ function handleMessage({io, socket, message}) {
     const messageDocument = new global.messageModel({
       username: socket.username,
       message: finalMessage,
+      server: socket.server,
       badge: 'none'
     });
-    global.serverModel.findOne({serverName: socket.server}, function(err, server) {
+    // Add a new message to the database
+    messageDocument.save(function (err, message) {
       if (err) console.error(err);
-      server.messages.push(messageDocument);
-      server.save(function (err, server) {
-        if (err) console.error(err);
-      });
     });
   }
 
