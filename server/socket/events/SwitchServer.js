@@ -26,7 +26,7 @@ function handleSwitchServer({io, socket, server}) {
   // Remove the user from their old server
   socket.leave(socket.server);
   // Remove the user from the user list
-  global.userListContents[socket.server] = arrayRemove(userListContents[socket.server], socket.username);
+  global.userListContents[socket.server] = arrayRemove(global.userListContents[socket.server], socket.username);
   // Echo globally in the server that this user has left
   socket.to(socket.server).emit('user left', {
     username: socket.username
