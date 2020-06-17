@@ -4,12 +4,12 @@ import http2 from 'http2';
 import socketio from 'socket.io';
 import mongoose from 'mongoose';
 import handleRequest from './server/webserver/RequestHandler.js';
-import handleLogin from './server/socket/events/Login.js';
-import handleMessage from './server/socket/events/Message.js';
-import handleTyping from './server/socket/events/Typing.js';
-import handleStopTyping from './server/socket/events/StopTyping.js';
-import handleSwitchServer from './server/socket/events/SwitchServer.js';
-import handleDisconnect from './server/socket/events/Disconnect.js';
+import handleLogin from './server/socket/event_handlers/Login.js';
+import handleMessage from './server/socket/event_handlers/Message.js';
+import handleTyping from './server/socket/event_handlers/Typing.js';
+import handleStopTyping from './server/socket/event_handlers/StopTyping.js';
+import handleSwitchServer from './server/socket/event_handlers/SwitchServer.js';
+import handleDisconnect from './server/socket/event_handlers/Disconnect.js';
 
 // Set the process title
 process.title = 'HyperChat';
