@@ -15,7 +15,7 @@ if ('serviceWorker' in navigator && 'register' in navigator.serviceWorker && 'co
       console.log(`Got message from service worker: ${event.data}`);
       if (event.data.startsWith('Notification Quick Reply:')) {
         notificationReplyMessage = event.data;
-        notificationReplyMessage = notificationReplyMessage.replace(/^(Notification Quick Reply\: )/,'');
+        notificationReplyMessage = notificationReplyMessage.replace(/^(Notification Quick Reply: )/,'');
         sendMessage(notificationReplyMessage);
         return;
       }
