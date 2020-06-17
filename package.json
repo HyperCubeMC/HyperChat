@@ -27,12 +27,12 @@
     "bootstrap": "github:twbs/bootstrap",
     "etag": "^1.8.1",
     "marked": "^1.1.0",
-    "mongoose": "^5.9.15",
+    "mongoose": "^5.9.19",
     "sanitize-html": "^1.26.0",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
-    "eslint": "^7.1.0",
+    "eslint": "^7.2.0",
     "jsdoc": "^3.6.4"
   }
 }
