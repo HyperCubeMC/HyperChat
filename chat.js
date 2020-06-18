@@ -328,6 +328,13 @@ function arrayRemove(array, value) {
   });
 }
 
+// Function to decode html escapes
+function decodeHtml(html) {
+  let txt = document.createElement('textarea');
+  txt.innerHTML = html;
+  return txt.value;
+}
+
 // Import the emoji button asyncronously with a dynamic import
 import('./es_modules/emoji-button/emoji-button.js').then(({default: EmojiButton}) => {
   // Setup the emoji button
@@ -375,9 +382,9 @@ import('./es_modules/emoji-button/emoji-button.js').then(({default: EmojiButton}
 
 // Submits the credentials to the server
 const submitLoginInfo = () => {
-  username = cleanInput(grab('#usernameInput').value.trim());
-  password = cleanInput(grab('#passwordInput').value.trim());
-  server = cleanInput(grab('#serverInput').value.trim());
+  username = decodeHtml(grab('#usernameInput').value.trim());
+  password = decodeHtml(grab('#passwordInput').value.trim());
+  server = decodeHtml(grab('#serverInput').value.trim());
   // Tell the server your username, password, and server
   socket.emit('login', { username, password, server });
 }
@@ -681,13 +688,6 @@ const addMessageElement = (element, options) => {
   grab('#messages').scrollTop = grab('#messages').scrollHeight;
 }
 
-// Prevents input from having injected markup
-const cleanInput = (input) => {
-  let tmp = newElement('div');
-  tmp.innerHTML = input;
-  return tmp.textContent || tmp.innerText || '';
-}
-
 // Updates the typing event
 const updateTyping = () => {
   if (connected) {
@@ -728,7 +728,7 @@ grab('#Message-Box').addEventListener('keydown', function (event) {
   }
   if (event.key == 'Enter' && !event.shiftKey) {
     event.preventDefault()
-    const message = grab('#Message-Box').innerHTML;
+    const message = decodeHtml(grab('#Message-Box').innerHTML);
     sendMessage(message);
     if (!cheatActivated) {
       this.textContent = '';

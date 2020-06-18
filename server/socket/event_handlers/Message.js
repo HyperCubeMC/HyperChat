@@ -20,6 +20,11 @@ const filter = new Filter();
 // Define a new array of objects of special users
 let specialUsers = [];
 
+// Set marked options
+marked.setOptions({
+  gfm: true
+});
+
 // Set sanitizeHtmlOptions for sanitize-html
 const sanitizeHtmlOptions = {
   allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ]),
