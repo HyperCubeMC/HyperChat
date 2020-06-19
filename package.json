@@ -24,15 +24,15 @@
     "@iconfu/svg-inject": "^1.2.3",
     "argon2": "^0.26.2",
     "bad-words": "^3.0.3",
-    "bootstrap": "github:twbs/bootstrap",
+    "bootstrap": "^5.0.0-alpha1",
     "etag": "^1.8.1",
     "marked": "^1.1.0",
     "mongoose": "^5.9.19",
-    "sanitize-html": "^1.26.0",
+    "sanitize-html": "^1.27.0",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
-    "eslint": "^7.2.0",
+    "eslint": "^7.3.0",
     "jsdoc": "^3.6.4"
   }
 }
