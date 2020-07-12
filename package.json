@@ -25,6 +25,7 @@
     "argon2": "^0.26.2",
     "bad-words": "^3.0.3",
     "bootstrap": "^5.0.0-alpha1",
+    "dotenv": "^8.2.0",
     "etag": "^1.8.1",
     "marked": "^1.1.0",
     "mongoose": "^5.9.19",

@@ -3,6 +3,7 @@ import fs from 'fs';
 import http2 from 'http2';
 import socketio from 'socket.io';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 import handleRequest from './server/webserver/RequestHandler.js';
 import handleLogin from './server/socket/event_handlers/Login.js';
 import handleMessage from './server/socket/event_handlers/Message.js';
@@ -13,6 +14,9 @@ import handleDisconnect from './server/socket/event_handlers/Disconnect.js';
 
 // Set the process title
 process.title = 'HyperChat';
+
+// Setup dotenv
+dotenv.config();
 
 // Options for the web server including the TLS Certificate and allowing http1
 const options = {
@@ -44,8 +48,11 @@ global.serverListContents = [];
 // Define the shared global user map which is used to map usernames to unique socket id's
 global.userMap = new Map();
 
+// Get the mongodb connection string from dotenv
+const mongodbConnectionUri = process.env.MONGODB_CONNECTION_URI;
+
 // Connect to the MongoDB database using Mongoose
-mongoose.connect('mongodb://localhost:27017/hyperchat', {useNewUrlParser: true, useUnifiedTopology: true}).then(function(db) {
+mongoose.connect(mongodbConnectionUri, {useNewUrlParser: true, useUnifiedTopology: true}).then(function(db) {
   console.log('Connection to MongoDB successful!');
 }).catch(function(error) {
   console.error(`Connection error upon trying to connect to MongoDB: ${error}`);
