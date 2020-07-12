@@ -51,8 +51,8 @@ global.userMap = new Map();
 // Get the mongodb connection string from dotenv
 const mongodbConnectionUri = process.env.MONGODB_CONNECTION_URI;
 
-// Connect to the MongoDB database using Mongoose
-mongoose.connect(mongodbConnectionUri, {useNewUrlParser: true, useUnifiedTopology: true}).then(function(db) {
+// Connect to the MongoDB database using Mongoose - tlsInsecure is used since the connection uri uses localhost
+mongoose.connect(mongodbConnectionUri, {useNewUrlParser: true, useUnifiedTopology: true, tlsInsecure: true}).then(function(db) {
   console.log('Connection to MongoDB successful!');
 }).catch(function(error) {
   console.error(`Connection error upon trying to connect to MongoDB: ${error}`);
