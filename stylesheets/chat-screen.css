@@ -136,6 +136,7 @@
   overflow-y: auto;
   resize: none;
   border-radius: 8px;
+  line-height: 45px;
 }
 
 #User-Is-Typing-Area {
@@ -240,14 +241,19 @@
   background-color: #7289da;
   color: #fff;
   border-radius: 5px;
-  padding-left: 3px;
-  padding-right: 3px;
-  padding-top: 2px;
-  padding-bottom: 5px;
-  font-size: 0.75em;
+  padding-left: 7px;
+  padding-right: 7px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  font-size: 0.65em;
   line-height: 80%;
   vertical-align: middle;
   margin-bottom: 3px;
+  margin-left: 5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-family: "Exo", sans-serif;
+  letter-spacing: 1px;
 }
 
 .typing {
