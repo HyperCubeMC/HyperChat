@@ -20,8 +20,8 @@ dotenv.config();
 
 // Options for the web server including the TLS Certificate and allowing http1
 const options = {
-  cert: fs.readFileSync('/Users/evere/Servers/Certificates/ECDSA/chain.pem'),
-  key: fs.readFileSync('/Users/evere/Servers/Certificates/ECDSA/key.pem'),
+  cert: fs.readFileSync('/home/justsnoopy30/Projects/Certificates/ECDSA/chain.pem'),
+  key: fs.readFileSync('/home/justsnoopy30/Projects/Certificates/ECDSA/key.pem'),
   allowHTTP1: true
 }
 
