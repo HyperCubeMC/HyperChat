@@ -27,13 +27,13 @@
     "bootstrap": "^5.0.0-alpha1",
     "dotenv": "^8.2.0",
     "etag": "^1.8.1",
-    "marked": "^1.1.0",
-    "mongoose": "^5.9.23",
-    "sanitize-html": "^1.27.0",
+    "marked": "^1.1.1",
+    "mongoose": "^5.9.28",
+    "sanitize-html": "^1.27.3",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
-    "eslint": "^7.4.0",
-    "jsdoc": "^3.6.4"
+    "eslint": "^7.6.0",
+    "jsdoc": "^3.6.5"
   }
 }
