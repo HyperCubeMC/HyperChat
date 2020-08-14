@@ -22,6 +22,7 @@
   "license": "AGPL-3.0",
   "dependencies": {
     "@iconfu/svg-inject": "^1.2.3",
+    "@joeattardi/emoji-button": "^4.0.2",
     "argon2": "^0.26.2",
     "bad-words": "^3.0.3",
     "bootstrap": "^5.0.0-alpha1",

@@ -336,7 +336,7 @@ function decodeHtml(html) {
 }
 
 // Import the emoji button asyncronously with a dynamic import
-import('./es_modules/emoji-button/emoji-button.js').then(({default: EmojiButton}) => {
+import('./node_modules/@joeattardi/emoji-button/dist/index.js').then(({EmojiButton}) => {
   // Setup the emoji button
 
   // Set textPosition as a placeholder variable for the user's cursor position in the
@@ -348,7 +348,8 @@ import('./es_modules/emoji-button/emoji-button.js').then(({default: EmojiButton}
 
   // Set the emoji button options
   const options = {
-    style: 'twemoji'
+    style: 'twemoji',
+    position: 'left-start'
   }
 
   // Define picker as emoji picker button with options
