@@ -30,7 +30,7 @@
     "etag": "^1.8.1",
     "marked": "^1.1.1",
     "mongoose": "^5.10.5",
-    "sanitize-html": "^1.27.4",
+    "sanitize-html": "^2.0.0-rc.2",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
