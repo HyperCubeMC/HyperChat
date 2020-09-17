@@ -44,9 +44,13 @@ const sanitizeHtmlOptions = {
 // Put the special users with details in the special user array
 specialUsers.push({Username: 'justsnoopy30', Badge: 'Owner', UsernameColor: '#00b0f4', BadgeColor: '#7289da'},{Username: 'kmisterk', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#691785'},{Username: 'OliviaTheVampire', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#7b3c96'});
 
+function validateMessage(message) {
+  return (message !== null && typeof message == 'string' && message.length !== 0 && message.trim());
+}
+
 function handleMessage({io, socket, message}) {
-  // Stop right there if the user tries to send a null or non-string message
-  if (typeof message !== 'string' || message == null) return;
+  // Stop right there if the user tries to send a invalid message (null, non-string, or empty message)
+  if (!validateMessage(message)) return;
   // If the muted list includes the user trying to send the message, stop right there
   if (global.mutedList.includes(socket.username)) return;
   // Check if the message is over 2000 character, and if it is, change it to a
