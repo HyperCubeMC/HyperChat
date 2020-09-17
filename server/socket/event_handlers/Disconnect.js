@@ -6,17 +6,10 @@
  * @license AGPL-3.0
  */
 
-// Helper function to return an array with the value specified removed from the passed array
-function arrayRemove(array, value) {
-  return array.filter(function(element) {
-    return element != value;
-  });
-}
-
 function handleDisconnect({io, socket}) {
   if (socket.addedUser) {
     // Remove the user from the user list
-    global.userListContents[socket.server] = arrayRemove(global.userListContents[socket.server], socket.username);
+    global.userListContents[socket.server] = global.arrayRemove(global.userListContents[socket.server], socket.username);
     // Echo globally in the server that this user has left
     socket.to(socket.server).emit('user left', {
       username: socket.username

@@ -20,8 +20,8 @@ dotenv.config();
 
 // Options for the web server including the TLS Certificate and allowing http1
 const options = {
-  cert: fs.readFileSync('/home/justsnoopy30/Projects/Certificates/ECDSA/chain.pem'),
-  key: fs.readFileSync('/home/justsnoopy30/Projects/Certificates/ECDSA/key.pem'),
+  cert: fs.readFileSync('/home/justsnoopy30/Projects/Certificates/chain.pem'),
+  key: fs.readFileSync('/home/justsnoopy30/Projects/Certificates/key.pem'),
   allowHTTP1: true
 }
 
@@ -44,6 +44,13 @@ global.userListContents = [];
 
 // Setup the user list contents as a shared global variable
 global.serverListContents = [];
+
+// Helper function to return an array with the value specified removed from the passed array
+global.arrayRemove = (array, value) => {
+  return array.filter(function(element) {
+    return element != value;
+  });
+}
 
 // Define the shared global user map which is used to map usernames to unique socket id's
 global.userMap = new Map();

@@ -22,19 +22,19 @@
   "license": "AGPL-3.0",
   "dependencies": {
     "@iconfu/svg-inject": "^1.2.3",
-    "@joeattardi/emoji-button": "^4.0.2",
-    "argon2": "^0.26.2",
+    "@joeattardi/emoji-button": "^4.1.0",
+    "argon2": "^0.27.0",
     "bad-words": "^3.0.3",
     "bootstrap": "^5.0.0-alpha1",
     "dotenv": "^8.2.0",
     "etag": "^1.8.1",
     "marked": "^1.1.1",
-    "mongoose": "^5.9.28",
-    "sanitize-html": "^1.27.3",
+    "mongoose": "^5.10.5",
+    "sanitize-html": "^1.27.4",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
-    "eslint": "^7.6.0",
+    "eslint": "^7.9.0",
     "jsdoc": "^3.6.5"
   }
 }

@@ -360,21 +360,28 @@ import('./node_modules/@joeattardi/emoji-button/dist/index.js').then(({EmojiButt
     if (getSelection().rangeCount > 0 && getSelection().containsNode(document.querySelector('#Message-Box'))) {
       messageBoxTextPosition = getSelection().getRangeAt(0);
     }
+
     picker.togglePicker(button);
-    grab('.emoji-picker').classList.remove('light');
+    grab('.emoji-picker').classList.remove('light', 'dark');
     grab('.emoji-picker').classList.add(store('theme'));
-    currentInput = grab('.emoji-picker');
+    if (picker.isPickerVisible()) {
+      currentInput = grab('.emoji-picker');
+    }
   });
 
 
   // Add the emoji to the user's cursor position in the message box when an emoji
   // in the emoji picker is clicked
-  picker.on('emoji', emoji => {
+  picker.on('emoji', selection => {
+    const emoji = document.createElement('img');
+    emoji.src = selection.url;
+    emoji.alt = selection.emoji;
+    emoji.className = 'emoji';
+    emoji.crossOrigin = 'anonymous';
     if (messageBoxTextPosition) {
-      messageBoxTextPosition.insertNode(messageBoxTextPosition.createContextualFragment(emoji))
-    }
-    else {
-      grab('#Message-Box').insertAdjacentHTML('beforeend', emoji);
+      messageBoxTextPosition.insertNode(emoji);
+    } else {
+      grab('#Message-Box').insertAdjacentElement('beforeend', emoji);
     }
     currentInput = grab('#Message-Box');
     setTimeout(function() { grab('#Message-Box').focus() }, 200);
@@ -396,7 +403,7 @@ socket.on('login authorized', () => {
     grab('#Chat-Screen').fadeIn();
     currentInput = grab('#Message-Box');
     connected = true;
-    loggedIn = true
+    loggedIn = true;
     // Display the welcome message
     log(`Welcome to ${server}!`, {
       prepend: true
@@ -437,12 +444,12 @@ socket.on('server list', (data) => {
 });
 
 socket.on('mute', () => {
-  grab('#Message-Box').disabled = true;
+  grab('#Message-Box').setAttribute("contentEditable", false)
   alert('You are now muted!');
 });
 
 socket.on('unmute', () => {
-  grab('#Message-Box').disabled = false;
+  grab('#Message-Box').setAttribute("contentEditable", true)
   alert('You are now unmuted!');
 });
 
@@ -558,7 +565,7 @@ const addChatMessage = (data) => {
   // Make a new img for the profile picture icon
   let profilePictureIcon = newElement('img');
   profilePictureIcon.classList.add('profilePictureIcon');
-  profilePictureIcon.src = `/cdn/UserProfilePictures/${data.username}.webp`;
+  profilePictureIcon.src = `/cdn/UserProfilePictures/${data.username.toLowerCase()}.webp`;
 
   // Add the profile picture icon to the profile picture span
   profilePicture.append(profilePictureIcon);
@@ -878,6 +885,7 @@ socket.on('reconnect', () => {
     initialLogin = false;
     clearUserList();
     clearServerList();
+    clearMessages();
     socket.emit('login', { username, password, server });
   }
 });
