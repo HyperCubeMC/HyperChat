@@ -136,7 +136,7 @@
   overflow-y: auto;
   resize: none;
   border-radius: 8px;
-  line-height: 45px;
+  line-height: normal;
 }
 
 #User-Is-Typing-Area {
