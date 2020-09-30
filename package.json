@@ -30,6 +30,7 @@
     "etag": "^1.8.1",
     "marked": "^1.2.0",
     "mongoose": "^5.10.7",
+    "rate-limiter-flexible": "^2.1.10",
     "sanitize-html": "^2.0.0",
     "socket.io": "^2.3.0"
   },
