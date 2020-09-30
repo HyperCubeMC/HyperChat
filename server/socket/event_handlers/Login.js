@@ -8,6 +8,9 @@
 
 // At the start, import the needed modules
 import argon2 from 'argon2';
+import Filter from 'bad-words';
+
+const filter = new Filter();
 
 function handleLogin({io, socket, username, password, server}) {
   // Check the client sent variables to make sure they are defined and of type string,
@@ -18,6 +21,9 @@ function handleLogin({io, socket, username, password, server}) {
     });
     return;
   }
+
+  // Make sure nobody can avoid the swear filter through a username
+  username = filter.clean(username);
 
   let userHashedPassword;
 
@@ -77,7 +83,7 @@ function handleLogin({io, socket, username, password, server}) {
         if (count > 0) {
           global.db.collection('credentials').findOne({username: username.toLowerCase()}, function(err, user) {
             async function getUserVerification() {
-              var userVerification = await verifyPassword(user.hashedPassword, password);
+              const userVerification = await verifyPassword(user.hashedPassword, password);
               return userVerification;
             }
             getUserVerification().then(userVerification => {
@@ -94,8 +100,8 @@ function handleLogin({io, socket, username, password, server}) {
         }
         // If no match is found for the username, register the user in the database, and then call allowLogin() to let them in
         else {
-          userCredentialsDocument.save(function (err, credentials) {
-            if (err) return console.error(err);
+          userCredentialsDocument.save(function (error, credentials) {
+            if (error) return console.error(`An error occurred while attempting to register user ${socket.username} in the database: ${error}`);
             allowLogin();
           });
         }
@@ -108,13 +114,12 @@ function handleLogin({io, socket, username, password, server}) {
         socket.server = server;
         // Join the user to their server
         socket.join(socket.server);
+        // Mark them as authenticated
+        socket.authenticated = true;
         // Tell the user that their login has been authorized
         socket.emit('login authorized');
-        socket.addedUser = true;
         // Echo to the server that a person has connected
-        socket.to(socket.server).emit('user joined', {
-          username: socket.username,
-        });
+        socket.to(socket.server).emit('user joined', socket.username);
         // Create the user list contents for the server if it doesn't exist
         if (typeof global.userListContents[socket.server] == 'undefined') {
           global.userListContents[socket.server] = [];
@@ -122,31 +127,27 @@ function handleLogin({io, socket, username, password, server}) {
         // Add the user to the user list contents for their server
         global.userListContents[socket.server].push(socket.username);
         // Send the user list contents to the user for their server
-        socket.emit('user list', {
-          userListContents: global.userListContents[socket.server]
-        });
+        socket.emit('user list', global.userListContents[socket.server]);
 
         // Create the server list contents for the user if it doesn't exist
         if (typeof global.serverListContents[socket.username] == 'undefined') {
           global.serverListContents[socket.username] = [];
           // The server list database is not implemented yet, so I'll put a server in the server list contents for the user
-          global.serverListContents[socket.username].push({ServerName: 'General', Owner: 'Justsnoopy30'},{ServerName: 'HyperLand', Owner: 'Justsnoopy30'});
+          global.serverListContents[socket.username].push({ServerName: 'General', Owner: 'Justsnoopy30'}, {ServerName: 'HyperLand', Owner: 'Justsnoopy30'});
         }
         // Send the server list contents for the user to the user
-        socket.emit('server list', {
-          serverListContents: global.serverListContents[socket.username]
-        });
+        socket.emit('server list', global.serverListContents[socket.username]);
 
         // Count amount of servers in the database with the server name the user is in
         global.serverModel.countDocuments({serverName: socket.server}, function(err, count) {
           // Server is already in the database, so send the client the initial message list and return
           if (count > 0) {
-            global.messageModel.find({server: socket.server}).then((servers) => {
+            global.messageModel.find({server: socket.server}).then((messages) => {
               // Send the initial message list to the client (array of messages)
-              socket.emit('initial message list', servers);
+              socket.emit('initial message list', messages);
             }).catch((error) => {
               // Catch and show an error in console if there is one
-              console.error(error);
+              console.error(`An error occurred while attempting to fetch the message history for ${socket.username} in server ${socket.server} from the database: ${error}`);
             });
             return;
           }
@@ -159,8 +160,8 @@ function handleLogin({io, socket, username, password, server}) {
             });
 
             // Save the server in the database
-            serverDocument.save(function (err, server) {
-              if (err) console.error(err);
+            serverDocument.save(function (error, server) {
+              if (error) console.error(`An error occurred while attempting to save the server ${socket.server} created by ${socket.username} to the database: ${error}`);
             });
 
             // Tell the user this is a new server

@@ -41,8 +41,16 @@ function handleRequest (req, res) {
   if (reqURL.pathname == '/')
     reqURL.pathname = '/chat.html';
 
+  // HOTFIX
+  // TODO: DO IT PROPERLY AND DON'T HAVE SERVER FILES EXPOSED, USE A DEDIATED CLIENT RESOURCES DIRECTORY
+  if (reqURL.pathname == '/.env') {
+    res.writeHead(404);
+    res.end('404 Not Found');
+    return;
+  }
+
   // Set the path to the requested resource based on the URL
-  const pathname = path.join(process.cwd(), reqURL.pathname);
+  const pathname = path.join(process.cwd() + '/client', reqURL.pathname);
 
   // Set the extension name variable based on the file extension in the pathname
   const extname = String(path.extname(pathname)).toLowerCase();
@@ -59,7 +67,7 @@ function handleRequest (req, res) {
         // If the path is a user profile picture, and the profile picture for the user
         // does not exist, then serve the generic profile picture
         if (reqURL.pathname.startsWith('/cdn/UserProfilePictures/')) {
-          fs.readFile('./cdn/UserProfilePictures/generic.webp', function (error, content) {
+          fs.readFile('./client/cdn/UserProfilePictures/generic.webp', function (error, content) {
             res.writeHead(200, {
               'Content-Type': contentType,
               'Content-Length': Buffer.byteLength(content),
@@ -71,7 +79,7 @@ function handleRequest (req, res) {
         }
         // Otherwise, if it's not a user profile picture requested, serve the 404 Not Found page
         else {
-          fs.readFile('./errors/404.html', function (error, content) {
+          fs.readFile('./client/errors/404.html', function (error, content) {
             res.writeHead(404, {
               'Content-Type': 'text/html',
               'Content-Length': Buffer.byteLength(content),

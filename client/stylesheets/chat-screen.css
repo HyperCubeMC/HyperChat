@@ -16,7 +16,7 @@
     "Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area"
     "Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area"
     "Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area"
-    "Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area";
+    "Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area";
 }
 
 #Server-List-Area {
@@ -70,7 +70,7 @@
       "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
       "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
       "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
-      "Server-List-Area Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area Message-Box-Area User-List";
+      "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List";
   }
 
   #Server-List-Area {
@@ -109,30 +109,38 @@
   padding: 1%;
 }
 
+#Bottom-Area {
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+  width: 100%;
+}
+
 #Chat-Area {
   grid-area: Chat-Area;
   display: flex;
+  flex-direction: column;
   height: 100%;
   width: 100%;
 }
 
 #Message-Box-Area {
-  grid-area: Message-Box-Area;
   display: flex;
-  height: 100%;
+  height: auto;
   width: 100%;
-  align-items: flex-end;
 }
 
 #Message-Box {
+  flex: 1;
   height: auto;
-  width: 100%;
   min-height: 3em;
-  max-height: 80%;
+  max-height: 6em;
   outline: none;
   font-size: 100%;
   border: 1px solid #40444b;
   padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   overflow-y: auto;
   resize: none;
   border-radius: 8px;
@@ -140,8 +148,7 @@
 }
 
 #User-Is-Typing-Area {
-  grid-area: Message-Box-Area;
-  display: flex;
+  display: flex; 
   padding-left: 10px;
   font-size: 150%;
 }
@@ -152,10 +159,11 @@
 }
 
 #messages {
+  flex-grow: 1;
   list-style: none;
   width: 100%;
   height: fit-content;
-  max-height: 100%;
+  max-height: 80%;
   padding-left: 0;
   margin: 0;
   overflow-y: auto;
@@ -190,8 +198,14 @@
 }
 
 .message {
+  position: relative;
   overflow: hidden;
   overflow-wrap: break-word;
+}
+
+/* Show the delete button when a message is hovered */
+.message:hover .deleteMessageButton {
+  display: inline-block;
 }
 
 /* Change message background color on hover on light theme */
@@ -322,4 +336,22 @@
 .emoji {
   height: 1em;
   width: 1em;
+}
+
+/* Button that deletes a message */
+.deleteMessageButton {
+  display: none;
+  height: 30px;
+  width: 30px;
+  position: absolute;
+  right: 5px;
+  cursor: pointer;
+  background-image: url('/assets/DeleteMessageIcon.png');
+  background-repeat: no-repeat;
+}
+
+/* The icon for the delete message button */
+.deleteMessageIcon {
+  height: 30px;
+  width: 30px;  
 }

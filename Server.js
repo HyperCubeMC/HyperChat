@@ -11,6 +11,7 @@ import handleTyping from './server/socket/event_handlers/Typing.js';
 import handleStopTyping from './server/socket/event_handlers/StopTyping.js';
 import handleSwitchServer from './server/socket/event_handlers/SwitchServer.js';
 import handleDisconnect from './server/socket/event_handlers/Disconnect.js';
+import handleDeleteMessage from './server/socket/event_handlers/DeleteMessage.js';
 
 // Set the process title
 process.title = 'HyperChat';
@@ -20,8 +21,8 @@ dotenv.config();
 
 // Options for the web server including the TLS Certificate and allowing http1
 const options = {
-  cert: fs.readFileSync('/home/justsnoopy30/Projects/Certificates/chain.pem'),
-  key: fs.readFileSync('/home/justsnoopy30/Projects/Certificates/key.pem'),
+  cert: fs.readFileSync(process.env.CERT_PATH),
+  key: fs.readFileSync(process.env.KEY_PATH),
   allowHTTP1: true
 }
 
@@ -32,7 +33,7 @@ const webServer = http2.createSecureServer(options, handleRequest);
 const io = socketio(webServer);
 
 // Make the web server listen on this port
-webServer.listen(4434);
+webServer.listen(process.env.PORT);
 
 // In the beginning, there was the chat app code...
 
@@ -79,6 +80,7 @@ const userCredentialsSchema = new Schema({
 // Create a new schema for messages
 const messageSchema = new Schema({
   username: String,
+  messageId: String,
   message: String,
   server: String,
   badge: String,
@@ -106,7 +108,7 @@ global.serverModel = mongoose.model('serverModel', serverSchema, 'servers');
 
 // And everything starts here where a user makes a connection to the socket.io server...
 io.on('connection', (socket) => {
-  socket.addedUser = false;
+  socket.authenticated = false;
 
   // When the client emits 'login', this listens and executes
   socket.on('login', ({ username, password, server }) => {
@@ -115,22 +117,32 @@ io.on('connection', (socket) => {
 
   // When the client emits 'new message', this listens and executes
   socket.on('new message', (message) => {
+    if (!socket.authenticated) return;
     handleMessage({io, socket, message});
   });
 
   // When the client emits 'typing', we broadcast it to others
   socket.on('typing', () => {
+    if (!socket.authenticated) return;
     handleTyping({io, socket});
   });
 
   // When the client emits 'stop typing', we broadcast it to others
   socket.on('stop typing', () => {
+    if (!socket.authenticated) return;
     handleStopTyping({io, socket});
   });
 
   // When the client emits 'switch server', we switch their server
   socket.on('switch server', (server) => {
+    if (!socket.authenticated) return;
     handleSwitchServer({io, socket, server});
+  });
+
+  // When the client emits 'delete message', we try to delete the message requested
+  socket.on('delete message', (messageId) => {
+    if (!socket.authenticated) return;
+    handleDeleteMessage({io, socket, messageId});
   });
 
   // When the user disconnects, perform this

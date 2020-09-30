@@ -1,3 +1,4 @@
+
 /**
  * Module to handle the socket switch server event.
  * @module Socket Switch Server Event Handler
@@ -28,9 +29,7 @@ function handleSwitchServer({io, socket, server}) {
   // Remove the user from the user list
   global.userListContents[socket.server] = arrayRemove(global.userListContents[socket.server], socket.username);
   // Echo globally in the server that this user has left
-  socket.to(socket.server).emit('user left', {
-    username: socket.username
-  });
+  socket.to(socket.server).emit('user left', socket.username);
   // Change the user's server to the requested server
   socket.server = server;
   // Join the user to their requested server
@@ -40,9 +39,7 @@ function handleSwitchServer({io, socket, server}) {
     server: socket.server
   });
   // Echo to the server that a person has connected
-  socket.to(socket.server).emit('user joined', {
-    username: socket.username,
-  });
+  socket.to(socket.server).emit('user joined', socket.username);
   // Create the user list contents for the server if it doesn't exist
   if (typeof global.userListContents[socket.server] == 'undefined') {
     global.userListContents[socket.server] = [];
@@ -51,20 +48,18 @@ function handleSwitchServer({io, socket, server}) {
   global.userListContents[socket.server].push(socket.username);
 
   // Send the user list contents to the user for their server
-  socket.emit('user list', {
-    userListContents: global.userListContents[socket.server]
-  });
+  socket.emit('user list', global.userListContents[socket.server]);
 
   // Count amount of servers in the database with the server name the user is in
   global.serverModel.countDocuments({serverName: socket.server}, function(err, count) {
     // Server is already in the database, so send the client the initial message list and return
     if (count > 0) {
-      global.messageModel.find({server: socket.server}).then((servers) => {
+      global.messageModel.find({server: socket.server}).then((messages) => {
         // Send the initial message list to the client (array of messages)
-        socket.emit('initial message list', servers);
+        socket.emit('initial message list', messages);
       }).catch((error) => {
         // Catch and show an error in console if there is one
-        console.error(error);
+        console.error(`An error occurred while attempting to fetch the message history for ${socket.username} in server ${socket.server} from the database: ${error}`);
       });
       return;
     }
@@ -76,8 +71,8 @@ function handleSwitchServer({io, socket, server}) {
         serverOwner: socket.username
       });
 
-      serverDocument.save(function (err, server) {
-        if (err) console.error(err);
+      serverDocument.save(function (error, server) {
+        if (error) console.error(`An error occurred while attempting to save the server ${socket.server} created by ${socket.username} to the database: ${error}`);
       });
     }
   });

@@ -6,7 +6,7 @@
  * @license AGPL-3.0
  */
 
- // At the start, import the needed modules
+// At the start, import the needed modules
 import marked from 'marked';
 import sanitizeHtml from 'sanitize-html';
 import Filter from 'bad-words';
@@ -31,21 +31,33 @@ const sanitizeHtmlOptions = {
   allowedAttributes: {
     a: [ 'href', 'name', 'target' ],
     img: [
-      'src', 'srcset', 'draggable', 'alt', 'class',
-      {
-        name: 'crossorigin',
-        multiple: false,
-        values: ['anonymous']
-      }
-    ]
+      'src', 'srcset', 'draggable', 'alt', 'class', 'crossorigin'
+    ],
+    span: ['style']
+  },
+  allowedStyles: {
+    '*': {
+      'color': [/^#(0x)?[0-9a-f]+$/i, /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/],
+      'text-align': [/^left$/, /^right$/, /^center$/],
+      'font-size': [/^\d+(?:px|em|%)$/]
+    }
   }
 }
 
 // Put the special users with details in the special user array
-specialUsers.push({Username: 'justsnoopy30', Badge: 'Owner', UsernameColor: '#00b0f4', BadgeColor: '#7289da'},{Username: 'kmisterk', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#691785'},{Username: 'OliviaTheVampire', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#7b3c96'});
+specialUsers.push({Username: 'justsnoopy30', Badge: 'Owner', UsernameColor: '#00b0f4', BadgeColor: '#7289da'}, {Username: 'kmisterk', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#691785'},{Username: 'OliviaTheVampire', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#7b3c96'});
 
+// Helper function to validate the contents of a message
 function validateMessage(message) {
   return (message !== null && typeof message == 'string' && message.length !== 0 && message.trim());
+}
+
+// Utility function to help with generating random numeric strings, see https://stackoverflow.com/a/57355127
+function generateNumericRandom(n) { var add = 1, max = 12 - add; if (n > max) { return generateNumericRandom(max) + generateNumericRandom(n - max); } max = Math.pow(10, n + add); var min = max / 10; var number = Math.floor(Math.random() * (max - min + 1)) + min; return ("" + number).substring(add); }
+
+// Tiny wrapper function to generate a message id
+function generateMessageId() {
+  return generateNumericRandom(18);
 }
 
 function handleMessage({io, socket, message}) {
@@ -65,6 +77,7 @@ function handleMessage({io, socket, message}) {
     });
     return;
   }
+
   // Clean the message with a bad word filter
   const filteredMessage = filter.clean(message);
 
@@ -74,11 +87,15 @@ function handleMessage({io, socket, message}) {
   // Sanitize the message html with the sanitize-html library
   const finalMessage = sanitizeHtml(messageHtml, sanitizeHtmlOptions);
 
+  // Generate a random numeric message id and save it to a variable
+  const messageId = generateMessageId();
+
   // Perform special user checking and then send the final message to everyone in the user's server
   const specialUser = specialUsers.find(specialUser => specialUser.Username === socket.username.toLowerCase());
   if (specialUser) {
     io.in(socket.server).emit('new message', {
       username: socket.username,
+      messageId: messageId,
       message: finalMessage,
       special: true,
       badge: specialUser.Badge,
@@ -88,6 +105,7 @@ function handleMessage({io, socket, message}) {
     // Create the mongoose document for messages using the message model
     const messageDocument = new global.messageModel({
       username: socket.username,
+      messageId: messageId,
       message: finalMessage,
       server: socket.server,
       special: true,
@@ -103,12 +121,14 @@ function handleMessage({io, socket, message}) {
   else {
     io.in(socket.server).emit('new message', {
       username: socket.username,
+      messageId: messageId,
       message: finalMessage,
       badge: 'none'
     });
     // Create the mongoose document for messages using the message model
     const messageDocument = new global.messageModel({
       username: socket.username,
+      messageId: messageId,
       message: finalMessage,
       server: socket.server,
       badge: 'none'
@@ -288,5 +308,5 @@ function handleMessage({io, socket, message}) {
   }
 }
 
- // Export the handleMessage function as the default export
- export default handleMessage;
+// Export the handleMessage function as the default export
+export default handleMessage;

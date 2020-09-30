@@ -60,7 +60,7 @@ if ('serviceWorker' in navigator && 'register' in navigator.serviceWorker && 'co
   }
 }
 else {
-  console.log('Service workers are not supported on this browser or browser version.');
+  console.warn('Service workers are not supported on this browser or browser version. Some features may be disabled!');
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -91,14 +91,14 @@ let lastTypingTime;
 let userListContents;
 let serverListContents;
 let loggedIn;
-let cheatActivated;
+let konamiActivated;
 let notificationReplyMessage;
 let initialLogin = true;
 let darkThemeSwitchState;
 let pageVisible;
 let systemTheme;
 let usersTypingArray = [];
-let socket; // Socket.io, placeholder letiable until assigned later below.
+let socket; // Socket.io, placeholder variable until assigned later below.
 
 // Initialize sounds for the chat app.
 const chatMessageSound = new Audio('./assets/ChatMessageSound.webm');
@@ -109,15 +109,15 @@ const regainedConnectionSound = new Audio('./assets/RegainedConnection.webm');
 const stunSound = new Audio('./assets/Stun.webm');
 const kickSound = new Audio('./assets/Kick.webm');
 
-let sequences = {
-  primary: 'up up down down left right left right b a',
+const sequences = {
+  konami: 'up up down down left right left right b a',
 };
 
-cheet(sequences.primary);
+cheet(sequences.konami);
 
 cheet.done(function (seq) {
-  if (seq === sequences.primary) {
-    cheatActivated = true
+  if (seq === sequences.konami) {
+    konamiActivated = true
   }
 });
 
@@ -383,8 +383,12 @@ import('./node_modules/@joeattardi/emoji-button/dist/index.js').then(({EmojiButt
     } else {
       grab('#Message-Box').insertAdjacentElement('beforeend', emoji);
     }
+  });
+
+  // When the picker is hidden, focus the message box and change the currentInput
+  picker.on('hidden', () => {
+    grab('#Message-Box').focus();
     currentInput = grab('#Message-Box');
-    setTimeout(function() { grab('#Message-Box').focus() }, 200);
   });
 });
 
@@ -425,13 +429,11 @@ socket.on('server switch denied', (data) => {
   location.reload();
 });
 
-socket.on('user list', (data) => {
-  userListContents = data.userListContents;
+socket.on('user list', (userListContents) => {
   syncUserList(userListContents);
 });
 
-socket.on('server list', (data) => {
-  serverListContents = data.serverListContents;
+socket.on('server list', (serverListContents) => {
   syncServerList(serverListContents);
   // Add an event listener go to the server when a server icon in the server list is clicked
   grabAll('.serverIconInServerList').forEach(function(element) {
@@ -440,6 +442,15 @@ socket.on('server list', (data) => {
       socket.emit('switch server', server);
       // const serverName = serverListContents.find(server => server.ServerName === 'ServerNameHere').PropertyOfObjectToGet;
     });
+  });
+});
+
+socket.on('delete message', (messageId) => {
+  // For all of the messages, iterate over and delete the one that matches the messageId to delete
+  grabAll('.message').forEach(function(message) {
+    if (message.dataset['messageid'] == messageId) {
+      message.remove();
+    }
   });
 });
 
@@ -566,6 +577,7 @@ const addChatMessage = (data) => {
   let profilePictureIcon = newElement('img');
   profilePictureIcon.classList.add('profilePictureIcon');
   profilePictureIcon.src = `/cdn/UserProfilePictures/${data.username.toLowerCase()}.webp`;
+  profilePictureIcon.draggable = false;
 
   // Add the profile picture icon to the profile picture span
   profilePicture.append(profilePictureIcon);
@@ -600,14 +612,32 @@ const addChatMessage = (data) => {
   let messageItem = newElement('li');
   messageItem.classList.add('message');
   messageItem.data('username', data.username);
+  messageItem.data('messageid', data.messageId);
+
+  // Make a new span for the delete message button
+  let deleteButton = newElement('span');
+  deleteButton.classList.add('deleteMessageButton');
+  deleteButton.onclick = (event) => {
+    socket.emit('delete message', deleteButton.getParent().data('messageid'));
+  }
+
+  // Make a new img for the delete message icon
+  let deleteIcon = newElement('img');
+  deleteIcon.classList.add('deleteMessageIcon');
+  deleteIcon.src = '/assets/DeleteMessageIcon.png';
+  deleteIcon.draggable = false;
+
+  // Add the delete icon to the delete button
+  deleteButton.append(deleteIcon);
+
   // If the message is special, add the special class and append the badge
   if (data.special) {
     messageItem.classList.add('special');
-    messageItem.append(profilePicture, usernameSpan, userBadge, messageBodyDiv);
+    messageItem.append(profilePicture, usernameSpan, userBadge, deleteButton, messageBodyDiv);
   }
   // Otherwise, just continue like normal
   else {
-    messageItem.append(profilePicture, usernameSpan, messageBodyDiv);
+    messageItem.append(profilePicture, usernameSpan, deleteButton, messageBodyDiv);
   }
 
   addMessageElement(messageItem);
@@ -674,6 +704,11 @@ function clearMessages() {
   }
 }
 
+// Function to remove all typing messages
+function clearTypingMessages() {
+  syncUsersTyping([]);
+}
+
 // Adds a message element to the messages and scrolls to the bottom
 // element - The element to add as a message
 // options.prepend - If the element should prepend
@@ -716,6 +751,11 @@ const updateTyping = () => {
   }
 }
 
+// Helper function to get random color from our color list
+function getRandomColorFromList() {
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+
 // Gets the color of a username through our hash function
 const getUsernameColor = (username) => {
   // Compute hash code
@@ -736,11 +776,15 @@ grab('#Message-Box').addEventListener('keydown', function (event) {
   }
   if (event.key == 'Enter' && !event.shiftKey) {
     event.preventDefault()
-    const message = decodeHtml(grab('#Message-Box').innerHTML);
-    sendMessage(message);
-    if (!cheatActivated) {
-      this.textContent = '';
+    const message = decodeHtml(this.innerHTML);
+    if (konamiActivated) {
+      const color = getRandomColorFromList();
+      const coloredMessage = `<span style="color: ${color}">${message}</span>`;
+      sendMessage(coloredMessage);
+    } else {
+      sendMessage(message);
     }
+    this.textContent = '';
     socket.emit('stop typing');
     typing = false;
   }
@@ -755,7 +799,7 @@ document.addEventListener('keydown', (event) => {
   }
   if (loggedIn) {
     // Auto-focus the current input when a key is typed
-    if (currentInput && !(event.ctrlKey || event.metaKey || event.altKey || event.ctrlKey)) {
+    if (currentInput && !(event.ctrlKey || event.metaKey || event.altKey)) {
       currentInput.focus();
     }
   }
@@ -769,12 +813,14 @@ grab('#usernameInput').addEventListener('click', () => {
 });
 
 // Set focus to password input when clicked
-grab('#passwordInput').addEventListener('click',() => {
+grab('#passwordInput').addEventListener('click', () => {
   currentInput = grab('#passwordInput');
 });
 
 // Focus input when clicking on the message input's border
-grab('#Message-Box').addEventListener('click', () => {grab('#Message-Box').focus()});
+grab('#Message-Box').addEventListener('click', () => {
+  grab('#Message-Box').focus();
+});
 
 // Go to the settings page when the settings icon on the chat page is clicked
 grab('#settingsIconInChat').addEventListener('click', showSettingsScreen);
@@ -799,8 +845,6 @@ socket.on('new message', (data) => {
     addChatMessage(data);
     chatMessageSound.play();
     if (navigator.serviceWorker.controller && notificationPermission === 'granted' && data.message.includes(`@${username}`)) { // Make sure the service worker is controlling the site, we have the permission to send notifications, and the user was mentioned
-      // Convert html to markdown using AgentMarkdown for the notification
-      // const notificationMessage = turndown(data.message);
       // No html to markdown converter yet because of issues
       const notificationMessage = data.message;
       navigator.serviceWorker.ready.then(function(registration) {
@@ -823,35 +867,37 @@ socket.on('new message', (data) => {
 });
 
 // Whenever the server emits 'user joined', log it in the chat body
-socket.on('user joined', (data) => {
-  log(`${data.username} joined the server.`);
+socket.on('user joined', (username) => {
+  log(`${username} joined the server.`);
   userJoinedChatSound.play();
-  addToUserList(data.username);
+  addToUserList(username);
 });
 
 // Whenever the server emits 'user left', log it in the chat body
-socket.on('user left', (data) => {
-  log(`${data.username} left the server.`);
+socket.on('user left', (username) => {
+  log(`${username} left the server.`);
   userLeftChatSound.play();
-  removeFromUserList(data.username);
+  removeFromUserList(username);
 });
 
 // Whenever the server emits 'typing', show the typing message
-socket.on('typing', (data) => {
-  usersTypingArray.push(data.username);
+socket.on('typing', (username) => {
+  usersTypingArray.push(username);
   syncUsersTyping(usersTypingArray);
 });
 
-// Whenever the server emits 'stop typing', kill the typing message
-socket.on('stop typing', (data) => {
-  usersTypingArray = arrayRemove(usersTypingArray, data.username);
+// Whenever the server emits 'stop typing', remove the typing message
+socket.on('stop typing', (username) => {
+  usersTypingArray = arrayRemove(usersTypingArray, username);
   syncUsersTyping(usersTypingArray);
 });
 
+// If the server tells us the server switch was successful, switch server visibly
 socket.on('server switch success', (data) => {
   server = data.server;
   clearUserList();
   clearMessages();
+  clearTypingMessages();
   // Display the welcome message
   log(`Welcome to ${server}!`, {
     prepend: true
@@ -875,6 +921,7 @@ socket.on('disconnect', () => {
   log('You have been disconnected.');
   lostConnectionSound.play();
   showReconnectingScreen();
+  connected = false;
 });
 
 socket.on('reconnect', () => {
@@ -886,8 +933,10 @@ socket.on('reconnect', () => {
     clearUserList();
     clearServerList();
     clearMessages();
+    clearTypingMessages();
     socket.emit('login', { username, password, server });
   }
+  connected = true;
 });
 
 socket.on('reconnect_error', () => {
