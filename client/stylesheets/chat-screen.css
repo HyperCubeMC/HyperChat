@@ -203,6 +203,14 @@
   overflow-wrap: break-word;
 }
 
+/* If a message has the mention class, highlight it */
+.message.mention .messageBody {
+  background-color: #ffdd00;
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+  border-left-color: #f5d142;
+}
+
 /* Show the delete button when a message is hovered */
 .message:hover .deleteMessageButton {
   display: inline-block;

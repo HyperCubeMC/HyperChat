@@ -495,9 +495,13 @@ socket.on('smash', () => {
   });
 });
 
-socket.on('kick', () => {
+socket.on('kick', (reason) => {
   kickSound.play();
-  alert('You have been kicked from the server.');
+  if (reason == null) {
+    alert('You have been kicked by an admin.');
+  } else {
+    alert(`You have been kicked for ${reason}.`);
+  }
   location.reload();
 });
 
@@ -629,6 +633,11 @@ const addChatMessage = (data) => {
 
   // Add the delete icon to the delete button
   deleteButton.append(deleteIcon);
+
+  // If the message mentions the user, add the mention class
+  if (data.message.includes(`@${username}`)) {
+    messageItem.classList.add('mention');
+  }
 
   // If the message is special, add the special class and append the badge
   if (data.special) {

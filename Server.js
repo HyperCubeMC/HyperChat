@@ -4,6 +4,7 @@ import http2 from 'http2';
 import socketio from 'socket.io';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import rateLimiterFlexible from 'rate-limiter-flexible';
 import handleRequest from './server/webserver/RequestHandler.js';
 import handleLogin from './server/socket/event_handlers/Login.js';
 import handleMessage from './server/socket/event_handlers/Message.js';
@@ -12,6 +13,9 @@ import handleStopTyping from './server/socket/event_handlers/StopTyping.js';
 import handleSwitchServer from './server/socket/event_handlers/SwitchServer.js';
 import handleDisconnect from './server/socket/event_handlers/Disconnect.js';
 import handleDeleteMessage from './server/socket/event_handlers/DeleteMessage.js';
+
+// Finish importing rate-limiter flexible
+const { RateLimiterMemory } = rateLimiterFlexible;
 
 // Set the process title
 process.title = 'HyperChat';
@@ -106,6 +110,12 @@ global.messageModel = mongoose.model('messageModel', messageSchema, 'messages');
 // Use the server Schema to make a Mongoose Model as a shared global variable
 global.serverModel = mongoose.model('serverModel', serverSchema, 'servers');
 
+// Setup rate limiter
+const rateLimiter = new RateLimiterMemory({
+  points: 5, // 5 points
+  duration: 1 // per second
+});
+
 // And everything starts here where a user makes a connection to the socket.io server...
 io.on('connection', (socket) => {
   socket.authenticated = false;
@@ -118,7 +128,14 @@ io.on('connection', (socket) => {
   // When the client emits 'new message', this listens and executes
   socket.on('new message', (message) => {
     if (!socket.authenticated) return;
-    handleMessage({io, socket, message});
+    rateLimiter.consume(socket.username)
+      .then(rateLimiterRes => {
+        handleMessage({io, socket, message});
+      })
+      .catch(rej => {
+        socket.emit('kick', 'spamming');
+        socket.disconnect();
+      });
   });
 
   // When the client emits 'typing', we broadcast it to others
