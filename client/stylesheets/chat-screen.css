@@ -363,3 +363,11 @@
   height: 30px;
   width: 30px;  
 }
+
+/* Timestamp that shows when a message was sent */
+.timestamp {
+  color: gray;
+  font-size: 70%;
+  padding-left: 7px;
+  padding-right: 7px;
+}

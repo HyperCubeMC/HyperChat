@@ -609,6 +609,11 @@ const addChatMessage = (data) => {
     userBadge.textContent = data.badge;
   }
 
+  // Make a new span showing when the message was sent
+  let timestamp = newElement('span');
+  timestamp.classList.add('timestamp');
+  timestamp.textContent = new Date(data.timestamp).toLocaleString();
+
   let messageBodyDiv = newElement('div');
   messageBodyDiv.classList.add('messageBody');
   messageBodyDiv.innerHTML = data.message;
@@ -642,11 +647,11 @@ const addChatMessage = (data) => {
   // If the message is special, add the special class and append the badge
   if (data.special) {
     messageItem.classList.add('special');
-    messageItem.append(profilePicture, usernameSpan, userBadge, deleteButton, messageBodyDiv);
+    messageItem.append(profilePicture, usernameSpan, userBadge, timestamp, deleteButton, messageBodyDiv);
   }
   // Otherwise, just continue like normal
   else {
-    messageItem.append(profilePicture, usernameSpan, deleteButton, messageBodyDiv);
+    messageItem.append(profilePicture, usernameSpan, deleteButton, timestamp, messageBodyDiv);
   }
 
   addMessageElement(messageItem);

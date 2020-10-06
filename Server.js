@@ -87,11 +87,11 @@ const messageSchema = new Schema({
   messageId: String,
   message: String,
   server: String,
+  timestamp: Date,
   badge: String,
   special: {type: Boolean, required: false},
   usernameColor: {type: String, required: false},
-  badgeColor: {type: String, required: false},
-  timestamp: {type: Date, default: Date.now}
+  badgeColor: {type: String, required: false}
 });
 
 // Create a new schema for servers

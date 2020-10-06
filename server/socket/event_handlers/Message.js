@@ -92,11 +92,16 @@ function handleMessage({io, socket, message}) {
 
   // Perform special user checking and then send the final message to everyone in the user's server
   const specialUser = specialUsers.find(specialUser => specialUser.Username === socket.username.toLowerCase());
+
+  // Make a timestamp for the message  
+  const timestamp = Date.now();
+
   if (specialUser) {
     io.in(socket.server).emit('new message', {
       username: socket.username,
       messageId: messageId,
       message: finalMessage,
+      timestamp: timestamp,
       special: true,
       badge: specialUser.Badge,
       usernameColor: specialUser.UsernameColor,
@@ -108,6 +113,7 @@ function handleMessage({io, socket, message}) {
       messageId: messageId,
       message: finalMessage,
       server: socket.server,
+      timestamp: timestamp,
       special: true,
       badge: specialUser.Badge,
       usernameColor: specialUser.UsernameColor,
@@ -123,6 +129,7 @@ function handleMessage({io, socket, message}) {
       username: socket.username,
       messageId: messageId,
       message: finalMessage,
+      timestamp: timestamp,
       badge: 'none'
     });
     // Create the mongoose document for messages using the message model
@@ -131,6 +138,7 @@ function handleMessage({io, socket, message}) {
       messageId: messageId,
       message: finalMessage,
       server: socket.server,
+      timestamp: timestamp,
       badge: 'none'
     });
     // Add a new message to the database
