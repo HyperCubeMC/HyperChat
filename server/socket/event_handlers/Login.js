@@ -139,12 +139,27 @@ function handleLogin({io, socket, username, password, server}) {
         socket.emit('server list', global.serverListContents[socket.username]);
 
         // Count amount of servers in the database with the server name the user is in
-        global.serverModel.countDocuments({serverName: socket.server}, function(err, count) {
+        global.serverModel.countDocuments({serverName: socket.server}, function(error, count) {
           // Server is already in the database, so send the client the initial message list and return
           if (count > 0) {
-            global.messageModel.find({server: socket.server}).then((messages) => {
-              // Send the initial message list to the client (array of messages)
-              socket.emit('initial message list', messages);
+            global.messageModel.countDocuments({server: socket.server}).then((count) => {
+              if (count > 50) {
+                global.messageModel.find({server: socket.server}).skip(count - 50).limit(50).then((messages) => {
+                  // Send the initial message list to the client (array of messages)
+                  socket.emit('initial message list', messages, true);
+                }).catch((error) => {
+                  // Catch and show an error in console if there is one
+                  console.error(`An error occurred while attempting to fetch the message history for ${socket.username} in server ${socket.server} from the database: ${error}`);
+                });
+              } else {
+                global.messageModel.find({server: socket.server}).limit(50).then((messages) => {
+                  // Send the initial message list to the client (array of messages)
+                  socket.emit('initial message list', messages, true);
+                }).catch((error) => {
+                  // Catch and show an error in console if there is one
+                  console.error(`An error occurred while attempting to fetch the message history for ${socket.username} in server ${socket.server} from the database: ${error}`);
+                });
+              }
             }).catch((error) => {
               // Catch and show an error in console if there is one
               console.error(`An error occurred while attempting to fetch the message history for ${socket.username} in server ${socket.server} from the database: ${error}`);

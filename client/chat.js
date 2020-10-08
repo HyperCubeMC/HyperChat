@@ -98,6 +98,7 @@ let darkThemeSwitchState;
 let pageVisible;
 let systemTheme;
 let usersTypingArray = [];
+let hasAllMessageHistory = false;
 let socket; // Socket.io, placeholder variable until assigned later below.
 
 // Initialize sounds for the chat app.
@@ -401,121 +402,6 @@ const submitLoginInfo = () => {
   socket.emit('login', { username, password, server });
 }
 
-socket.on('login authorized', () => {
-  if (initialLogin) {
-    grab('#loginScreen').fadeOut();
-    grab('#Chat-Screen').fadeIn();
-    currentInput = grab('#Message-Box');
-    connected = true;
-    loggedIn = true;
-    // Display the welcome message
-    log(`Welcome to ${server}!`, {
-      prepend: true
-    });
-  }
-  grab('#profilePicturePreview').src = `./cdn/UserProfilePictures/${username.toLowerCase()}.webp`;
-});
-
-// If the login has been denied...
-socket.on('login denied', (data) => {
-  const loginDeniedReason = data.loginDeniedReason;
-  alert(loginDeniedReason);
-  location.reload();
-});
-
-// If the server switch has been denied...
-socket.on('server switch denied', (data) => {
-  const switchServerDeniedReason = data.switchServerDeniedReason;
-  alert(switchServerDeniedReason);
-  location.reload();
-});
-
-socket.on('user list', (userListContents) => {
-  syncUserList(userListContents);
-});
-
-socket.on('server list', (serverListContents) => {
-  syncServerList(serverListContents);
-  // Add an event listener go to the server when a server icon in the server list is clicked
-  grabAll('.serverIconInServerList').forEach(function(element) {
-    element.addEventListener('click', function() {
-      const server = element.dataset['servername'];
-      socket.emit('switch server', server);
-      // const serverName = serverListContents.find(server => server.ServerName === 'ServerNameHere').PropertyOfObjectToGet;
-    });
-  });
-});
-
-socket.on('delete message', (messageId) => {
-  // For all of the messages, iterate over and delete the one that matches the messageId to delete
-  grabAll('.message').forEach(function(message) {
-    if (message.dataset['messageid'] == messageId) {
-      message.remove();
-    }
-  });
-});
-
-socket.on('mute', () => {
-  grab('#Message-Box').setAttribute("contentEditable", false)
-  alert('You are now muted!');
-});
-
-socket.on('unmute', () => {
-  grab('#Message-Box').setAttribute("contentEditable", true)
-  alert('You are now unmuted!');
-});
-
-socket.on('flip', () => {
-  document.body.style['transform'] = 'rotate(180deg)';
-});
-
-socket.on('unflip', () => {
-  document.body.style['transform'] = 'rotate(0deg)';
-});
-
-socket.on('stupidify', () => {
-  (function(){
-    let text = 'When I looked in the mirror, the reflection showed Joe Mama. Then the mirror screamed, and shattered. '
-    Array.prototype.slice.call(document.querySelectorAll('input,textarea')).map(function (element) {
-      element.onkeypress=function(evt){
-        let charCode = typeof evt.which == 'number' ? evt.which : evt.keyCode;
-        if (charCode && charCode > 31) {
-          let start = this.selectionStart, end = this.selectionEnd;
-          this.value = this.value.slice(0, start) + text[start % text.length] + this.value.slice(end);
-          this.selectionStart = this.selectionEnd = start + 1;
-        }
-        return false;
-      }
-    });
-  }());
-});
-
-socket.on('smash', () => {
-  Array.prototype.slice.call(document.querySelectorAll('div,p,span,img,a,body')).map(function (element) {
-    element.style['transform'] = 'rotate(' + (Math.floor(Math.random() * 10) - 1) + 'deg)';
-  });
-});
-
-socket.on('unsmash', () => {
-  Array.prototype.slice.call(document.querySelectorAll('div,p,span,img,a,body')).map(function (element) {
-    element.style['transform'] = 'rotate(0deg)'
-  });
-});
-
-socket.on('kick', (reason) => {
-  kickSound.play();
-  if (reason == null) {
-    alert('You have been kicked by an admin.');
-  } else {
-    alert(`You have been kicked for ${reason}.`);
-  }
-  location.reload();
-});
-
-socket.on('stun', () => {
-  stunSound.play();
-});
-
 // Syncs the contents of the server list
 const syncServerList = (serverListContents) => {
   for (let server = 0; server < serverListContents.length; server++) {
@@ -579,7 +465,7 @@ const removeFromUserList = (user) => {
 }
 
 // Adds the visual chat message to the message list
-const addChatMessage = (data) => {
+const addChatMessage = (data, prepend) => {
   // Make a new span for the profile picture span
   let profilePicture = newElement('span');
   profilePicture.classList.add('profilePicture');
@@ -661,7 +547,7 @@ const addChatMessage = (data) => {
     messageItem.append(profilePicture, usernameSpan, deleteButton, timestamp, messageBodyDiv);
   }
 
-  addMessageElement(messageItem);
+  addMessageElement(messageItem, { prepend: prepend });
 }
 
 // Sync the user typing message
@@ -730,7 +616,7 @@ function clearTypingMessages() {
   syncUsersTyping([]);
 }
 
-// Adds a message element to the messages and scrolls to the bottom
+// Adds a message element to the message list
 // element - The element to add as a message
 // options.prepend - If the element should prepend
 //   all other messages (default = false)
@@ -748,8 +634,6 @@ const addMessageElement = (element, options) => {
   else {
     grab('#messages').append(element);
   }
-
-  grab('#messages').scrollTop = grab('#messages').scrollHeight;
 }
 
 // Updates the typing event
@@ -877,12 +761,133 @@ grab('#profilePictureUpload').addEventListener('change', function() {
   }
 });
 
+grab('#messages').addEventListener('scroll', function() {
+  if (this.scrollTop == 0 && !hasAllMessageHistory) {
+    socket.emit('request more messages', this.childElementCount);
+  }
+});
+
 // Socket events
+
+socket.on('login authorized', () => {
+  if (initialLogin) {
+    grab('#loginScreen').fadeOut();
+    grab('#Chat-Screen').fadeIn();
+    currentInput = grab('#Message-Box');
+    connected = true;
+    loggedIn = true;
+    // Display the welcome message
+    log(`Welcome to ${server}!`, {
+      prepend: true
+    });
+  }
+  grab('#profilePicturePreview').src = `./cdn/UserProfilePictures/${username.toLowerCase()}.webp`;
+});
+
+// If the login has been denied...
+socket.on('login denied', (data) => {
+  const loginDeniedReason = data.loginDeniedReason;
+  alert(loginDeniedReason);
+  location.reload();
+});
+
+// If the server switch has been denied...
+socket.on('server switch denied', (data) => {
+  const switchServerDeniedReason = data.switchServerDeniedReason;
+  alert(switchServerDeniedReason);
+  location.reload();
+});
+
+socket.on('user list', (userListContents) => {
+  syncUserList(userListContents);
+});
+
+socket.on('server list', (serverListContents) => {
+  syncServerList(serverListContents);
+  // Add an event listener go to the server when a server icon in the server list is clicked
+  grabAll('.serverIconInServerList').forEach(function(element) {
+    element.addEventListener('click', function() {
+      const server = element.dataset['servername'];
+      socket.emit('switch server', server);
+      // const serverName = serverListContents.find(server => server.ServerName === 'ServerNameHere').PropertyOfObjectToGet;
+    });
+  });
+});
+
+socket.on('delete message', (messageId) => {
+  // For all of the messages, iterate over and delete the one that matches the messageId to delete
+  grabAll('.message').forEach(function(message) {
+    if (message.dataset['messageid'] == messageId) {
+      message.remove();
+    }
+  });
+});
+
+socket.on('mute', () => {
+  grab('#Message-Box').setAttribute("contentEditable", false)
+  alert('You are now muted!');
+});
+
+socket.on('unmute', () => {
+  grab('#Message-Box').setAttribute("contentEditable", true)
+  alert('You are now unmuted!');
+});
+
+socket.on('flip', () => {
+  document.body.style['transform'] = 'rotate(180deg)';
+});
+
+socket.on('unflip', () => {
+  document.body.style['transform'] = 'rotate(0deg)';
+});
+
+socket.on('stupidify', () => {
+  (function(){
+    let text = 'When I looked in the mirror, the reflection showed Joe Mama. Then the mirror screamed, and shattered. '
+    Array.prototype.slice.call(document.querySelectorAll('input,textarea')).map(function (element) {
+      element.onkeypress=function(evt){
+        let charCode = typeof evt.which == 'number' ? evt.which : evt.keyCode;
+        if (charCode && charCode > 31) {
+          let start = this.selectionStart, end = this.selectionEnd;
+          this.value = this.value.slice(0, start) + text[start % text.length] + this.value.slice(end);
+          this.selectionStart = this.selectionEnd = start + 1;
+        }
+        return false;
+      }
+    });
+  }());
+});
+
+socket.on('smash', () => {
+  Array.prototype.slice.call(document.querySelectorAll('div,p,span,img,a,body')).map(function (element) {
+    element.style['transform'] = 'rotate(' + (Math.floor(Math.random() * 10) - 1) + 'deg)';
+  });
+});
+
+socket.on('unsmash', () => {
+  Array.prototype.slice.call(document.querySelectorAll('div,p,span,img,a,body')).map(function (element) {
+    element.style['transform'] = 'rotate(0deg)'
+  });
+});
+
+socket.on('kick', (reason) => {
+  kickSound.play();
+  if (reason == null) {
+    alert('You have been kicked by an admin.');
+  } else {
+    alert(`You have been kicked for ${reason}.`);
+  }
+  location.reload();
+});
+
+socket.on('stun', () => {
+  stunSound.play();
+});
 
 // Whenever the server emits 'new message', update the chat body
 socket.on('new message', (data) => {
   if (data.username !== username) {
-    addChatMessage(data);
+    addChatMessage(data, false);
     chatMessageSound.play();
     if (navigator.serviceWorker.controller && notificationPermission === 'granted' && data.message.includes(`@${username}`)) { // Make sure the service worker is controlling the site, we have the permission to send notifications, and the user was mentioned
       // No html to markdown converter yet because of issues
@@ -902,8 +907,9 @@ socket.on('new message', (data) => {
     }
   }
   else {
-    addChatMessage(data);
+    addChatMessage(data, false);
   }
+  grab('#messages').scrollTop = grab('#messages').scrollHeight;
 });
 
 // Whenever the server emits 'user joined', log it in the chat body
@@ -947,8 +953,22 @@ socket.on('server switch success', (data) => {
 socket.on('initial message list', (messages) => {
   // Add each message to the message list
   messages.forEach((message) => {
-    addChatMessage(message);
+    addChatMessage(message, false);
   });
+  grab('#messages').scrollTop = grab('#messages').scrollHeight;
+});
+
+socket.on('more messages', (messages, endOfMessages) => {
+  if (endOfMessages) {
+    hasAllMessageHistory = true;
+  }
+  const previousScrollTop = grab('#messages').scrollHeight - grab('#messages').scrollTop;
+  // Prepend messages from the reversed array to the message list
+  messages.reverse();
+  messages.forEach((message) => {
+    addChatMessage(message, true);
+  });
+  grab('#messages').scrollTop = grab('#messages').scrollHeight - previousScrollTop;
 });
 
 socket.on('new server', () => {
@@ -976,6 +996,7 @@ socket.on('reconnect', () => {
     clearTypingMessages();
     socket.emit('login', { username, password, server });
   }
+  hasAllMessageHistory = false;
   connected = true;
 });
 

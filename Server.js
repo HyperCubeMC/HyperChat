@@ -14,6 +14,7 @@ import handleSwitchServer from './server/socket/event_handlers/SwitchServer.js';
 import handleDisconnect from './server/socket/event_handlers/Disconnect.js';
 import handleDeleteMessage from './server/socket/event_handlers/DeleteMessage.js';
 import handleUploadProfilePicture from './server/socket/event_handlers/UploadProfilePicture.js';
+import handleRequestMoreMessages from './server/socket/event_handlers/RequestMoreMessages.js';
 
 // Finish importing rate-limiter flexible
 const { RateLimiterMemory } = rateLimiterFlexible;
@@ -167,6 +168,12 @@ io.on('connection', (socket) => {
   socket.on('upload profile picture', async (profilePicture) => {
     if (!socket.authenticated) return;
     await handleUploadProfilePicture({io, socket, profilePicture});
+  });
+
+  // When the client emits 'request more messages', give them more messages
+  socket.on('request more messages', (skipMessages) => {
+    if (!socket.authenticated) return;
+    handleRequestMoreMessages({io, socket, skipMessages});
   });
 
   // When the user disconnects, perform this
