@@ -413,6 +413,7 @@ socket.on('login authorized', () => {
       prepend: true
     });
   }
+  grab('#profilePicturePreview').src = `./cdn/UserProfilePictures/${username.toLowerCase()}.webp`;
 });
 
 // If the login has been denied...
@@ -492,6 +493,12 @@ socket.on('stupidify', () => {
 socket.on('smash', () => {
   Array.prototype.slice.call(document.querySelectorAll('div,p,span,img,a,body')).map(function (element) {
     element.style['transform'] = 'rotate(' + (Math.floor(Math.random() * 10) - 1) + 'deg)';
+  });
+});
+
+socket.on('unsmash', () => {
+  Array.prototype.slice.call(document.querySelectorAll('div,p,span,img,a,body')).map(function (element) {
+    element.style['transform'] = 'rotate(0deg)'
   });
 });
 
@@ -850,6 +857,25 @@ grab('#serverListIconWrapper').addEventListener('click', toggleServerList);
 
 // Toggle user list slide-out drawer when the user list icon is tapped on mobile
 grab('#userListIconWrapper').addEventListener('click', toggleUserList);
+
+// Open profile picture uploader when the preview in settings is clicked
+grab('#profilePicturePreview').addEventListener('click', () => {
+  grab('#profilePictureUpload').click();
+});
+
+// Update profile picture preview and send server new profile picture when a profile picture is chosen
+grab('#profilePictureUpload').addEventListener('change', function() {
+  if (this.files && this.files[0]) {
+    grab('#profilePicturePreview').src = URL.createObjectURL(this.files[0]);
+
+    const reader = new FileReader();
+    reader.onload = function() {
+      const profilePictureArrayBuffer = this.result;
+      socket.emit('upload profile picture', profilePictureArrayBuffer);
+    }
+    reader.readAsArrayBuffer(this.files[0]);
+  }
+});
 
 // Socket events
 

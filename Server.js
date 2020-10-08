@@ -13,6 +13,7 @@ import handleStopTyping from './server/socket/event_handlers/StopTyping.js';
 import handleSwitchServer from './server/socket/event_handlers/SwitchServer.js';
 import handleDisconnect from './server/socket/event_handlers/Disconnect.js';
 import handleDeleteMessage from './server/socket/event_handlers/DeleteMessage.js';
+import handleUploadProfilePicture from './server/socket/event_handlers/UploadProfilePicture.js';
 
 // Finish importing rate-limiter flexible
 const { RateLimiterMemory } = rateLimiterFlexible;
@@ -160,6 +161,12 @@ io.on('connection', (socket) => {
   socket.on('delete message', (messageId) => {
     if (!socket.authenticated) return;
     handleDeleteMessage({io, socket, messageId});
+  });
+
+  // When the client emits 'upload profile picture', save their new profile picture
+  socket.on('upload profile picture', async (profilePicture) => {
+    if (!socket.authenticated) return;
+    await handleUploadProfilePicture({io, socket, profilePicture});
   });
 
   // When the user disconnects, perform this

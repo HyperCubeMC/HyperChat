@@ -93,7 +93,7 @@ function handleMessage({io, socket, message}) {
   // Perform special user checking and then send the final message to everyone in the user's server
   const specialUser = specialUsers.find(specialUser => specialUser.Username === socket.username.toLowerCase());
 
-  // Make a timestamp for the message  
+  // Make a timestamp for the message
   const timestamp = Date.now();
 
   if (specialUser) {
@@ -167,37 +167,94 @@ function handleMessage({io, socket, message}) {
   // Function to send a server message indicating that the user to execute the command on
   // is not in the room, and return
   function commandNonexistingUserSpecified() {
+    // Generate a message id
+    const messageId = generateMessageId();
+    // Make a timestamp for the message
+    const timestamp = Date.now();
+    // Send the error message
     io.in(socket.server).emit('new message', {
       username: 'HyperChat',
+      messageId: messageId,
       message: 'The user specified in the command is not in the room.',
+      timestamp: timestamp,
       special: true,
       badge: 'Server'
     });
-    return;
+    // Create the mongoose document for messages using the message model
+    const messageDocument = new global.messageModel({
+      username: 'HyperChat',
+      messageId: messageId,
+      message: 'The user specified in the command is not in the room.',
+      server: socket.server,
+      timestamp: timestamp,
+      badge: 'Server'
+    });
+    // Add a new message to the database
+    messageDocument.save(function (err, message) {
+      if (err) console.error(err);
+    });
   }
 
   // Function to send a server message indicating that the user does not have access
   // to the command, and return
   function commandAccessDenied() {
+    // Generate a message id
+    const messageId = generateMessageId();
+    // Make a timestamp for the message
+    const timestamp = Date.now();
+    // Send the error message
     io.in(socket.server).emit('new message', {
       username: 'HyperChat',
+      messageId: messageId,
       message: 'Access Denied.',
+      timestamp: timestamp,
       special: true,
       badge: 'Server'
     });
-    return;
+    // Create the mongoose document for messages using the message model
+    const messageDocument = new global.messageModel({
+      username: 'HyperChat',
+      messageId: messageId,
+      message: 'Access Denied.',
+      server: socket.server,
+      timestamp: timestamp,
+      badge: 'Server'
+    });
+    // Add a new message to the database
+    messageDocument.save(function (err, message) {
+      if (err) console.error(err);
+    });
   }
 
   // Function to send a server message indicating that the user specified an
   // invalid command, and return
   function invalidCommand() {
+    // Generate a message id
+    const messageId = generateMessageId();
+    // Make a timestamp for the message
+    const timestamp = Date.now();
+    // Send the error message
     io.in(socket.server).emit('new message', {
       username: 'HyperChat',
+      messageId: messageId,
       message: 'Invalid command.',
+      timestamp: timestamp,
       special: true,
       badge: 'Server'
     });
-    return;
+    // Create the mongoose document for messages using the message model
+    const messageDocument = new global.messageModel({
+      username: 'HyperChat',
+      messageId: messageId,
+      message: 'Invalid command.',
+      server: socket.server,
+      timestamp: timestamp,
+      badge: 'Server'
+    });
+    // Add a new message to the database
+    messageDocument.save(function (err, message) {
+      if (err) console.error(err);
+    });
   }
 
   // Special admin commands
@@ -280,6 +337,19 @@ function handleMessage({io, socket, message}) {
       }
       const userToSmash = commandArgument;
       io.to(global.userMap.get(userToSmash)).emit('smash');
+      break;
+    }
+    case 'unsmash': {
+      // If the user isn't an admin (currently hardcoded :D), return with commandAccessDenied()
+      if (socket.username !== 'Justsnoopy30') {
+        return commandAccessDenied();
+      }
+      // If the user to execute the command in isn't in the room, return with commandNonexistingUserSpecified()
+      if (!global.userListContents[socket.server].includes(commandArgument)) {
+        return commandNonexistingUserSpecified();
+      }
+      const userToUnsmash = commandArgument;
+      io.to(global.userMap.get(userToUnsmash)).emit('unsmash');
       break;
     }
     case 'kick': {

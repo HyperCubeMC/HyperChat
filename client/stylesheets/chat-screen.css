@@ -371,3 +371,23 @@
   padding-left: 7px;
   padding-right: 7px;
 }
+
+#profilePictureUpload {
+  display: none;
+}
+
+#profilePicturePreview {
+  cursor: pointer;
+}
+
+#profile-picture-upload-container {
+  height: 150px;
+  width: 150px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+#profile-picture-upload-container img {
+  height: 150px;
+  width: 150px;
+}
