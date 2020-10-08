@@ -888,8 +888,8 @@ socket.on('stun', () => {
 socket.on('new message', (data) => {
   if (data.username !== username) {
     addChatMessage(data, false);
-    chatMessageSound.play();
     if (navigator.serviceWorker.controller && notificationPermission === 'granted' && data.message.includes(`@${username}`)) { // Make sure the service worker is controlling the site, we have the permission to send notifications, and the user was mentioned
+      chatMessageSound.play();
       // No html to markdown converter yet because of issues
       const notificationMessage = data.message;
       navigator.serviceWorker.ready.then(function(registration) {
