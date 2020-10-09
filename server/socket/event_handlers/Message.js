@@ -93,7 +93,6 @@ function handleMessage({io, socket, message}) {
 
   if (filterFoundWords.length != 0) {
     message = 'not good';
-    return;
   }
 
   // Convert markdown to html with the Marked markdown library
