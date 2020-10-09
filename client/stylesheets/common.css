@@ -10,12 +10,12 @@ html, body {
   overflow: hidden;
 }
 
-body .light, .light, .light #Chat-Screen, .light #settingsScreen, .light #reconnectingScreen, .light #Message-Box, .light #emoji-button, .light #serverListIcon {
+body .light, .light, .light #Chat-Screen, .light #settingsScreen, .light #reconnectingScreen, .light #Message-Box, .light #emoji-button, .light #serverListIcon, .light #userListIcon, .light #notificationBell, .light .settingsIcon {
   background-color: #fff;
   color: #212529
 }
 
-body .dark, .dark, .dark #Chat-Screen, .dark #settingsScreen, .dark #reconnectingScreen, .dark #Message-Box, .dark #emoji-button, .dark #serverListIcon {
+body .dark, .dark, .dark #Chat-Screen, .dark #settingsScreen, .dark #reconnectingScreen, .dark #Message-Box, .dark #emoji-button, .dark #serverListIcon, .dark #userListIcon, .dark #notificationBell, .dark .settingsIcon {
   background-color: #36393f;
   color: #fff;
 }

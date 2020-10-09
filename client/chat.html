@@ -23,10 +23,10 @@
     <meta name="theme-color" content="#00adff">
     <!-- Preload Assets -->
     <link rel="manifest" href="./manifest.json">
-    <link rel="preload" href="./assets/WhiteNotificationBell.png" as="image">
-    <link rel="preload" href="./assets/WhiteSettingsIcon.png" as="image">
-    <link rel="preload" href="./assets/BlackNotificationBell.png" as="image">
-    <link rel="preload" href="./assets/BlackSettingsIcon.png" as="image">
+    <link rel="preload" href="./assets/SettingsIcon.svg" as="image">
+    <link rel="preload" href="./assets/NotificationBell.svg" as="image">
+    <link rel="preload" href="./assets/UserListIcon.svg" as="image">
+    <link rel="preload" href="./assets/ServerListIcon.svg" as="image">
     <link rel="preload" href="./assets/Reconnecting.svg" as="image">
     <link rel="preload" href="./assets/ChatMessageSound.webm" as="audio">
     <link rel="preload" href="./assets/UserJoinedChat.webm" as="audio">
@@ -38,9 +38,12 @@
     <!-- Fix Electron Support (before scripts) -->
     <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
     <!-- Load scripts -->
-    <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js" defer></script>
     <script src="./node_modules/socket.io-client/dist/socket.io.js" defer></script>
     <script src="./node_modules/@iconfu/svg-inject/dist/svg-inject.min.js" defer></script>
+    <script>(function(){var WebP=new Image();WebP.onload=WebP.onerror=function(){
+if(WebP.height!=2){var sc=document.createElement('script');sc.type='text/javascript';sc.async=true;
+var s=document.getElementsByTagName('script')[0];sc.src='./node_modules/webjs/webpjs.min.js';s.parentNode.insertBefore(sc,s);}};
+WebP.src='data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA';})();</script>
     <script type="module" src="./chat.js" defer></script>
     <!-- Fix Electron Support (after scripts) -->
     <script>if (window.module) module = window.module;</script>
@@ -69,8 +72,12 @@
         <div id="serverListIconWrapper">
           <img id="serverListIcon" src="./assets/ServerListIcon.svg" title="Server List Icon" alt="Server List Icon" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
         </div>
-        <img id="notificationBell" src="./assets/BlackNotificationBell.png" title="Notification Bell" alt="Notification Bell" draggable="false">
-        <img class="settingsIcon" id="settingsIconInChat" src="./assets/BlackSettingsIcon.png" title="Settings Icon" alt="Settings Icon" draggable="false">
+        <div id="notificationBellWrapper">
+          <img id="notificationBell" src="./assets/NotificationBell.svg" title="Notification Bell" alt="Notification Bell" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
+        </div>
+        <div class="settingsIconWrapper" id="settingsIconWrapperInChat">
+          <img class="settingsIcon" src="./assets/SettingsIcon.svg" title="Settings Icon" alt="Settings Icon" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
+        </div>
         <div id="userListIconWrapper">
           <img id="userListIcon" src="./assets/UserListIcon.svg" title="User List Icon" alt="User List Icon" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
         </div>
@@ -104,8 +111,10 @@
               HyperChat Settings
             </a>
           </div>
+          <div class="settingsIconWrapper" id="settingsIconWrapperInSettings">
+            <img class="settingsIcon" src="./assets/SettingsIcon.svg" title="Settings Icon" alt="Settings Icon" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
+          </div>
         </nav>
-        <img class="settingsIcon" id="settingsIconInSettings" src="./assets/BlackSettingsIcon.png" title="Settings Icon" alt="Settings Icon" draggable="false">
         <div class="form-check form-control-lg">
           <input class="form-check-input" type="radio" name="themeRadio" id="lightThemeRadio">
           <label class="form-check-label" for="lightThemeRadio">Light Theme</label>

@@ -63,6 +63,11 @@ const handleElement = {
       case targetNode: {
         return element;
       }
+      case 'getElement': {
+        return () => {
+          return element;
+        }
+      }
       case 'getParent': {
         return () => {
           return new Proxy(element.parentElement, handleElement);

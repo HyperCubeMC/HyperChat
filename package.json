@@ -24,16 +24,17 @@
     "@iconfu/svg-inject": "^1.2.3",
     "@joeattardi/emoji-button": "^4.2.0",
     "argon2": "^0.27.0",
-    "bad-words": "^3.0.3",
-    "bootstrap": "^5.0.0-alpha1",
+    "bootstrap": "^5.0.0-alpha2",
     "dotenv": "^8.2.0",
     "etag": "^1.8.1",
     "marked": "^1.2.0",
-    "mongoose": "^5.10.8",
+    "mongoose": "^5.10.9",
     "rate-limiter-flexible": "^2.1.10",
     "sanitize-html": "^2.1.0",
     "sharp": "^0.26.1",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.3.0",
+    "webpjs": "0.0.2",
+    "whoolso-word-filter": "^1.0.8"
   },
   "devDependencies": {
     "eslint": "^7.10.0",

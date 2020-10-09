@@ -163,9 +163,6 @@ const changeTheme = (theme) => {
   }
   grab('body').classList.add(theme);
   grab('body').classList.remove(inverse);
-  grab('#settingsIconInChat').src = `./assets/${iconPrefix}SettingsIcon.png`;
-  grab('#settingsIconInSettings').src = `./assets/${iconPrefix}SettingsIcon.png`;
-  grab('#notificationBell').src = `./assets/${iconPrefix}NotificationBell.png`;
   grab('#settingsTopBar').classList.remove(`navbar-${inverse}`, `bg-${inverse}`);
   grab('#settingsTopBar').classList.add(`navbar-${theme}`, `bg-${theme}`);
   grab('#Message-Box').classList.remove(`${inverse}ThemeScrollbar`);
@@ -526,8 +523,9 @@ const addChatMessage = (data, prepend) => {
   // Make a new img for the delete message icon
   let deleteIcon = newElement('img');
   deleteIcon.classList.add('deleteMessageIcon');
-  deleteIcon.src = '/assets/DeleteMessageIcon.png';
+  deleteIcon.src = '/assets/DeleteMessageIcon.svg';
   deleteIcon.draggable = false;
+  deleteIcon.onload = () => SVGInject(deleteIcon.getElement());
 
   // Add the delete icon to the delete button
   deleteButton.append(deleteIcon);
@@ -728,13 +726,13 @@ grab('#Message-Box').addEventListener('click', () => {
 });
 
 // Go to the settings page when the settings icon on the chat page is clicked
-grab('#settingsIconInChat').addEventListener('click', showSettingsScreen);
+grab('#settingsIconWrapperInChat').addEventListener('click', showSettingsScreen);
 
 // Go to the chat page when the settings icon in settings is clicked
-grab('#settingsIconInSettings').addEventListener('click', hideSettingsScreen);
+grab('#settingsIconWrapperInSettings').addEventListener('click', hideSettingsScreen);
 
 // Show the notification permission prompt when the notification bell is clicked
-grab('#notificationBell').addEventListener('click', notificationPermissionPrompt);
+grab('#notificationBellWrapper').addEventListener('click', notificationPermissionPrompt);
 
 // Toggle server list slide-out drawer when the server list icon is tapped on mobile
 grab('#serverListIconWrapper').addEventListener('click', toggleServerList);
@@ -950,7 +948,10 @@ socket.on('server switch success', (data) => {
   });
 });
 
-socket.on('initial message list', (messages) => {
+socket.on('initial message list', (messages, endOfMessages) => {
+  if (endOfMessages) {
+    hasAllMessageHistory = true;
+  }
   // Add each message to the message list
   messages.forEach((message) => {
     addChatMessage(message, false);
@@ -988,6 +989,7 @@ socket.on('reconnect', () => {
   hideReconnectingScreen();
   regainedConnectionSound.play();
   log('You have been reconnected.');
+  hasAllMessageHistory = false;
   if (username) {
     initialLogin = false;
     clearUserList();
@@ -996,7 +998,6 @@ socket.on('reconnect', () => {
     clearTypingMessages();
     socket.emit('login', { username, password, server });
   }
-  hasAllMessageHistory = false;
   connected = true;
 });
 

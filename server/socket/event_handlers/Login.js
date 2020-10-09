@@ -8,9 +8,10 @@
 
 // At the start, import the needed modules
 import argon2 from 'argon2';
-import Filter from 'bad-words';
+import wordFilter from 'whoolso-word-filter';
+import { wordsToFilter, lengthThreshold, leetAlphabet1, leetAlphabet2, shortWordLength, shortWordExceptions } from '../../util/FilterConstants.js';
 
-const filter = new Filter();
+const { filterWords } = wordFilter;
 
 function handleLogin({io, socket, username, password, server}) {
   // Check the client sent variables to make sure they are defined and of type string,
@@ -22,8 +23,25 @@ function handleLogin({io, socket, username, password, server}) {
     return;
   }
 
-  // Make sure nobody can avoid the swear filter through a username
-  username = filter.clean(username);
+  const filterOptions = {
+    wordsToFilter: wordsToFilter,
+    stringToCheck: username,
+    lengthThreshold: lengthThreshold,
+    leetAlphabet1: leetAlphabet1,
+    leetAlphabet2: leetAlphabet2,
+    shortWordLength: shortWordLength,
+    shortWordExceptions: shortWordExceptions
+  }
+
+  // Check the username for bad words
+  const filterFoundWords = filterWords(filterOptions);
+
+  if (filterFoundWords.length != 0) {
+    socket.emit('login denied', {
+      loginDeniedReason: 'Username contains bad words.'
+    });
+    return;
+  }
 
   let userHashedPassword;
 
@@ -146,7 +164,7 @@ function handleLogin({io, socket, username, password, server}) {
               if (count > 50) {
                 global.messageModel.find({server: socket.server}).skip(count - 50).limit(50).then((messages) => {
                   // Send the initial message list to the client (array of messages)
-                  socket.emit('initial message list', messages, true);
+                  socket.emit('initial message list', messages, false);
                 }).catch((error) => {
                   // Catch and show an error in console if there is one
                   console.error(`An error occurred while attempting to fetch the message history for ${socket.username} in server ${socket.server} from the database: ${error}`);

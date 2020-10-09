@@ -9,13 +9,13 @@
 // At the start, import the needed modules
 import marked from 'marked';
 import sanitizeHtml from 'sanitize-html';
-import Filter from 'bad-words';
+import wordFilter from 'whoolso-word-filter';
+import { wordsToFilter, lengthThreshold, leetAlphabet1, leetAlphabet2, shortWordLength, shortWordExceptions } from '../../util/FilterConstants.js';
+
+const { filterWords } = wordFilter;
 
 // Set the message command prefix
 const prefix = '/';
-
-// Define new bad-words Filter
-const filter = new Filter();
 
 // Define a new array of objects of special users
 let specialUsers = [];
@@ -78,20 +78,35 @@ function handleMessage({io, socket, message}) {
     return;
   }
 
-  // Clean the message with a bad word filter
-  const filteredMessage = filter.clean(message);
+  const filterOptions = {
+    wordsToFilter: wordsToFilter,
+    stringToCheck: message,
+    lengthThreshold: lengthThreshold,
+    leetAlphabet1: leetAlphabet1,
+    leetAlphabet2: leetAlphabet2,
+    shortWordLength: shortWordLength,
+    shortWordExceptions: shortWordExceptions
+  }
+
+  // Check the message for bad words
+  const filterFoundWords = filterWords(filterOptions);
+
+  if (filterFoundWords.length != 0) {
+    message = 'not good';
+    return;
+  }
 
   // Convert markdown to html with the Marked markdown library
-  const messageHtml = marked(filteredMessage);
+  const messageHtml = marked(message);
 
   // Sanitize the message html with the sanitize-html library
   const finalMessage = sanitizeHtml(messageHtml, sanitizeHtmlOptions);
 
-  // Generate a random numeric message id and save it to a variable
-  const messageId = generateMessageId();
-
   // Perform special user checking and then send the final message to everyone in the user's server
   const specialUser = specialUsers.find(specialUser => specialUser.Username === socket.username.toLowerCase());
+
+  // Generate a random numeric message id and save it to a variable
+  const messageId = generateMessageId();
 
   // Make a timestamp for the message
   const timestamp = Date.now();

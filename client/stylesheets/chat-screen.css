@@ -148,7 +148,7 @@
 }
 
 #User-Is-Typing-Area {
-  display: flex; 
+  display: flex;
   padding-left: 10px;
   font-size: 150%;
 }
@@ -310,7 +310,14 @@
   cursor: pointer;
 }
 
-/* The notification bell icon used to turn on notifications for mentions */
+/* Clickable wrapper for the notification bell */
+#notificationBellWrapper {
+  width: fit-content;
+  height: fit-content;
+  margin-left: 1%;
+}
+
+/* The notification bell */
 #notificationBell {
   width: 50px;
   height: 50px;
@@ -318,11 +325,22 @@
   margin-left: auto;
 }
 
-/* The settigns icon used to go to the settings menu */
-#settingsIconInChat {
+/* Clickable wrapper for the settings icon */
+.settingsIconWrapper {
+  width: fit-content;
+  height: fit-content;
+  margin-left: auto;
+}
+
+/* The settings icon */
+.settingsIcon {
   width: 50px;
   height: 50px;
   cursor: pointer;
+}
+
+#settingsTopBar .container-fluid {
+  flex: 1;
 }
 
 /* Placeholder for the message box */
@@ -354,14 +372,12 @@
   position: absolute;
   right: 5px;
   cursor: pointer;
-  background-image: url('/assets/DeleteMessageIcon.png');
-  background-repeat: no-repeat;
 }
 
 /* The icon for the delete message button */
 .deleteMessageIcon {
   height: 30px;
-  width: 30px;  
+  width: 30px;
 }
 
 /* Timestamp that shows when a message was sent */
