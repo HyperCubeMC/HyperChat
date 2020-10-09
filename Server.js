@@ -130,7 +130,6 @@ io.on('connection', (socket) => {
   // When the client emits 'new message', this listens and executes
   socket.on('new message', (message) => {
     if (!socket.authenticated) return;
-    console.log(message);
     rateLimiter.consume(socket.username)
       .then(rateLimiterRes => {
         handleMessage({io, socket, message});
