@@ -441,6 +441,7 @@ const log = (message, options) => {
   messageElement.classList.add('log')
   messageElement.textContent = message;
   addMessageElement(messageElement, options);
+  grab('#messages').scrollTop = grab('#messages').scrollHeight;
 }
 
 // Add a user to the user list.
