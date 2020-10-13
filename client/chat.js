@@ -412,8 +412,8 @@ const syncServerList = (serverListContents) => {
       serverIconForServerList.alt = serverListContents[server].ServerName;
       serverIconForServerList.draggable = 'false';
       serverIconForServerList.data('servername', serverListContents[server].ServerName);
-      serverForServerList.appendChild(serverIconForServerList);
-      grab('#Server-List').appendChild(serverForServerList);
+      serverForServerList.appendChild(serverIconForServerList.getElement());
+      grab('#Server-List').appendChild(serverForServerList.getElement());
     }
   }
 }
@@ -430,7 +430,7 @@ const syncUserList = (userListContents) => {
       let userToAddToUserList = newElement('li');
       userToAddToUserList.classList.add('userInUserList');
       userToAddToUserList.textContent = userListContents[user];
-      grab('#userListContents').appendChild(userToAddToUserList);
+      grab('#userListContents').appendChild(userToAddToUserList.getElement());
     }
   }
 }
@@ -449,7 +449,7 @@ const addToUserList = (user) => {
   let userToAddToUserList = newElement('li');
   userToAddToUserList.classList.add('userInUserList')
   userToAddToUserList.textContent = user;
-  grab('#userListContents').appendChild(userToAddToUserList);
+  grab('#userListContents').appendChild(userToAddToUserList.getElement());
 }
 
 // Remove a user from the user list.
