@@ -41,7 +41,8 @@ const sanitizeHtmlOptions = {
       'text-align': [/^left$/, /^right$/, /^center$/],
       'font-size': [/^\d+(?:px|em|%)$/]
     }
-  }
+  },
+  allowedSchemes: ['http', 'https', 'ftp', 'mailto', 'data']
 }
 
 // Put the special users with details in the special user array
@@ -69,13 +70,8 @@ function handleMessage({io, socket, message}) {
   if (global.mutedList.includes(socket.username)) return;
   // Check if the message is over 2000 character, and if it is, change it to a
   // ...predetermined message indicating that the message is too long and return
-  if (message.length > 2000) {
-    io.in(socket.server).emit('new message', {
-      username: socket.username,
-      message: 'This message was removed because it was too long (over 2000 characters).',
-      badge: 'normal'
-    });
-    return;
+  if (message.length > 10000) {
+    message = 'This message was removed because it was too long (over 10000 characters).';
   }
 
   const filterOptions = {
@@ -90,8 +86,8 @@ function handleMessage({io, socket, message}) {
 
   // Check the message for bad words
   const filterFoundWords = filterWords(filterOptions);
-
   if (filterFoundWords.length != 0) {
+    console.log(`User ${socket.username} tried to swear with: ${filterFoundWords}`);
     message = 'not good';
   }
 
