@@ -33,7 +33,7 @@ const sanitizeHtmlOptions = {
     img: [
       'src', 'srcset', 'draggable', 'alt', 'class', 'crossorigin'
     ],
-    span: ['style']
+    span: ['style', 'class']
   },
   allowedStyles: {
     '*': {
@@ -46,7 +46,7 @@ const sanitizeHtmlOptions = {
 }
 
 // Put the special users with details in the special user array
-specialUsers.push({Username: 'justsnoopy30', Badge: 'Owner', UsernameColor: '#00b0f4', BadgeColor: '#7289da'}, {Username: 'kmisterk', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#691785'},{Username: 'OliviaTheVampire', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#7b3c96'});
+specialUsers.push({Username: 'justsnoopy30', Badge: 'Owner', UsernameColor: '#00b0f4', BadgeColor: '#7289da'}, {Username: 'kmisterk', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#691785'},{Username: 'OliviaTheVampire', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#7b3c96'},{Username: 'nbi__', Badge: 'Admin', UsernameColor: '#79f02e', BadgeColor: '#79f02e'}, {Username: '4a656666', Badge: 'Admin', UsernameColor: '#9c59b6', BadgeColor: '#79f02e'});
 
 // Helper function to validate the contents of a message
 function validateMessage(message) {
@@ -68,12 +68,16 @@ function handleMessage({io, socket, message}) {
   if (!validateMessage(message)) return;
   // If the muted list includes the user trying to send the message, stop right there
   if (global.mutedList.includes(socket.username)) return;
-  // Check if the message is over 2000 character, and if it is, change it to a
+  // Check if the message is over 100000 characters, and if it is, change it to a
   // ...predetermined message indicating that the message is too long and return
-  if (message.length > 10000) {
-    message = 'This message was removed because it was too long (over 10000 characters).';
+  if (message.length > 100000) {
+    message = 'This message was removed because it was too long (over 100000 characters).';
   }
 
+  // Make mentions text fancier
+  global.userListContents[socket.server].forEach(username => {
+    message = message.replaceAll(`@${username}`, `<span class="mention-text">@${username}</span>`)
+  });
   const filterOptions = {
     wordsToFilter: wordsToFilter,
     stringToCheck: message,

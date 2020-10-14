@@ -15,6 +15,10 @@ import handleDisconnect from './server/socket/event_handlers/Disconnect.js';
 import handleDeleteMessage from './server/socket/event_handlers/DeleteMessage.js';
 import handleUploadProfilePicture from './server/socket/event_handlers/UploadProfilePicture.js';
 import handleRequestMoreMessages from './server/socket/event_handlers/RequestMoreMessages.js';
+import replaceAll from 'string.prototype.replaceall';
+
+// Polyfill replaceAll
+replaceAll.shim();
 
 // Finish importing rate-limiter flexible
 const { RateLimiterMemory } = rateLimiterFlexible;

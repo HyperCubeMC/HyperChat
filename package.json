@@ -33,6 +33,7 @@
     "sanitize-html": "^2.1.0",
     "sharp": "^0.26.1",
     "socket.io": "^2.3.0",
+    "string.prototype.replaceall": "^1.0.3",
     "webpjs": "0.0.2",
     "whoolso-word-filter": "^1.0.8"
   },

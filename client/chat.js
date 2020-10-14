@@ -508,6 +508,12 @@ const addChatMessage = (data, prepend) => {
   let messageBodyDiv = newElement('div');
   messageBodyDiv.classList.add('messageBody');
   messageBodyDiv.innerHTML = data.message;
+  messageBodyDiv.querySelectorAll('.mention-text').forEach((element) => {
+    const username = element.textContent.substring(1);
+    element.onclick = (event) => {
+      alert(username);
+    }
+  });
 
   let messageItem = newElement('li');
   messageItem.classList.add('message');
@@ -679,8 +685,9 @@ grab('#Message-Box').addEventListener('keydown', function (event) {
     event.preventDefault();
   }
   if (event.key == 'Enter' && !event.shiftKey) {
-    event.preventDefault()
+    event.preventDefault();
     const message = decodeHtml(this.innerHTML);
+    if (message.trim() === '') return;
     if (konamiActivated) {
       const color = getRandomColorFromList();
       const coloredMessage = `<span style="color: ${color}">${message}</span>`;
@@ -887,22 +894,24 @@ socket.on('stun', () => {
 socket.on('new message', (data) => {
   if (data.username !== username) {
     addChatMessage(data, false);
-    if (navigator.serviceWorker.controller && notificationPermission === 'granted' && data.message.includes(`@${username}`)) { // Make sure the service worker is controlling the site, we have the permission to send notifications, and the user was mentioned
+    if (data.message.includes(`@${username}`)) { // Make sure that the user was mentioned
       chatMessageSound.play();
       // No html to markdown converter yet because of issues
-      const notificationMessage = data.message;
-      navigator.serviceWorker.ready.then(function(registration) {
-        registration.showNotification(data.username, {
-          body: notificationMessage,
-          icon: './assets/favicon.ico',
-          vibrate: [200, 100, 200, 100, 200, 100, 200],
-          tag: 'pingNotification',
-          actions: [
-            {action: 'reply', title: 'Reply', type: 'text', placeholder: 'Type your reply...'},
-            {action: 'close', title: 'Close notification'}
-          ]
+      if (navigator.serviceWorker.controlled && notificationPermission === 'granted') {
+        const notificationMessage = data.message;
+        navigator.serviceWorker.ready.then(function(registration) {
+          registration.showNotification(data.username, {
+            body: notificationMessage,
+            icon: './assets/favicon.ico',
+            vibrate: [200, 100, 200, 100, 200, 100, 200],
+            tag: 'pingNotification',
+            actions: [
+              {action: 'reply', title: 'Reply', type: 'text', placeholder: 'Type your reply...'},
+              {action: 'close', title: 'Close notification'}
+            ]
+          });
         });
-      });
+      }
     }
   }
   else {

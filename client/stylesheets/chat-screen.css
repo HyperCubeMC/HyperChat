@@ -205,10 +205,10 @@
 
 /* If a message has the mention class, highlight it */
 .message.mention .messageBody {
-  background-color: #ffdd00;
+  background-color: rgba(255, 239, 0, 0.8);
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
-  border-left-color: #f5d142;
+  border-left-color: rgba(255, 239, 0, 1);
 }
 
 /* Show the delete button when a message is hovered */
@@ -406,4 +406,13 @@
 #profile-picture-upload-container img {
   height: 150px;
   width: 150px;
+}
+
+.mention-text {
+  cursor: pointer;
+  color: blue;
+}
+
+.mention-text:hover {
+  text-shadow: 1px 1px 1px #555;
 }
