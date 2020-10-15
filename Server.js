@@ -1,7 +1,7 @@
 // At the start, import the needed modules
 import fs from 'fs';
 import http2 from 'http2';
-import socketio from 'socket.io';
+import { Server as SocketIOServer } from 'socket.io';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import rateLimiterFlexible from 'rate-limiter-flexible';
@@ -40,7 +40,7 @@ const options = {
 // defined as webServer
 const webServer = http2.createSecureServer(options, handleRequest);
 // Define io as socketio with our web server
-const io = socketio(webServer);
+const io = new SocketIOServer(webServer);
 
 // Make the web server listen on this port
 webServer.listen(process.env.PORT);

@@ -31,14 +31,14 @@
     "mongoose": "^5.10.9",
     "rate-limiter-flexible": "^2.1.10",
     "sanitize-html": "^2.1.0",
-    "sharp": "^0.26.1",
-    "socket.io": "^2.3.0",
+    "sharp": "^0.26.2",
+    "socket.io": "^3.0.0-rc2",
     "string.prototype.replaceall": "^1.0.3",
     "webpjs": "0.0.2",
     "whoolso-word-filter": "^1.0.8"
   },
   "devDependencies": {
-    "eslint": "^7.10.0",
+    "eslint": "^7.11.0",
     "jsdoc": "^3.6.6"
   }
 }
