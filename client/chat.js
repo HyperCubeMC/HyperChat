@@ -1013,7 +1013,7 @@ socket.on('disconnect', () => {
   connected = false;
 });
 
-socket.on('reconnect', () => {
+socket.io.on('reconnect', () => {
   hideReconnectingScreen();
   regainedConnectionSound.play();
   log('You have been reconnected.');
@@ -1029,6 +1029,6 @@ socket.on('reconnect', () => {
   connected = true;
 });
 
-socket.on('reconnect_error', () => {
+socket.io.on('reconnect_error', () => {
   log('Attempt to reconnect has failed');
 });
