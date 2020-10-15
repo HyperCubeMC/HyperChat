@@ -118,7 +118,7 @@ global.serverModel = mongoose.model('serverModel', serverSchema, 'servers');
 
 // Setup rate limiter
 const rateLimiter = new RateLimiterMemory({
-  points: 5, // 5 points
+  points: 3, // 3 points
   duration: 1 // per second
 });
 
