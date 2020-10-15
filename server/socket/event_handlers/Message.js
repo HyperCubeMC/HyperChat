@@ -287,6 +287,16 @@ function handleMessage({io, socket, message}) {
       io.to(global.userMap.get(userToMute)).emit('mute');
       break;
     }
+    case 'ipmute': {
+      // If the user isn't an admin (currently hardcoded :D), return with commandAccessDenied()
+      if (socket.username !== 'Justsnoopy30') {
+        return commandAccessDenied();
+      }
+      const ipToMute = commandArgument;
+      global.mutedIpList.push(userToMute);
+      io.to(global.userMap.get(userToMute)).emit('mute');
+      break;
+    }
     case 'unmute': {
       // If the user isn't an admin (currently hardcoded :D), return with commandAccessDenied()
       if (socket.username !== 'Justsnoopy30') {

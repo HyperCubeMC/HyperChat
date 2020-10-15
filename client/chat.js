@@ -169,6 +169,8 @@ const changeTheme = (theme) => {
   grab('#Message-Box').classList.add(`${theme}ThemeScrollbar`);
   grab('#messages').classList.remove(`${inverse}ThemeScrollbar`);
   grab('#messages').classList.add(`${theme}ThemeScrollbar`);
+  grab('#userListContents').classList.remove(`${inverse}ThemeScrollbar`);
+  grab('#userListContents').classList.add(`${theme}ThemeScrollbar`);
 }
 
 if (store('theme') == null) {

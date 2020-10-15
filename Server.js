@@ -50,6 +50,9 @@ webServer.listen(process.env.PORT);
 // Setup the muted list as a shared global variable
 global.mutedList = [];
 
+// Setup the muted ip list as a shared global variable
+global.mutedIpList = [];
+
 // Setup the user list contents as a shared global variable
 global.userListContents = [];
 
@@ -116,10 +119,15 @@ global.messageModel = mongoose.model('messageModel', messageSchema, 'messages');
 // Use the server Schema to make a Mongoose Model as a shared global variable
 global.serverModel = mongoose.model('serverModel', serverSchema, 'servers');
 
-// Setup rate limiter
-const rateLimiter = new RateLimiterMemory({
+// Setup rate limiters
+const messageRateLimiter = new RateLimiterMemory({
   points: 3, // 3 points
   duration: 1 // per second
+});
+
+const loginRateLimiter = new RateLimiterMemory({
+  points: 1, // 1 points
+  duration: 10 // per 10 seconds
 });
 
 // And everything starts here where a user makes a connection to the socket.io server...
@@ -128,13 +136,20 @@ io.on('connection', (socket) => {
 
   // When the client emits 'login', this listens and executes
   socket.on('login', ({ username, password, server }) => {
-    handleLogin({io, socket, username, password, server});
+    messageRateLimiter.consume(socket.handshake.address)
+      .then(rateLimiterRes => {
+            handleLogin({io, socket, username, password, server});
+      })
+      .catch(rej => {
+        socket.emit('loginDenied', {loginDeniedReason: 'You are logging in too fast!'});
+        socket.disconnect();
+      });
   });
 
   // When the client emits 'new message', this listens and executes
   socket.on('new message', (message) => {
     if (!socket.authenticated) return;
-    rateLimiter.consume(socket.username)
+    messageRateLimiter.consume(socket.username)
       .then(rateLimiterRes => {
         handleMessage({io, socket, message});
       })
