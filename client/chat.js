@@ -509,9 +509,14 @@ const addChatMessage = (data, prepend) => {
   messageBodyDiv.classList.add('messageBody');
   messageBodyDiv.innerHTML = data.message;
   messageBodyDiv.querySelectorAll('.mention-text').forEach((element) => {
-    const username = element.textContent.substring(1);
+    const mentionedUsername = element.textContent.substring(1);
+    let mentionElement = newElement('span');
+    mentionElement.classList.add('mention-text');
+    mentionElement.textContent = `@${mentionedUsername}`;
     element.onclick = (event) => {
-      alert(username);
+      grab('#Message-Box').appendChild(mentionElement.getElement());
+      currentInput = grab('#Message-Box');
+      setCursorToEnd(grab('#Message-Box').getElement());
     }
   });
 
@@ -590,6 +595,19 @@ const syncUsersTyping = (usersTypingArray) => {
   else {
     grab('#User-Is-Typing-Area').innerHTML = '';
   }
+}
+
+// Function to set the cursor to the end of a content editable element
+function setCursorToEnd(target) {
+  const range = document.createRange();
+  const selection = window.getSelection();
+  range.selectNodeContents(target);
+  range.collapse(false);
+  selection.removeAllRanges();
+  selection.addRange(range);
+  target.focus();
+  range.detach();
+  target.scrollTop = target.scrollHeight;
 }
 
 // Function to clear the user list
