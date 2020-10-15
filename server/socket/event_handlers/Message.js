@@ -66,8 +66,9 @@ function handleMessage({io, socket, message}) {
   message = message.replace(/\s*(<br ?\/>\s*)+/g, "<br>").replace(/^<br>|<br>$/g, "");
   // Stop right there if the user tries to send a invalid message (null, non-string, or empty message)
   if (!validateMessage(message)) return;
-  // If the muted list includes the user trying to send the message, stop right there
+  // If the muted list or muted ip list includes the user trying to send the message, stop right there
   if (global.mutedList.includes(socket.username)) return;
+  if (global.mutedIpList.includes(socket.handshake.address)) return;
   // Check if the message is over 100000 characters, and if it is, change it to a
   // ...predetermined message indicating that the message is too long and return
   if (message.length > 100000) {
@@ -287,16 +288,6 @@ function handleMessage({io, socket, message}) {
       io.to(global.userMap.get(userToMute)).emit('mute');
       break;
     }
-    case 'ipmute': {
-      // If the user isn't an admin (currently hardcoded :D), return with commandAccessDenied()
-      if (socket.username !== 'Justsnoopy30') {
-        return commandAccessDenied();
-      }
-      const ipToMute = commandArgument;
-      global.mutedIpList.push(userToMute);
-      io.to(global.userMap.get(userToMute)).emit('mute');
-      break;
-    }
     case 'unmute': {
       // If the user isn't an admin (currently hardcoded :D), return with commandAccessDenied()
       if (socket.username !== 'Justsnoopy30') {
@@ -309,6 +300,38 @@ function handleMessage({io, socket, message}) {
       const userToUnmute = commandArgument;
       global.mutedList = global.arrayRemove(global.mutedList, userToUnmute);
       io.to(global.userMap.get(userToUnmute)).emit('unmute');
+      break;
+    }
+    case 'ipmute': {
+      // If the user isn't an admin (currently hardcoded :D), return with commandAccessDenied()
+      if (socket.username !== 'Justsnoopy30') {
+        return commandAccessDenied();
+      }
+      const ipToMute = commandArgument;
+      global.mutedIpList.push(ipToMute);
+      io.sockets.sockets.forEach((connectedSocket) => {
+        const username = connectedSocket.username;
+        console.log(`Ip to mute: ${ipToMute} | Handshake address: ${connectedSocket.handshake.address}`);
+        if (connectedSocket.handshake.address === ipToMute && global.userMap.has(username)) {
+          io.to(global.userMap.get(username)).emit('mute');
+        }
+      });
+      break;
+    }
+    case 'unmuteip': {
+      // If the user isn't an admin (currently hardcoded :D), return with commandAccessDenied()
+      if (socket.username !== 'Justsnoopy30') {
+        return commandAccessDenied();
+      }
+      const ipToUnmute = commandArgument;
+      global.mutedIpList = global.arrayRemove(global.mutedIpList, ipToUnmute);
+      io.sockets.sockets.forEach((connectedSocket) => {
+        const username = connectedSocket.username;
+        console.log(`Ip to unmute: ${ipUnToMute} | Handshake address: ${connectedSocket.handshake.address}`);
+        if (connectedSocket.handshake.address === ipToUnmute && global.userMap.has(username)) {
+          io.to(global.userMap.get(username)).emit('unmute');
+        }
+      });
       break;
     }
     case 'flip': {
