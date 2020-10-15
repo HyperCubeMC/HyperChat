@@ -205,6 +205,11 @@ function handleLogin({io, socket, username, password, server}) {
         // Map the user's username to a unique socket id
         global.userMap.set(socket.username, socket.id);
 
+        // If they're muted, tell them they are muted
+        if (global.mutedList.includes(socket.username) || global.mutedIpList.includes(socket.handshake.address)) {
+          socket.emit('mute');
+        }
+
         // Create timestamp for usage logging
         const timestamp = new Date().toLocaleDateString(undefined, {
           day: 'numeric',
