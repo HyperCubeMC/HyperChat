@@ -465,7 +465,19 @@ const removeFromUserList = (user) => {
 }
 
 // Adds the visual chat message to the message list
-const addChatMessage = (data, prepend) => {
+const addChatMessage = (data, options) => {
+  // Make sure option properties are set
+  if (options != null) {
+    if (!options.prepend) {
+      options.prepend = false;
+    }
+    if (!options.previousSameAuthor) {
+      options.previousSameAuthor = false;
+    }
+  } else {
+    options = { prepend: false, previousSameAuthor: false };
+  }
+
   // Make a new span for the profile picture span
   let profilePicture = newElement('span');
   profilePicture.classList.add('profilePicture');
@@ -549,17 +561,24 @@ const addChatMessage = (data, prepend) => {
     messageItem.classList.add('mention');
   }
 
-  // If the message is special, add the special class and append the badge
-  if (data.special) {
-    messageItem.classList.add('special');
-    messageItem.append(profilePicture, usernameSpan, userBadge, timestamp, deleteButton, messageBodyDiv);
+  // Compare the authors of the previous message and this one to see if they are the same, and if so, group them
+  if (options.previousSameAuthor) {
+    messageItem.append(deleteButton, messageBodyDiv);
   }
   // Otherwise, just continue like normal
   else {
-    messageItem.append(profilePicture, usernameSpan, deleteButton, timestamp, messageBodyDiv);
+    // If the message is special, add the special class and append the badge
+    if (data.special) {
+      messageItem.classList.add('special');
+      messageItem.append(profilePicture, usernameSpan, userBadge, timestamp, deleteButton, messageBodyDiv);
+    }
+    // Otherwise, just continue like normal
+    else {
+      messageItem.append(profilePicture, usernameSpan, deleteButton, timestamp, messageBodyDiv);
+    }
   }
 
-  addMessageElement(messageItem, { prepend: prepend });
+  addMessageElement(messageItem, { prepend: options.prepend });
 }
 
 // Sync the user typing message
@@ -912,30 +931,36 @@ socket.on('stun', () => {
 
 // Whenever the server emits 'new message', update the chat body
 socket.on('new message', (data) => {
-  if (data.username !== username) {
-    addChatMessage(data, false);
-    if (data.message.includes(`@${username}`)) { // Make sure that the user was mentioned
-      chatMessageSound.play();
-      // No html to markdown converter yet because of issues
-      if (navigator.serviceWorker.controlled && notificationPermission === 'granted') {
-        const notificationMessage = data.message;
-        navigator.serviceWorker.ready.then(function(registration) {
-          registration.showNotification(data.username, {
-            body: notificationMessage,
-            icon: './assets/favicon.ico',
-            vibrate: [200, 100, 200, 100, 200, 100, 200],
-            tag: 'pingNotification',
-            actions: [
-              {action: 'reply', title: 'Reply', type: 'text', placeholder: 'Type your reply...'},
-              {action: 'close', title: 'Close notification'}
-            ]
-          });
-        });
-      }
+  let previousSameAuthor = false; // Initialize previousSameAuthor as false until changed
+  if (grab('#messages').lastElementChild != null) {
+    const previousMessage = grab('#messages').lastElementChild;
+    // Set option to group messages by the same author
+    if (data.username === previousMessage.getAttribute('data-username')) {
+      previousSameAuthor = true;
     }
   }
-  else {
-    addChatMessage(data, false);
+  // Add the chat message
+  addChatMessage(data, { previousSameAuthor: previousSameAuthor });
+  if (data.username !== username && data.message.includes(`@${username}`)) { // Make sure that the user was mentioned and that the message author wasn't the user themself
+    // Play chat message sound
+    chatMessageSound.play();
+    // No html to markdown converter yet because of issues
+    // Send notification if we have notification permission
+    if (navigator.serviceWorker.controlled && notificationPermission === 'granted') {
+      const notificationMessage = data.message;
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.showNotification(data.username, {
+          body: notificationMessage,
+          icon: './assets/favicon.ico',
+          vibrate: [200, 100, 200, 100, 200, 100, 200],
+          tag: 'pingNotification',
+          actions: [
+            {action: 'reply', title: 'Reply', type: 'text', placeholder: 'Type your reply...'},
+            {action: 'close', title: 'Close notification'}
+          ]
+        });
+      });
+    }
   }
   grab('#messages').scrollTop = grab('#messages').scrollHeight;
 });
@@ -983,8 +1008,17 @@ socket.on('initial message list', (messages, endOfMessages) => {
     hasAllMessageHistory = true;
   }
   // Add each message to the message list
-  messages.forEach((message) => {
-    addChatMessage(message, false);
+  messages.forEach((message, index) => {
+    let previousSameAuthor = false; // Initialize previousSameAuthor as false until changed
+    if (index > 0) {
+      const previousMessage = messages[index - 1];
+      // Set option to group messages by the same author
+      if (message.username === previousMessage.username) {
+        previousSameAuthor = true;
+      }
+    }
+    // Add the chat message
+    addChatMessage(message, { previousSameAuthor: previousSameAuthor });
   });
   grab('#messages').scrollTop = grab('#messages').scrollHeight;
 });
@@ -996,8 +1030,17 @@ socket.on('more messages', (messages, endOfMessages) => {
   const previousScrollTop = grab('#messages').scrollHeight - grab('#messages').scrollTop;
   // Prepend messages from the reversed array to the message list
   messages.reverse();
-  messages.forEach((message) => {
-    addChatMessage(message, true);
+  messages.forEach((message, index) => {
+    let previousSameAuthor = false; // Initialize previousSameAuthor as false until changed
+    if (index < messages.length -1) {
+      const previousInHistoryMessage = messages[index + 1];
+      // Set option to group messages by the same author
+      if (message.username === previousInHistoryMessage.username) {
+        previousSameAuthor = true;
+      }
+    }
+    // Add the chat message
+    addChatMessage(message, { prepend: true, previousSameAuthor: previousSameAuthor });
   });
   grab('#messages').scrollTop = grab('#messages').scrollHeight - previousScrollTop;
 });

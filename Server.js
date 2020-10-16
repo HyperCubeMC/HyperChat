@@ -39,6 +39,7 @@ const options = {
 // Use http2 to create a secure http2 web server, handled with handleRequest(),
 // defined as webServer
 const webServer = http2.createSecureServer(options, handleRequest);
+
 // Define io as socketio with our web server
 const io = new SocketIOServer(webServer);
 
@@ -126,8 +127,8 @@ const messageRateLimiter = new RateLimiterMemory({
 });
 
 const loginRateLimiter = new RateLimiterMemory({
-  points: 5, // 1 points
-  duration: 1 // per 1 second
+  points: 1, // 1 points
+  duration: 5 // per 5 seconds
 });
 
 // And everything starts here where a user makes a connection to the socket.io server...
@@ -141,7 +142,7 @@ io.on('connection', (socket) => {
             handleLogin({io, socket, username, password, server});
       })
       .catch(rej => {
-        socket.emit('loginDenied', {loginDeniedReason: 'Too many people are logging in right now!'});
+        socket.emit('loginDenied', {loginDeniedReason: 'You are logging in too fast!'});
         socket.disconnect();
       });
   });
