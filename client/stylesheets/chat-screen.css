@@ -203,14 +203,25 @@
   position: relative;
   overflow: hidden;
   overflow-wrap: break-word;
+  padding-left: 5px;
 }
 
 /* If a message has the mention class, highlight it */
-.message.mention .messageBody {
-  background-color: rgba(255, 239, 0, 0.8);
-  border-bottom-left-radius: 5px;
-  border-top-left-radius: 5px;
-  border-left-color: rgba(255, 239, 0, 1);
+
+.message.mention {
+  background-color: rgba(250, 166, 26, 0.05);
+}
+
+.message.mention:before {
+  content: "";
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  pointer-events: none;
+  width: 2px;
+  background-color: #faa61a;
 }
 
 /* Show the delete button when a message is hovered */
