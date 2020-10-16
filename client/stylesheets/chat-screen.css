@@ -291,6 +291,11 @@
   letter-spacing: 1px;
 }
 
+/* Hide everything except delete button and message contents when the previousSameAuthor class is added */
+.message.previousSameAuthor .profilePicture, .message.previousSameAuthor .username, .message.special.previousSameAuthor .userBadge, .message.previousSameAuthor .timestamp {
+  display: none;
+}
+
 .typing {
   color: gray;
   overflow: auto;
@@ -432,3 +437,4 @@
   color: #fff;
   background-color: #7289da;
 }
+

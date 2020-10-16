@@ -563,19 +563,18 @@ const addChatMessage = (data, options) => {
 
   // Compare the authors of the previous message and this one to see if they are the same, and if so, group them
   if (options.previousSameAuthor) {
-    messageItem.append(deleteButton, messageBodyDiv);
+    messageItem.classList.add('previousSameAuthor');
+  }
+
+
+  // If the message is special, add the special class and append the badge
+  if (data.special) {
+    messageItem.classList.add('special');
+    messageItem.append(profilePicture, usernameSpan, userBadge, timestamp, deleteButton, messageBodyDiv);
   }
   // Otherwise, just continue like normal
   else {
-    // If the message is special, add the special class and append the badge
-    if (data.special) {
-      messageItem.classList.add('special');
-      messageItem.append(profilePicture, usernameSpan, userBadge, timestamp, deleteButton, messageBodyDiv);
-    }
-    // Otherwise, just continue like normal
-    else {
-      messageItem.append(profilePicture, usernameSpan, deleteButton, timestamp, messageBodyDiv);
-    }
+    messageItem.append(profilePicture, usernameSpan, deleteButton, timestamp, messageBodyDiv);
   }
 
   addMessageElement(messageItem, { prepend: options.prepend });
@@ -863,6 +862,10 @@ socket.on('delete message', (messageId) => {
   // For all of the messages, iterate over and delete the one that matches the messageId to delete
   grabAll('.message').forEach(function(message) {
     if (message.dataset['messageid'] == messageId) {
+      // Ungroup messages that shouldn't be grouped after the message is deleted
+      if (message.previousElementSibling != null && message.nextElementSibling != null && message.nextElementSibling.dataset['username'] !== message.previousElementSibling.dataset['username']) {
+        message.nextElementSibling.classList.remove('previousSameAuthor');
+      }
       message.remove();
     }
   });
