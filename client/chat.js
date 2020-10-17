@@ -407,14 +407,29 @@ const syncServerList = (serverListContents) => {
     if (serverListContents[server] !== undefined) {
       let serverForServerList = newElement('li');
       serverForServerList.classList.add('serverInServerList');
+
       let serverIconForServerList = newElement('img');
       serverIconForServerList.classList.add('serverIconInServerList');
-      serverIconForServerList.src = `/cdn/ServerIcons/${serverListContents[server].ServerName}.webp`;
+      serverIconForServerList.src = `https://hyperchat.cf/cdn/ServerIcons/${serverListContents[server].ServerName}.webp`;
       serverIconForServerList.title = serverListContents[server].ServerName;
       serverIconForServerList.alt = serverListContents[server].ServerName;
       serverIconForServerList.draggable = 'false';
       serverIconForServerList.data('servername', serverListContents[server].ServerName);
+
+      let serverDeleteForServerList = newElement('span');
+      serverDeleteForServerList.classList.add('serverDeleteInServerList');
+      serverDeleteForServerList.data('servername', serverListContents[server].ServerName);
+
+      let serverDeleteForServerListIcon = newElement('img');
+      serverDeleteForServerListIcon.classList.add('serverDeleteInServerListIcon');
+      serverDeleteForServerListIcon.src = './assets/DeleteMessageIcon.svg';
+      serverDeleteForServerListIcon.title = 'Delete Server';
+      serverDeleteForServerListIcon.alt = 'Delete Server';
+      serverDeleteForServerListIcon.draggable = 'false';
+
       serverForServerList.appendChild(serverIconForServerList.getElement());
+      serverDeleteForServerList.appendChild(serverDeleteForServerListIcon.getElement());
+      serverForServerList.appendChild(serverDeleteForServerList.getElement());
       grab('#Server-List').appendChild(serverForServerList.getElement());
     }
   }
@@ -739,6 +754,14 @@ grab('#Message-Box').addEventListener('keydown', function (event) {
   }
 });
 
+grab('#Add-Server-Name-Input').addEventListener('keydown', function (event) {
+  if (event.key == 'Enter') {
+    event.preventDefault();
+    server = this.value;
+    socket.emit('add server', server);
+    console.log("added server " + server);
+  }
+});
 
 document.addEventListener('keydown', (event) => {
   // When the client hits ENTER on their keyboard and they're not logged in, submit their credentials
@@ -766,9 +789,14 @@ grab('#passwordInput').addEventListener('click', () => {
   currentInput = grab('#passwordInput');
 });
 
+// Set focus to server input when clicked
+grab('#Add-Server-Name-Input').addEventListener('click', () => {
+  currentInput = grab('#Add-Server-Name-Input');
+});
+
 // Focus input when clicking on the message input's border
 grab('#Message-Box').addEventListener('click', () => {
-  grab('#Message-Box').focus();
+  currentInput = grab('#Message-Box');
 });
 
 // Go to the settings page when the settings icon on the chat page is clicked
@@ -848,12 +876,20 @@ socket.on('user list', (userListContents) => {
 
 socket.on('server list', (serverListContents) => {
   syncServerList(serverListContents);
-  // Add an event listener go to the server when a server icon in the server list is clicked
+  // Add an event listener to go to the server when a server icon in the server list is clicked
   grabAll('.serverIconInServerList').forEach(function(element) {
     element.addEventListener('click', function() {
       const server = element.dataset['servername'];
       socket.emit('switch server', server);
       // const serverName = serverListContents.find(server => server.ServerName === 'ServerNameHere').PropertyOfObjectToGet;
+    });
+  });
+  // Add an event listener to delete the server when a delete button in the server list is clicked
+  grabAll('.serverDeleteInServerList').forEach(function(element) {
+    element.addEventListener('click', function() {
+      const server = element.dataset['servername'];
+      socket.emit('remove server', server);
+      console.log("removed server " + server);
     });
   });
 });
