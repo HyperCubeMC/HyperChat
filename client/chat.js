@@ -99,6 +99,7 @@ let pageVisible;
 let systemTheme;
 let usersTypingArray = [];
 let hasAllMessageHistory = false;
+let defaultServer = 'General'; // Server to use when current server is not set yet
 let socket; // Socket.io, placeholder variable until assigned later below.
 
 // Initialize sounds for the chat app.
@@ -171,6 +172,8 @@ const changeTheme = (theme) => {
   grab('#messages').classList.add(`${theme}ThemeScrollbar`);
   grab('#userListContents').classList.remove(`${inverse}ThemeScrollbar`);
   grab('#userListContents').classList.add(`${theme}ThemeScrollbar`);
+  grab('#Server-List').classList.remove(`${inverse}ThemeScrollbar`);
+  grab('#Server-List').classList.add(`${theme}ThemeScrollbar`);
 }
 
 if (store('theme') == null) {
@@ -242,11 +245,6 @@ function onVisibilityChange(callback) {
   if ('msHidden' in document) {
     document.addEventListener('msvisibilitychange',
       function() {(document.msHidden ? unfocused : focused)()});
-  }
-  // IE 9 and lower:
-  if ('onfocusin' in document) {
-    document.onfocusin = focused;
-    document.onfocusout = unfocused;
   }
   // All others:
   window.onpageshow = window.onfocus = focused;
@@ -396,41 +394,62 @@ import('./node_modules/@joeattardi/emoji-button/dist/index.js').then(({EmojiButt
 const submitLoginInfo = () => {
   username = decodeHtml(grab('#usernameInput').value.trim());
   password = decodeHtml(grab('#passwordInput').value.trim());
-  server = decodeHtml(grab('#serverInput').value.trim());
-  // Tell the server your username, password, and server
+  server = server || defaultServer;
+  // Tell the server your username and password
   socket.emit('login', { username, password, server });
+}
+
+// Removes a server from the server list
+const removeFromServerList = (server) => {
+  for (let serverInServerList of document.querySelectorAll('#Server-List .serverInServerList')) {
+    if (serverInServerList.dataset['servername'] === server.ServerName) {
+      serverInServerList.remove();
+      break;
+    }
+  }
+}
+
+// Adds a server to the server list
+const addToServerList = (server) => {
+  let serverForServerList = newElement('li');
+  serverForServerList.classList.add('serverInServerList');
+  serverForServerList.data('servername', server.ServerName);
+
+  let serverIconForServerList = newElement('img');
+  serverIconForServerList.classList.add('serverIconInServerList');
+  serverIconForServerList.src = `./cdn/ServerIcons/${server.ServerName}.webp`;
+  serverIconForServerList.title = server.ServerName;
+  serverIconForServerList.alt = server.ServerName;
+  serverIconForServerList.draggable = 'false';
+  serverIconForServerList.onclick = (event) => {
+    socket.emit('switch server', serverIconForServerList.getParent().data('servername'));
+  }
+
+  let deleteServerWrapperForServerList = newElement('span');
+  deleteServerWrapperForServerList.classList.add('deleteServerWrapperInServerList');
+  deleteServerWrapperForServerList.onclick = (event) => {
+    socket.emit('remove server', deleteServerWrapperForServerList.getParent().data('servername'));
+  }
+
+  let deleteServerIconForServerList = newElement('img');
+  deleteServerIconForServerList.classList.add('deleteServerIconInServerList');
+  deleteServerIconForServerList.src = './assets/DeleteMessageIcon.svg';
+  deleteServerIconForServerList.title = 'Delete Server';
+  deleteServerIconForServerList.alt = 'Delete Server';
+  deleteServerIconForServerList.draggable = 'false';
+  deleteServerIconForServerList.onload = () => SVGInject(deleteServerIconForServerList.getElement());
+
+  serverForServerList.appendChild(serverIconForServerList.getElement());
+  deleteServerWrapperForServerList.appendChild(deleteServerIconForServerList.getElement());
+  serverForServerList.appendChild(deleteServerWrapperForServerList.getElement());
+  grab('#Server-List').appendChild(serverForServerList.getElement());
 }
 
 // Syncs the contents of the server list
 const syncServerList = (serverListContents) => {
   for (let server = 0; server < serverListContents.length; server++) {
     if (serverListContents[server] !== undefined) {
-      let serverForServerList = newElement('li');
-      serverForServerList.classList.add('serverInServerList');
-
-      let serverIconForServerList = newElement('img');
-      serverIconForServerList.classList.add('serverIconInServerList');
-      serverIconForServerList.src = `https://hyperchat.cf/cdn/ServerIcons/${serverListContents[server].ServerName}.webp`;
-      serverIconForServerList.title = serverListContents[server].ServerName;
-      serverIconForServerList.alt = serverListContents[server].ServerName;
-      serverIconForServerList.draggable = 'false';
-      serverIconForServerList.data('servername', serverListContents[server].ServerName);
-
-      let serverDeleteForServerList = newElement('span');
-      serverDeleteForServerList.classList.add('serverDeleteInServerList');
-      serverDeleteForServerList.data('servername', serverListContents[server].ServerName);
-
-      let serverDeleteForServerListIcon = newElement('img');
-      serverDeleteForServerListIcon.classList.add('serverDeleteInServerListIcon');
-      serverDeleteForServerListIcon.src = './assets/DeleteMessageIcon.svg';
-      serverDeleteForServerListIcon.title = 'Delete Server';
-      serverDeleteForServerListIcon.alt = 'Delete Server';
-      serverDeleteForServerListIcon.draggable = 'false';
-
-      serverForServerList.appendChild(serverIconForServerList.getElement());
-      serverDeleteForServerList.appendChild(serverDeleteForServerListIcon.getElement());
-      serverForServerList.appendChild(serverDeleteForServerList.getElement());
-      grab('#Server-List').appendChild(serverForServerList.getElement());
+      addToServerList(serverListContents[server]);
     }
   }
 }
@@ -462,17 +481,17 @@ const log = (message, options) => {
 }
 
 // Add a user to the user list.
-const addToUserList = (user) => {
+const addToUserList = (username) => {
   let userToAddToUserList = newElement('li');
   userToAddToUserList.classList.add('userInUserList')
-  userToAddToUserList.textContent = user;
+  userToAddToUserList.textContent = username;
   grab('#userListContents').appendChild(userToAddToUserList.getElement());
 }
 
 // Remove a user from the user list.
-const removeFromUserList = (user) => {
+const removeFromUserList = (username) => {
   for (let userInUserList of document.querySelectorAll('#User-List .userInUserList')) {
-    if (userInUserList.textContent === user) {
+    if (userInUserList.textContent === username) {
       userInUserList.remove();
       break;
     }
@@ -757,9 +776,8 @@ grab('#Message-Box').addEventListener('keydown', function (event) {
 grab('#Add-Server-Name-Input').addEventListener('keydown', function (event) {
   if (event.key == 'Enter') {
     event.preventDefault();
-    server = this.value;
-    socket.emit('add server', server);
-    console.log("added server " + server);
+    socket.emit('add server', this.value);
+    this.value = '';
   }
 });
 
@@ -876,22 +894,14 @@ socket.on('user list', (userListContents) => {
 
 socket.on('server list', (serverListContents) => {
   syncServerList(serverListContents);
-  // Add an event listener to go to the server when a server icon in the server list is clicked
-  grabAll('.serverIconInServerList').forEach(function(element) {
-    element.addEventListener('click', function() {
-      const server = element.dataset['servername'];
-      socket.emit('switch server', server);
-      // const serverName = serverListContents.find(server => server.ServerName === 'ServerNameHere').PropertyOfObjectToGet;
-    });
-  });
-  // Add an event listener to delete the server when a delete button in the server list is clicked
-  grabAll('.serverDeleteInServerList').forEach(function(element) {
-    element.addEventListener('click', function() {
-      const server = element.dataset['servername'];
-      socket.emit('remove server', server);
-      console.log("removed server " + server);
-    });
-  });
+});
+
+socket.on('add server', (server) => {
+  addToServerList(server);
+});
+
+socket.on('remove server', (server) => {
+  removeFromServerList(server);
 });
 
 socket.on('delete message', (messageId) => {

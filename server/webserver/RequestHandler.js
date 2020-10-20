@@ -68,8 +68,18 @@ function handleRequest (req, res) {
             res.end(content, 'utf-8');
             return;
           });
+        } else if (reqURL.pathname.startsWith('/cdn/ServerIcons/')) {
+          fs.readFile('./client/cdn/ServerIcons/generic.webp', function (error, content) {
+            res.writeHead(200, {
+              'Content-Type': contentType,
+              'Content-Length': Buffer.byteLength(content),
+              'ETag': etag(content)
+            });
+            res.end(content, 'utf-8');
+            return;
+          });
         }
-        // Otherwise, if it's not a user profile picture requested, serve the 404 Not Found page
+        // Otherwise, if it's not a user profile picture or server icon requested, serve the 404 Not Found page
         else {
           fs.readFile('./client/errors/404.html', function (error, content) {
             res.writeHead(404, {

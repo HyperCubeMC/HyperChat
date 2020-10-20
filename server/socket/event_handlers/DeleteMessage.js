@@ -7,7 +7,8 @@
  */
 
 function handleDeleteMessage({io, socket, messageId}) {
-  if (messageId == null) {
+  // Null or wrong type check
+  if (messageId == null || messageId === '' || typeof messageId !== 'string') {
     return;
   }
   global.messageModel.findOne({server: socket.server, messageId: messageId}, function (error, message) {

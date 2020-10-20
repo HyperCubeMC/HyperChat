@@ -51,12 +51,27 @@ function handleSwitchServer({io, socket, server}) {
   socket.emit('user list', global.userListContents[socket.server]);
 
   // Count amount of servers in the database with the server name the user is in
-  global.serverModel.countDocuments({serverName: socket.server}, function(err, count) {
+  global.serverModel.countDocuments({serverName: socket.server}, function(error, count) {
     // Server is already in the database, so send the client the initial message list and return
     if (count > 0) {
-      global.messageModel.find({server: socket.server}).then((messages) => {
-        // Send the initial message list to the client (array of messages)
-        socket.emit('initial message list', messages);
+      global.messageModel.countDocuments({server: socket.server}).then((count) => {
+        if (count > 50) {
+          global.messageModel.find({server: socket.server}).skip(count - 50).limit(50).then((messages) => {
+            // Send the initial message list to the client (array of messages)
+            socket.emit('initial message list', messages, false);
+          }).catch((error) => {
+            // Catch and show an error in console if there is one
+            console.error(`An error occurred while attempting to fetch the message history for ${socket.username} in server ${socket.server} from the database: ${error}`);
+          });
+        } else {
+          global.messageModel.find({server: socket.server}).limit(50).then((messages) => {
+            // Send the initial message list to the client (array of messages)
+            socket.emit('initial message list', messages, true);
+          }).catch((error) => {
+            // Catch and show an error in console if there is one
+            console.error(`An error occurred while attempting to fetch the message history for ${socket.username} in server ${socket.server} from the database: ${error}`);
+          });
+        }
       }).catch((error) => {
         // Catch and show an error in console if there is one
         console.error(`An error occurred while attempting to fetch the message history for ${socket.username} in server ${socket.server} from the database: ${error}`);
@@ -71,9 +86,13 @@ function handleSwitchServer({io, socket, server}) {
         serverOwner: socket.username
       });
 
+      // Save the server in the database
       serverDocument.save(function (error, server) {
         if (error) console.error(`An error occurred while attempting to save the server ${socket.server} created by ${socket.username} to the database: ${error}`);
       });
+
+      // Tell the user this is a new server
+      socket.emit('new server');
     }
   });
 

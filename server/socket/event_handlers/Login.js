@@ -82,15 +82,15 @@ function handleLogin({io, socket, username, password, server}) {
     // Verify the user's login attempt
     // eslint-disable-next-line no-inner-declarations
     function verifyLogin() {
-      global.db.collection('credentials').countDocuments({username: username.toLowerCase(), hashedPassword: {$exists: true}}, function(err, count) {
+      global.userModel.countDocuments({username: username.toLowerCase()}, function(err, count) {
         // Create an object with the user credentials
         const credentials = {
           'username': username.toLowerCase(),
           'hashedPassword': userHashedPassword
         }
 
-        // Create the mongoose document for user credentials using the user credentials model
-        const userCredentialsDocument = new userCredentialsModel({
+        // Create the mongoose document for a user using the user model
+        const userDocument = new userModel({
           'username': username.toLowerCase(),
           'hashedPassword': userHashedPassword
         });
@@ -99,7 +99,7 @@ function handleLogin({io, socket, username, password, server}) {
         if (err) return console.error(err);
         // If a match is found for the username, perform credential checking and either deny or allow login
         if (count > 0) {
-          global.db.collection('credentials').findOne({username: username.toLowerCase()}, function(err, user) {
+          global.userModel.findOne({username: username.toLowerCase()}, function(err, user) {
             async function getUserVerification() {
               const userVerification = await verifyPassword(user.hashedPassword, password);
               return userVerification;
@@ -118,7 +118,7 @@ function handleLogin({io, socket, username, password, server}) {
         }
         // If no match is found for the username, register the user in the database, and then call allowLogin() to let them in
         else {
-          userCredentialsDocument.save(function (error, credentials) {
+          userDocument.save(function (error, user) {
             if (error) return console.error(`An error occurred while attempting to register user ${socket.username} in the database: ${error}`);
             allowLogin();
           });
@@ -147,14 +147,17 @@ function handleLogin({io, socket, username, password, server}) {
         // Send the user list contents to the user for their server
         socket.emit('user list', global.userListContents[socket.server]);
 
-        // Create the server list contents for the user if it doesn't exist
-        if (typeof global.serverListContents[socket.username] == 'undefined') {
-          global.serverListContents[socket.username] = [];
-          // The server list database is not implemented yet, so I'll put a server in the server list contents for the user
-          global.serverListContents[socket.username].push({ServerName: 'General', Owner: 'Justsnoopy30'}, {ServerName: 'HyperLand', Owner: 'Justsnoopy30'});
-        }
-        // Send the server list contents for the user to the user
-        socket.emit('server list', global.serverListContents[socket.username]);
+        global.userModel.findOne({username: socket.username.toLowerCase()}, function (error, user) {
+          if (user == null) {
+            return console.warn(`User ${socket.username} was not in the database when handling the socket Login event, fetching the server list for the user!`);
+          }
+          if (error) {
+            return console.error(`An error occured while trying to fetch user ${socket.username} from the database while handling the socket Login event, fetching the server list for the user`);
+          }
+
+          // Send the server list contents for the user to the user
+          socket.emit('server list', user.serverList);
+        });
 
         // Count amount of servers in the database with the server name the user is in
         global.serverModel.countDocuments({serverName: socket.server}, function(error, count) {
@@ -241,7 +244,7 @@ function handleLogin({io, socket, username, password, server}) {
   // Check if the user used too many characters in their server
   else if (server.length > 16) {
     socket.emit('login denied', {
-      loginDeniedReason: 'Server cannot be longer than 16 characters'
+      loginDeniedReason: 'Password cannot be longer than 16 characters'
     });
     return;
   }
@@ -259,7 +262,7 @@ function handleLogin({io, socket, username, password, server}) {
     });
     return;
   }
-  // Check if the user did not enter a server
+  // Check if the server is blank
   else if (server.length == 0) {
     socket.emit('login denied', {
       loginDeniedReason: 'Server cannot be empty'

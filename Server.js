@@ -15,6 +15,8 @@ import handleDisconnect from './server/socket/event_handlers/Disconnect.js';
 import handleDeleteMessage from './server/socket/event_handlers/DeleteMessage.js';
 import handleUploadProfilePicture from './server/socket/event_handlers/UploadProfilePicture.js';
 import handleRequestMoreMessages from './server/socket/event_handlers/RequestMoreMessages.js';
+import handleAddServer from './server/socket/event_handlers/AddServer.js';
+import handleRemoveServer from './server/socket/event_handlers/RemoveServer.js';
 import replaceAll from 'string.prototype.replaceall';
 
 // Polyfill replaceAll
@@ -85,10 +87,11 @@ global.db = mongoose.connection;
 
 // Assign Mongoose Schema to Schema
 const Schema = mongoose.Schema;
-// Create a new Schema for user credentials
-const userCredentialsSchema = new Schema({
+// Create a new Schema for users
+const userSchema = new Schema({
   username: String,
-  hashedPassword: String
+  hashedPassword: String,
+  serverList: {type: Array, default: []}
 });
 
 // Create a new schema for messages
@@ -111,8 +114,8 @@ const serverSchema = new Schema({
   timestamp: {type: Date, default: Date.now}
 });
 
-// Use the user credentials Schema to make a Mongoose Model as a shared global variable
-global.userCredentialsModel = mongoose.model('userCredentialsModel', userCredentialsSchema, 'credentials');
+// Use the user Schema to make a Mongoose Model as a shared global variable
+global.userModel = mongoose.model('userModel', userSchema, 'users');
 
 // Use the message Schema to make a Mongoose Model as a shared global variable
 global.messageModel = mongoose.model('messageModel', messageSchema, 'messages');
@@ -139,7 +142,7 @@ io.on('connection', (socket) => {
   socket.on('login', ({ username, password, server }) => {
     messageRateLimiter.consume(socket.handshake.address)
       .then(rateLimiterRes => {
-            handleLogin({io, socket, username, password, server});
+          handleLogin({io, socket, username, password, server});
       })
       .catch(rej => {
         socket.emit('loginDenied', {loginDeniedReason: 'Too many people are logging in at once! Try again in a few seconds.'});
@@ -194,6 +197,18 @@ io.on('connection', (socket) => {
   socket.on('request more messages', (skipMessages) => {
     if (!socket.authenticated) return;
     handleRequestMoreMessages({io, socket, skipMessages});
+  });
+
+  // When the client emits 'add server', add the server to their server list
+  socket.on('add server', (serverName) => {
+    if (!socket.authenticated) return;
+    handleAddServer({io, socket, serverName});
+  });
+
+  // When the client emits 'remove server', remove the server from their server list
+  socket.on('remove server', (serverName) => {
+    if (!socket.authenticated) return;
+    handleRemoveServer({io, socket, serverName});
   });
 
   // When the user disconnects, perform this

@@ -34,6 +34,7 @@
   border-right: 3px solid #40444b;
   padding-left: 10px;
   padding-top: 10px;
+  padding-bottom: 10px;
   --original-state: hidden;
 }
 
@@ -176,6 +177,7 @@
 /* The server list ul */
 #Server-List {
   list-style: none;
+  overflow: auto;
   padding-left: 0;
   margin-bottom: 0;
 }
@@ -190,34 +192,36 @@
   height: 50px;
   width: 50px;
   border-radius: 50%;
+  margin-right: 5px;
   cursor: pointer;
 }
 
 /* The input bar to add new servers */
 #Add-Server-Name-Input {
-  vertical-align: bottom;
   height: 20px;
   width: 80%;
-  align: left;
+  border-radius: 3px;
+  border: 1px solid rgba(79, 84, 92, 0.3);
 }
 
 /* Button that deletes a server */
-.serverDeleteInServerList {
+.deleteServerWrapperInServerList {
   display: none;
   height: 30px;
   width: 30px;
+  margin-left: 5px;
   position: relative;
   right: 5px;
   cursor: pointer;
 }
 
-.serverDeleteInServerListIcon {
+.deleteServerIconInServerList {
   height: 30px;
   width: 30px;
 }
 
 /* Displays the delete button when the server is hovered */
-.serverInServerList:hover .serverDeleteInServerList {
+.serverInServerList:hover .deleteServerWrapperInServerList {
   display: inline-block;
 }
 
