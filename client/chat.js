@@ -420,7 +420,8 @@ const addToServerList = (server) => {
   serverIconForServerList.src = `./cdn/ServerIcons/${server.ServerName}.webp`;
   serverIconForServerList.title = server.ServerName;
   serverIconForServerList.alt = server.ServerName;
-  serverIconForServerList.draggable = 'false';
+  serverIconForServerList.draggable = false;
+  serverIconForServerList.onload = () => SVGInject(serverIconForServerList.getElement());
   serverIconForServerList.onclick = (event) => {
     socket.emit('switch server', serverIconForServerList.getParent().data('servername'));
   }
@@ -436,7 +437,7 @@ const addToServerList = (server) => {
   deleteServerIconForServerList.src = './assets/DeleteMessageIcon.svg';
   deleteServerIconForServerList.title = 'Delete Server';
   deleteServerIconForServerList.alt = 'Delete Server';
-  deleteServerIconForServerList.draggable = 'false';
+  deleteServerIconForServerList.draggable = false;
   deleteServerIconForServerList.onload = () => SVGInject(deleteServerIconForServerList.getElement());
 
   serverForServerList.appendChild(serverIconForServerList.getElement());
@@ -459,18 +460,6 @@ const sendMessage = (message) => {
   socket.emit('new message', message);
 }
 
-// Sync the contents of the user list.
-const syncUserList = (userListContents) => {
-  for (let user = 0; user < userListContents.length; user++) {
-    if (userListContents[user] !== undefined) {
-      let userToAddToUserList = newElement('li');
-      userToAddToUserList.classList.add('userInUserList');
-      userToAddToUserList.textContent = userListContents[user];
-      grab('#userListContents').appendChild(userToAddToUserList.getElement());
-    }
-  }
-}
-
 // Log a message
 const log = (message, options) => {
   let messageElement = newElement('li');
@@ -484,7 +473,28 @@ const log = (message, options) => {
 const addToUserList = (username) => {
   let userToAddToUserList = newElement('li');
   userToAddToUserList.classList.add('userInUserList')
-  userToAddToUserList.textContent = username;
+  userToAddToUserList.data('username', username);
+
+  let usernameSpan = newElement('span');
+  usernameSpan.classList.add('username');
+  usernameSpan.textContent = username;
+
+  // Make a new span for the profile picture span
+  let profilePicture = newElement('span');
+  profilePicture.classList.add('profilePicture');
+
+  // Make a new img for the profile picture icon
+  let profilePictureIcon = newElement('img');
+  profilePictureIcon.classList.add('profilePictureIcon');
+  profilePictureIcon.src = `/cdn/UserProfilePictures/${username.toLowerCase()}.webp`;
+  profilePictureIcon.draggable = false;
+
+  // Add the profile picture icon to the profile picture span
+  profilePicture.append(profilePictureIcon);
+
+  // Append the profile picture and username to the user li
+  userToAddToUserList.append(profilePicture, usernameSpan);
+
   grab('#userListContents').appendChild(userToAddToUserList.getElement());
 }
 
@@ -494,6 +504,15 @@ const removeFromUserList = (username) => {
     if (userInUserList.textContent === username) {
       userInUserList.remove();
       break;
+    }
+  }
+}
+
+// Sync the contents of the user list.
+const syncUserList = (userListContents) => {
+  for (let user = 0; user < userListContents.length; user++) {
+    if (userListContents[user] !== undefined) {
+      addToUserList(userListContents[user]);
     }
   }
 }
@@ -599,7 +618,6 @@ const addChatMessage = (data, options) => {
   if (options.previousSameAuthor) {
     messageItem.classList.add('previousSameAuthor');
   }
-
 
   // If the message is special, add the special class and append the badge
   if (data.special) {
@@ -779,6 +797,10 @@ grab('#Add-Server-Name-Input').addEventListener('keydown', function (event) {
     socket.emit('add server', this.value);
     this.value = '';
   }
+});
+
+grab('#Add-Server-Name-Input').addEventListener('blur', function (event) {
+  currentInput = grab('#Message-Box');
 });
 
 document.addEventListener('keydown', (event) => {

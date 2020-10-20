@@ -225,6 +225,27 @@
   display: inline-block;
 }
 
+/* A user in the user list */
+.userInUserList {
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+/* When hovering over a user in the user list */
+
+/* Change user background color on hover on light theme */
+.light .userInUserList:hover {
+  background-color: #f0e9e9;
+}
+
+/* Change user background color on hover on dark theme */
+.dark .userInUserList:hover {
+  background-color: #36393f;
+}
+
 .log {
   color: gray;
   font-size: 70%;

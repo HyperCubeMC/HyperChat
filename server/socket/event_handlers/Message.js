@@ -46,7 +46,7 @@ const sanitizeHtmlOptions = {
 }
 
 // Put the special users with details in the special user array
-specialUsers.push({Username: 'justsnoopy30', Badge: 'Owner', UsernameColor: '#00b0f4', BadgeColor: '#7289da'}, {Username: 'kmisterk', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#691785'},{Username: 'OliviaTheVampire', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#7b3c96'},{Username: 'nbi__', Badge: 'Admin', UsernameColor: '#79f02e', BadgeColor: '#79f02e'}, {Username: '4a656666', Badge: 'Admin', UsernameColor: '#9c59b6', BadgeColor: '#79f02e'});
+specialUsers.push({Username: 'justsnoopy30', Badge: 'Owner', UsernameColor: '#00b0f4', BadgeColor: '#7289da'}, {Username: 'kmisterk', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#691785'},{Username: 'OliviaTheVampire', Badge: 'Helper', UsernameColor: '#00b0f4', BadgeColor: '#7b3c96'},{Username: 'nbi__', Badge: 'Admin', UsernameColor: '#79f02e', BadgeColor: '#79f02e'}, {Username: '4a656666', Badge: 'Admin', UsernameColor: '#9c59b6', BadgeColor: '#79f02e'},{Username: 'pixxi', Badge: 'Bonk Head', UsernameColor: '#ff9ff2', BadgeColor: '#ff9ff2'});
 
 // Helper function to validate the contents of a message
 function validateMessage(message) {
