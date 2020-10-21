@@ -184,6 +184,7 @@
 
 /* Selecting the server li's inside the server list ul */
 #Server-List li {
+  display: relative;
   padding-bottom: 1em;
 }
 
@@ -222,6 +223,25 @@
 
 /* Displays the delete button when the server is hovered */
 .serverInServerList:hover .deleteServerWrapperInServerList {
+  display: inline-block;
+}
+
+/* Displays a tooltop when a server icon is hovered */
+.serverIconWrapperInServerList:after {
+  content: attr(data-servername);
+  position: absolute;
+  vertical-align: middle;
+  left: 100px;
+  width: fit-content;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  display: none;
+}
+
+.serverIconWrapperInServerList:hover:after {
   display: inline-block;
 }
 

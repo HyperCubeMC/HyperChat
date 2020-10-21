@@ -426,15 +426,19 @@ const addToServerList = (server) => {
   serverForServerList.classList.add('serverInServerList');
   serverForServerList.data('servername', server.ServerName);
 
+  let serverIconWrapperForServerList = newElement('span');
+  serverIconWrapperForServerList.classList.add('serverIconWrapperInServerList');
+  serverIconWrapperForServerList.data('servername', server.ServerName);
+  serverIconWrapperForServerList.onclick = (event) => {
+    socket.emit('switch server', serverIconWrapperForServerList.getParent().data('servername'));
+  }
+
   let serverIconForServerList = newElement('img');
   serverIconForServerList.classList.add('serverIconInServerList');
   serverIconForServerList.src = `./cdn/ServerIcons/${server.ServerName}.webp`;
   serverIconForServerList.title = server.ServerName;
   serverIconForServerList.alt = server.ServerName;
   serverIconForServerList.draggable = false;
-  serverIconForServerList.onclick = (event) => {
-    socket.emit('switch server', serverIconForServerList.getParent().data('servername'));
-  }
 
   let deleteServerWrapperForServerList = newElement('span');
   deleteServerWrapperForServerList.classList.add('deleteServerWrapperInServerList');
@@ -450,7 +454,8 @@ const addToServerList = (server) => {
   deleteServerIconForServerList.draggable = false;
   deleteServerIconForServerList.onload = () => SVGInject(deleteServerIconForServerList.getElement());
 
-  serverForServerList.appendChild(serverIconForServerList.getElement());
+  serverIconWrapperForServerList.appendChild(serverIconForServerList.getElement());
+  serverForServerList.appendChild(serverIconWrapperForServerList.getElement());
   deleteServerWrapperForServerList.appendChild(deleteServerIconForServerList.getElement());
   serverForServerList.appendChild(deleteServerWrapperForServerList.getElement());
   grab('#Server-List').appendChild(serverForServerList.getElement());
