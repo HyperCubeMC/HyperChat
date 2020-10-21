@@ -97,6 +97,7 @@ let initialLogin = true;
 let darkThemeSwitchState;
 let pageVisible;
 let systemTheme;
+let emojiPickerLoaded = false;
 let usersTypingArray = [];
 let hasAllMessageHistory = false;
 let defaultServer = 'General'; // Server to use when current server is not set yet
@@ -333,62 +334,72 @@ function decodeHtml(html) {
   return txt.value;
 }
 
-// Import the emoji button asyncronously with a dynamic import
-import('./node_modules/@joeattardi/emoji-button/dist/index.js').then(({EmojiButton}) => {
-  // Setup the emoji button
+// Lazy load the emoji picker when the button is clicked
+grab('#emoji-button').addEventListener('click', () => {
+  // Import the emoji button asyncronously with a dynamic import
+  import('./node_modules/@joeattardi/emoji-button/dist/index.js').then(({EmojiButton}) => {
+    // Setup the emoji button
 
-  // Set textPosition as a placeholder variable for the user's cursor position in the
-  // message box before they click the emoji button
-  let messageBoxTextPosition = false;
+    // Set textPosition as a placeholder variable for the user's cursor position in the
+    // message box before they click the emoji button
+    let messageBoxTextPosition = false;
 
-  // Define button as the emoji button on the page
-  const button = document.querySelector('#emoji-button');
+    // Define button as the emoji button on the page
+    const button = document.querySelector('#emoji-button');
 
-  // Set the emoji button options
-  const options = {
-    style: 'twemoji',
-    position: 'left-start'
-  }
-
-  // Define picker as emoji picker button with options
-  const picker = new EmojiButton(options);
-
-  // When the emoji button is clicked, toggle the emoji picker
-  button.addEventListener('click', () => {
-    if (getSelection().rangeCount > 0 && getSelection().containsNode(document.querySelector('#Message-Box'))) {
-      messageBoxTextPosition = getSelection().getRangeAt(0);
+    // Set the emoji button options
+    const options = {
+      style: 'twemoji',
+      position: 'left-start'
     }
 
-    picker.togglePicker(button);
-    grab('.emoji-picker').classList.remove('light', 'dark');
-    grab('.emoji-picker').classList.add(store('theme'));
-    if (picker.isPickerVisible()) {
-      currentInput = grab('.emoji-picker');
+    // Define picker as emoji picker button with options
+    const picker = new EmojiButton(options);
+
+    // When the emoji button is clicked, toggle the emoji picker
+    function toggleEmojiPicker() {
+      if (getSelection().rangeCount > 0 && getSelection().containsNode(document.querySelector('#Message-Box'))) {
+        messageBoxTextPosition = getSelection().getRangeAt(0);
+      }
+
+      picker.togglePicker(button);
+      grab('.emoji-picker').classList.remove('light', 'dark');
+      grab('.emoji-picker').classList.add(store('theme'));
+      if (picker.isPickerVisible()) {
+        currentInput = grab('.emoji-picker');
+      }
+    }
+
+    button.addEventListener('click', toggleEmojiPicker);
+
+    // Add the emoji to the user's cursor position in the message box when an emoji
+    // in the emoji picker is clicked
+    picker.on('emoji', selection => {
+      const emoji = document.createElement('img');
+      emoji.src = selection.url;
+      emoji.alt = selection.emoji;
+      emoji.className = 'emoji';
+      emoji.crossOrigin = 'anonymous';
+      if (messageBoxTextPosition) {
+        messageBoxTextPosition.insertNode(emoji);
+      } else {
+        grab('#Message-Box').insertAdjacentElement('beforeend', emoji);
+      }
+    });
+
+    // When the picker is hidden, focus the message box and change the currentInput
+    picker.on('hidden', () => {
+      grab('#Message-Box').focus();
+      currentInput = grab('#Message-Box');
+    });
+
+    // If this is the first time the emoji picker has been loaded (by user clicking), open the emoji picker
+    if (!emojiPickerLoaded) {
+      toggleEmojiPicker();
+      emojiPickerLoaded = true;
     }
   });
-
-
-  // Add the emoji to the user's cursor position in the message box when an emoji
-  // in the emoji picker is clicked
-  picker.on('emoji', selection => {
-    const emoji = document.createElement('img');
-    emoji.src = selection.url;
-    emoji.alt = selection.emoji;
-    emoji.className = 'emoji';
-    emoji.crossOrigin = 'anonymous';
-    if (messageBoxTextPosition) {
-      messageBoxTextPosition.insertNode(emoji);
-    } else {
-      grab('#Message-Box').insertAdjacentElement('beforeend', emoji);
-    }
-  });
-
-  // When the picker is hidden, focus the message box and change the currentInput
-  picker.on('hidden', () => {
-    grab('#Message-Box').focus();
-    currentInput = grab('#Message-Box');
-  });
-});
+}, { once: true });
 
 // Submits the credentials to the server
 const submitLoginInfo = () => {
@@ -421,7 +432,6 @@ const addToServerList = (server) => {
   serverIconForServerList.title = server.ServerName;
   serverIconForServerList.alt = server.ServerName;
   serverIconForServerList.draggable = false;
-  serverIconForServerList.onload = () => SVGInject(serverIconForServerList.getElement());
   serverIconForServerList.onclick = (event) => {
     socket.emit('switch server', serverIconForServerList.getParent().data('servername'));
   }

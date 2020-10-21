@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="HyperChat is a fast, secure open-source chat app developed by Justsnoopy30.">
     <title>HyperChat</title>
-    <!-- Load bootstrap styles -->
-    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Load bootstrap styles asyncronously-->
+    <link rel="preload" href="./node_modules/bootstrap/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <!-- Load main stylesheets -->
     <link rel="stylesheet" href="./stylesheets/common.css">
     <link rel="stylesheet" href="./stylesheets/login-screen.css">
