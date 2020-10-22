@@ -1,6 +1,7 @@
 // Import dependencies
 import 'https://polyfill.io/v3/polyfill.min.js';
 import { grab, grabAll, newElement } from './hyperlib/HyperLib.js';
+import { createPopper } from './node_modules/@popperjs/core/dist/esm/popper.js';
 import store from './es_modules/store2/store2.js';
 import cheet from './es_modules/cheet.js/cheet.js';
 
@@ -486,10 +487,12 @@ const log = (message, options) => {
 
 // Add a user to the user list.
 const addToUserList = (username) => {
-  let userToAddToUserList = newElement('li');
-  userToAddToUserList.classList.add('userInUserList')
-  userToAddToUserList.data('username', username);
+  // Create the user item
+  let userItem = newElement('li');
+  userItem.classList.add('userInUserList')
+  userItem.data('username', username);
 
+  // Make a new span for the username
   let usernameSpan = newElement('span');
   usernameSpan.classList.add('username');
   usernameSpan.textContent = username;
@@ -507,10 +510,46 @@ const addToUserList = (username) => {
   // Add the profile picture icon to the profile picture span
   profilePicture.append(profilePictureIcon);
 
-  // Append the profile picture and username to the user li
-  userToAddToUserList.append(profilePicture, usernameSpan);
+  // Clone profile picture to use in the user popout
+  const userPopoutProfilePicture = profilePicture.cloneNode(true)
 
-  grab('#userListContents').appendChild(userToAddToUserList.getElement());
+  // Make a new popout for the user
+  let userPopout = newElement('div');
+  userPopout.classList.add('userPopout');
+  userPopout.css('display', 'none');
+  userPopout.append(userPopoutProfilePicture);
+
+  // Make a new span for the user popout username
+  let userPopoutUsername = newElement('span');
+  userPopoutUsername.classList.add('userPopoutUsername');
+  userPopoutUsername.textContent = username;
+
+  // Make a new span for the user popout info text
+  let userPopoutInfoText = newElement('span');
+  userPopoutInfoText.classList.add('userPopoutInfoText');
+  userPopoutInfoText.textContent = 'Nice popout, right?';
+
+  // Add the username to the popout
+  userPopout.append(userPopoutUsername);
+
+  // Add the info text to the popout
+  userPopout.append(userPopoutInfoText);
+
+  // Add a click handler to the user item to popout the user info panel
+  userItem.onclick = (event) => {
+    if (userPopout.style.display == 'flex') {
+      return userPopout.style.display = 'none';
+    }
+    userPopout.css('display', 'flex');
+    createPopper(userItem.getElement(), userPopout.getElement(), {
+      placement: 'left'
+    });
+  }
+
+  // Append the profile picture, username, and user popout div to the user li
+  userItem.append(profilePicture, usernameSpan, userPopout);
+
+  grab('#userListContents').appendChild(userItem.getElement());
 }
 
 // Remove a user from the user list.

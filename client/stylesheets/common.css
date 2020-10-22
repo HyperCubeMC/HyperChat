@@ -10,24 +10,52 @@ html, body {
   overflow: hidden;
 }
 
-body .light, .light, .light #Chat-Screen, .light #settingsScreen, .light #reconnectingScreen, .light #Message-Box, .light #emoji-button, .light #serverListIcon, .light #userListIcon, .light #notificationBell, .light .settingsIcon, .light #Add-Server-Name-Input {
-  background-color: #fff;
-  color: #212529
+.light {
+  --header-primary: #060607;
+  --header-secondary: #4f5660;
+  --text-normal: #2e3338;
+  --text-muted: #747f8d;
+  --text-link: #0067e0;
+  --channels-default: #6a7480;
+  --interactive-normal: #4f5660;
+  --interactive-hover: #2e3338;
+  --interactive-active: #060607;
+  --interactive-muted: #c7ccd1;
+  --background-primary: #fff;
+  --background-secondary: #f2f3f5;
+  --background-secondary-alt: #ebedef;
+  --background-tertiary: #e3e5e8;
+  --background-accent: #747f8d;
+  --background-floating: #fff;
 }
 
-body .dark, .dark, .dark #Chat-Screen, .dark #settingsScreen, .dark #reconnectingScreen, .dark #Message-Box, .dark #emoji-button, .dark #serverListIcon, .dark #userListIcon, .dark #notificationBell, .dark .settingsIcon, .dark #Add-Server-Name-Input {
-  background-color: #36393f;
-  color: #fff;
+.dark {
+  --header-primary: #fff;
+  --header-secondary: #b9bbbe;
+  --text-normal: #dcddde;
+  --text-muted: #72767d;
+  --text-link: #00b0f4;
+  --channels-default: #8e9297;
+  --interactive-normal: #b9bbbe;
+  --interactive-hover: #dcddde;
+  --interactive-active: #fff;
+  --interactive-muted: #4f545c;
+  --background-primary: #36393f;
+  --background-secondary: #2f3136;
+  --background-secondary-alt: #292b2f;
+  --background-tertiary: #202225;
+  --background-accent: #4f545c;
+  --background-floating: #18191c;
 }
 
-.light #Server-List-Area, .light #User-List {
-  background-color: #fff;
-  color: #212529
+body .light, .light {
+  background-color: var(--background-primary);
+  color: var(--header-primary);
 }
 
-.dark #Server-List-Area, .dark #User-List {
-  background-color: #2f3136;
-  color: #fff;
+body .dark, .dark {
+  background-color: var(--background-primary);
+  color: var(--header-primary);
 }
 
 /* Themed custom scrollbars */
@@ -74,4 +102,14 @@ body .dark, .dark, .dark #Chat-Screen, .dark #settingsScreen, .dark #reconnectin
 blockquote {
   padding-left: 15px;
   border-left: 4px solid #4f545c;
+}
+
+a {
+  text-decoration: none;
+  color: var(--text-link)
+}
+
+a:hover {
+  text-decoration: underline;
+  color: var(--text-link)
 }
