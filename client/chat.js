@@ -537,14 +537,23 @@ const addToUserList = (username) => {
 
   // Add a click handler to the user item to popout the user info panel
   userItem.onclick = (event) => {
-    if (userPopout.style.display == 'flex') {
-      return userPopout.style.display = 'none';
+    if (event.target == userPopout.getElement() || userPopout.getElement().contains(event.target)) {
+      return;
+    }
+    if (userPopout.css('display') == 'flex') {
+      return userPopout.css('display', 'none');
     }
     userPopout.css('display', 'flex');
     createPopper(userItem.getElement(), userPopout.getElement(), {
       placement: 'left'
     });
   }
+
+  document.addEventListener('click', (event) => {
+    if (event.target != userItem.getElement() && !userItem.contains(event.target)) {
+      userPopout.css('display', 'none');
+    }
+  });
 
   // Append the profile picture, username, and user popout div to the user li
   userItem.append(profilePicture, usernameSpan, userPopout);

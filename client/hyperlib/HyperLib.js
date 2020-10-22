@@ -23,21 +23,24 @@ const normalInsertBefore = Node.prototype.insertBefore;
 const normalAppendChild = Node.prototype.appendChild;
 const normalPrepend = Element.prototype.prepend;
 const normalAppend = Element.prototype.append;
-Node.prototype.insertBefore = function(...args) {
+Node.prototype.insertBefore = function() {
+  let args = Array.from(arguments);
   if (args[0][targetNode]) {
     args[0] = args[0][targetNode];
     logDebug(args[0]);
   }
   normalInsertBefore.apply(this, args);
 }
-Node.prototype.appendChild = function(...args) {
+Node.prototype.appendChild = function() {
+  let args = Array.from(arguments);
   if (args[0][targetNode]) {
     args[0] = args[0][targetNode];
     logDebug(args[0]);
   }
   normalAppendChild.apply(this, args);
 }
-Element.prototype.prepend = function(...args) {
+Element.prototype.prepend = function() {
+  let args = Array.from(arguments);
   args.forEach((arg, index) => {
     if (arg[targetNode]) {
       args[index] = args[index][targetNode];
@@ -46,7 +49,8 @@ Element.prototype.prepend = function(...args) {
   });
   normalPrepend.apply(this, args);
 }
-Element.prototype.append = function(...args) {
+Element.prototype.append = function() {
+  let args = Array.from(arguments);
   args.forEach((arg, index) => {
     if (arg[targetNode]) {
       args[index] = args[index][targetNode];
