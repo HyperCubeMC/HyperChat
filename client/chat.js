@@ -141,6 +141,19 @@ else {
   socket = io();
 }
 
+// Function to get a css rule
+function getCSSRule(ruleName) {
+  ruleName = ruleName.toLowerCase();
+  let result = null;
+  [...document.styleSheets].find(styleSheet => {
+    result = [...styleSheet.cssRules].find(cssRule => {
+      return cssRule instanceof CSSStyleRule && cssRule.selectorText.toLowerCase() == ruleName;
+    });
+    return result != null;
+  });
+  return result;
+}
+
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
   systemTheme = 'dark';
 }
@@ -153,29 +166,20 @@ else {
 
 // Here is the function to change the theme.
 const changeTheme = (theme) => {
-  store('theme', theme);
-  let inverse;
-  let iconPrefix;
-  if (theme == 'light') {
-    inverse = 'dark';
-    iconPrefix = 'Black';
-  }
-  if (theme == 'dark') {
-    inverse = 'light';
-    iconPrefix = 'White';
-  }
+  const previousTheme = store('theme') || 'light';
+  grab('body').classList.remove(previousTheme);
   grab('body').classList.add(theme);
-  grab('body').classList.remove(inverse);
-  grab('#settingsTopBar').classList.remove(`navbar-${inverse}`, `bg-${inverse}`);
+  grab('#settingsTopBar').classList.remove(`navbar-${previousTheme}`, `bg-${previousTheme}`);
   grab('#settingsTopBar').classList.add(`navbar-${theme}`, `bg-${theme}`);
-  grab('#Message-Box').classList.remove(`${inverse}ThemeScrollbar`);
+  grab('#Message-Box').classList.remove(`${previousTheme}ThemeScrollbar`);
   grab('#Message-Box').classList.add(`${theme}ThemeScrollbar`);
-  grab('#messages').classList.remove(`${inverse}ThemeScrollbar`);
+  grab('#messages').classList.remove(`${previousTheme}ThemeScrollbar`);
   grab('#messages').classList.add(`${theme}ThemeScrollbar`);
-  grab('#userListContents').classList.remove(`${inverse}ThemeScrollbar`);
+  grab('#userListContents').classList.remove(`${previousTheme}ThemeScrollbar`);
   grab('#userListContents').classList.add(`${theme}ThemeScrollbar`);
-  grab('#Server-List').classList.remove(`${inverse}ThemeScrollbar`);
+  grab('#Server-List').classList.remove(`${previousTheme}ThemeScrollbar`);
   grab('#Server-List').classList.add(`${theme}ThemeScrollbar`);
+  store('theme', theme);
 }
 
 if (store('theme') == null) {
@@ -192,12 +196,81 @@ if (store('theme') == 'dark') {
   changeTheme('dark');
 }
 
+if (store('theme') == 'custom') {
+  grab('#customThemeRadio').checked = true; // Set the custom theme radio to checked if the theme is custom theme on page load
+  grab('#custom-theme-picker').show();
+  changeTheme('custom');
+}
+
+if (store('custom-theme-background-primary')) {
+  const customThemeRule = getCSSRule('.custom');
+  const primaryBackgroundColor = store('custom-theme-background-primary');
+  grab('#custom-theme-background-primary').value = primaryBackgroundColor;
+  customThemeRule.style.setProperty('--background-primary', primaryBackgroundColor);
+}
+
+if (store('custom-theme-background-secondary')) {
+  const customThemeRule = getCSSRule('.custom');
+  const secondaryBackgroundColor = store('custom-theme-background-secondary');
+  grab('#custom-theme-background-secondary').value = secondaryBackgroundColor;
+  customThemeRule.style.setProperty('--background-secondary', secondaryBackgroundColor);
+}
+
+if (store('custom-theme-background-tertiary')) {
+  const customThemeRule = getCSSRule('.custom');
+  const tertiaryBackgroundColor = store('custom-theme-background-tertiary');
+  grab('#custom-theme-background-tertiary').value = tertiaryBackgroundColor;
+  customThemeRule.style.setProperty('--background-tertiary', tertiaryBackgroundColor);
+}
+
+if (store('custom-theme-header-primary')) {
+  const customThemeRule = getCSSRule('.custom');
+  const primaryHeaderColor = store('custom-theme-header-primary');
+  grab('#custom-theme-header-primary').value = primaryHeaderColor;
+  customThemeRule.style.setProperty('--header-primary', primaryHeaderColor);
+}
+
 grab('#lightThemeRadio').addEventListener('change', function (event) {
+  grab('#custom-theme-picker').hide();
   changeTheme('light'); // Light theme radio chosen, so change the theme to light.
 });
 
 grab('#darkThemeRadio').addEventListener('change', function (event) {
+  grab('#custom-theme-picker').hide();
   changeTheme('dark'); // Dark theme radio chosen, so change the theme to dark.
+});
+
+grab('#customThemeRadio').addEventListener('change', function (event) {
+  grab('#custom-theme-picker').show();
+  changeTheme('custom');
+});
+
+grab('#custom-theme-background-primary').addEventListener('input', function (event) {
+  const customThemeRule = getCSSRule('.custom');
+  const primaryBackgroundColor = event.target.value;
+  customThemeRule.style.setProperty('--background-primary', primaryBackgroundColor);
+  store('custom-theme-background-primary', primaryBackgroundColor);
+});
+
+grab('#custom-theme-background-secondary').addEventListener('input', function (event) {
+  const customThemeRule = getCSSRule('.custom');
+  const secondaryBackgroundColor = event.target.value;
+  customThemeRule.style.setProperty('--background-secondary', secondaryBackgroundColor);
+  store('custom-theme-background-secondary', secondaryBackgroundColor);
+});
+
+grab('#custom-theme-background-tertiary').addEventListener('input', function (event) {
+  const customThemeRule = getCSSRule('.custom');
+  const tertiaryBackgroundColor = event.target.value;
+  customThemeRule.style.setProperty('--background-tertiary', tertiaryBackgroundColor);
+  store('custom-theme-background-tertiary', tertiaryBackgroundColor);
+});
+
+grab('#custom-theme-header-primary').addEventListener('input', function (event) {
+  const customThemeRule = getCSSRule('.custom');
+  const primaryHeaderColor = event.target.value;
+  customThemeRule.style.setProperty('--header-primary', primaryHeaderColor);
+  store('custom-theme-header-primary', primaryHeaderColor);
 });
 
 // If the server list area state is not set, set it to the original state which depends if the user is on desktop or mobile
@@ -564,7 +637,7 @@ const addToUserList = (username) => {
 // Remove a user from the user list.
 const removeFromUserList = (username) => {
   for (let userInUserList of document.querySelectorAll('#User-List .userInUserList')) {
-    if (userInUserList.textContent === username) {
+    if (userInUserList.dataset['username'] === username) {
       userInUserList.remove();
       break;
     }
@@ -1137,10 +1210,8 @@ socket.on('server switch success', (data) => {
   });
 });
 
-socket.on('initial message list', (messages, endOfMessages) => {
-  if (endOfMessages) {
-    hasAllMessageHistory = true;
-  }
+socket.on('initial message list', (messages, hasAllMessages) => {
+  hasAllMessageHistory = hasAllMessages;
   // Add each message to the message list
   messages.forEach((message, index) => {
     let previousSameAuthor = false; // Initialize previousSameAuthor as false until changed

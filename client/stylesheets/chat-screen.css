@@ -576,3 +576,7 @@
   color: #fff;
   background-color: #7289da;
 }
+
+#custom-theme-picker {
+  display: none;
+}

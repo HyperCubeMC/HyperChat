@@ -48,12 +48,19 @@ html, body {
   --background-floating: #18191c;
 }
 
+.custom {}
+
 body .light, .light {
   background-color: var(--background-primary);
   color: var(--header-primary);
 }
 
 body .dark, .dark {
+  background-color: var(--background-primary);
+  color: var(--header-primary);
+}
+
+body .custom, .custom {
   background-color: var(--background-primary);
   color: var(--header-primary);
 }

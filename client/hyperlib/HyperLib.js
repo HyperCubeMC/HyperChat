@@ -175,9 +175,11 @@ function css(element, property, value) {
 
 function hide(element) {
   return new Promise((resolve, reject) => {
-    const originalDisplay = css(element, 'display') || 'initial';
-    data(element, 'originalDisplay', originalDisplay);
-    css(element, 'display', 'none');
+    if (css(element, 'display') != 'none') {
+      const originalDisplay = css(element, 'display') || 'initial';
+      data(element, 'originalDisplay', originalDisplay);
+      css(element, 'display', 'none');
+    }
     resolve(new Proxy(element, handleElement));
   });
 }
