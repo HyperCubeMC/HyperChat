@@ -22,23 +22,23 @@
   "license": "AGPL-3.0",
   "dependencies": {
     "@iconfu/svg-inject": "^1.2.3",
-    "@joeattardi/emoji-button": "^4.2.0",
-    "@popperjs/core": "^2.5.3",
+    "@joeattardi/emoji-button": "^4.3.0",
+    "@popperjs/core": "^2.5.4",
     "argon2": "^0.27.0",
     "bootstrap": "^5.0.0-alpha2",
     "dotenv": "^8.2.0",
     "etag": "^1.8.1",
     "marked": "^1.2.2",
-    "mongoose": "^5.10.9",
-    "rate-limiter-flexible": "^2.1.10",
-    "sanitize-html": "^2.1.1",
+    "mongoose": "^5.10.11",
+    "rate-limiter-flexible": "^2.1.13",
+    "sanitize-html": "^2.1.2",
     "sharp": "^0.26.2",
-    "socket.io": "^3.0.0-rc2",
+    "socket.io": "^3.0.0-rc4",
     "string.prototype.replaceall": "^1.0.3",
     "whoolso-word-filter": "^1.0.8"
   },
   "devDependencies": {
-    "eslint": "^7.11.0",
+    "eslint": "^7.12.1",
     "jsdoc": "^3.6.6"
   }
 }
