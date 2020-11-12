@@ -169,8 +169,6 @@ const changeTheme = (theme) => {
   const previousTheme = store('theme') || 'light';
   grab('body').classList.remove(previousTheme);
   grab('body').classList.add(theme);
-  grab('#settingsTopBar').classList.remove(`navbar-${previousTheme}`, `bg-${previousTheme}`);
-  grab('#settingsTopBar').classList.add(`navbar-${theme}`, `bg-${theme}`);
   grab('#Message-Box').classList.remove(`${previousTheme}ThemeScrollbar`);
   grab('#Message-Box').classList.add(`${theme}ThemeScrollbar`);
   grab('#messages').classList.remove(`${previousTheme}ThemeScrollbar`);
@@ -344,6 +342,7 @@ function hideSettingsScreen() {
 function showReconnectingScreen() {
   if (loggedIn) {
     grab('#Chat-Screen').fadeOut();
+    grab('#settingsScreen').hide();
     grab('#reconnectingScreen').fadeIn();
   }
   else {

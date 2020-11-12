@@ -25,20 +25,20 @@
     "@joeattardi/emoji-button": "^4.3.0",
     "@popperjs/core": "^2.5.4",
     "argon2": "^0.27.0",
-    "bootstrap": "^5.0.0-alpha2",
+    "bootstrap": "^5.0.0-alpha3",
     "dotenv": "^8.2.0",
     "etag": "^1.8.1",
-    "marked": "^1.2.2",
-    "mongoose": "^5.10.11",
+    "marked": "^1.2.3",
+    "mongoose": "^5.10.13",
     "rate-limiter-flexible": "^2.1.13",
     "sanitize-html": "^2.1.2",
     "sharp": "^0.26.2",
-    "socket.io": "^3.0.0-rc4",
+    "socket.io": "^3.0.1",
     "string.prototype.replaceall": "^1.0.3",
     "whoolso-word-filter": "^1.0.8"
   },
   "devDependencies": {
-    "eslint": "^7.12.1",
+    "eslint": "^7.13.0",
     "jsdoc": "^3.6.6"
   }
 }

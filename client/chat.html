@@ -100,17 +100,15 @@
     </section>
     <section id="settingsScreen">
       <div id="settingsArea">
-        <nav class="navbar" id="settingsTopBar">
-          <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-              <img src="./assets/favicon.ico" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy" draggable="false">
+        <div id="settingsTopBar">
+            <a id="settingsTopBarText" href="#">
+              <img id="settingsTopBarImage" src="./assets/favicon.ico" width="30" height="30" alt="" draggable="false">
               HyperChat Settings
             </a>
-          </div>
           <div class="settingsIconWrapper" id="settingsIconWrapperInSettings">
             <img class="settingsIcon" src="./assets/SettingsIcon.svg" title="Settings Icon" alt="Settings Icon" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
           </div>
-        </nav>
+        </div>
         <div class="form-check form-control-lg">
           <input class="form-check-input" type="radio" name="themeRadio" id="lightThemeRadio">
           <label class="form-check-label" for="lightThemeRadio">Light Theme</label>

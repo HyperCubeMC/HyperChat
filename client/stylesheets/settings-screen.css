@@ -18,6 +18,16 @@
   padding: 10px;
 }
 
+#settingsTopBar {
+  display: flex;
+  width: 100%;
+}
+
+#settingsTopBarText {
+  color: var(--header-primary);
+  font-size: 24px;
+}
+
 #settingsIconInSettings {
   margin: 10px;
   position: absolute;
@@ -26,4 +36,25 @@
   height: 50px;
   width: 50px;
   cursor: pointer;
+}
+
+#custom-theme-picker {
+  display: none;
+}
+
+#profilePictureUpload {
+  display: none;
+}
+#profilePicturePreview {
+  cursor: pointer;
+}
+#profile-picture-upload-container {
+  height: 150px;
+  width: 150px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+#profile-picture-upload-container img {
+  height: 150px;
+  width: 150px;
 }
