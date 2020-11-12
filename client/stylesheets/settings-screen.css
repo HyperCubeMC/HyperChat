@@ -53,6 +53,7 @@
   width: 150px;
   overflow: hidden;
   border-radius: 50%;
+  margin-top: 1em;
 }
 #profile-picture-upload-container img {
   height: 150px;
