@@ -19,7 +19,7 @@
     "Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area"
     "Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area"
     "Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area";
-}
+ }
 
 #Server-List-Area {
   display: flex;
@@ -356,14 +356,13 @@
   display: inline-block;
 }
 
-/* Change message background color on hover on light theme */
-.light .message:hover {
-  background-color: #f0e9e9;
+/* Change message background color on hover */
+.message:hover {
+  background-color: var(--background-secondary);
 }
 
-/* Change message background color on hover on dark theme */
-.dark .message:hover {
-  background-color: #2f3136;
+.message:hover .embed {
+  background-color: var(--background-tertiary);
 }
 
 /* Containing span for a profile picture */
@@ -551,4 +550,26 @@
 .mention-text:hover {
   color: #fff;
   background-color: #7289da;
+}
+
+.embed {
+  display: flex;
+  border-radius: 5px;
+  background-color: var(--background-secondary);
+}
+
+.embed-color-bar {
+  width: 10px;
+  margin-right: 5px;
+  border-radius: 100em 0 0 100em;
+  background-color: #0099E1;
+}
+
+.embed-contents {
+  display: inline-block;
+}
+
+.embed-image {
+  max-width: 300px;
+  max-height: 300px;
 }

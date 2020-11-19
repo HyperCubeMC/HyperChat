@@ -17,6 +17,7 @@ import handleUploadProfilePicture from './server/socket/event_handlers/UploadPro
 import handleRequestMoreMessages from './server/socket/event_handlers/RequestMoreMessages.js';
 import handleAddServer from './server/socket/event_handlers/AddServer.js';
 import handleRemoveServer from './server/socket/event_handlers/RemoveServer.js';
+import handleRequestLinkPreview from './server/socket/event_handlers/RequestLinkPreview.js';
 import replaceAll from 'string.prototype.replaceall';
 
 // Polyfill replaceAll
@@ -209,6 +210,11 @@ io.on('connection', (socket) => {
   socket.on('remove server', (serverName) => {
     if (!socket.authenticated) return;
     handleRemoveServer({io, socket, serverName});
+  });
+
+  socket.on('request link preview', (messageId, link) => {
+    if (!socket.authenticated) return;
+    handleRequestLinkPreview({io, socket, messageId, link});
   });
 
   // When the user disconnects, perform this

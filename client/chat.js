@@ -721,6 +721,11 @@ const addChatMessage = (data, options) => {
       setCursorToEnd(grab('#Message-Box').getElement());
     }
   });
+  messageBodyDiv.querySelectorAll('a').forEach((element) => {
+    if (element.href) {
+      socket.emit('request link preview', data.messageId, element.href);
+    }
+  });
 
   let messageItem = newElement('li');
   messageItem.classList.add('message');
@@ -1070,6 +1075,49 @@ socket.on('delete message', (messageId) => {
         message.nextElementSibling.classList.remove('previousSameAuthor');
       }
       message.remove();
+    }
+  });
+});
+
+socket.on('link preview', ({messageId, link, linkPreview}) => {
+  grabAll('.message').forEach(function(message) {
+    if (message.dataset['messageid'] == messageId) {
+      let embed = newElement('div');
+      embed.classList.add('embed');
+
+      let embedColorBar = newElement('div');
+      embedColorBar.classList.add('embed-color-bar');
+
+      let embedContents = newElement('div');
+      embedContents.classList.add('embed-contents');
+
+      let embedTitle = newElement('a');
+      embedTitle.classList.add('embed-title');
+      embedTitle.textContent = linkPreview.ogTitle;
+      embedTitle.href = link;
+      embedContents.appendChild(embedTitle);
+
+      if (linkPreview.ogDescription) {
+        let embedDescription = newElement('p');
+        embedDescription.classList.add('embed-description');
+        embedDescription.textContent = linkPreview.ogDescription;
+        embedContents.appendChild(embedDescription);
+      }
+
+      if (linkPreview.ogImage) {
+        let embedImage = newElement('img');
+        embedImage.classList.add('embed-image');
+        embedImage.src = linkPreview.ogImage.url;
+        if (embedImage.width && embedImage.height) {
+          embedImage.width = linkPreview.ogImage.width + 'px';
+          embedImage.height = linkPreview.ogImage.height + 'px';
+        }
+        embedContents.appendChild(embedImage);
+      }
+
+      embed.append(embedColorBar, embedContents);
+
+      message.appendChild(embed);
     }
   });
 });
