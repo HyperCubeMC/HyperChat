@@ -287,6 +287,7 @@
   padding: 16px;
   border-radius: 5px;
   cursor: auto;
+  box-shadow: -5px 10px 18px var(--background-tertiary);
 }
 
 /* The profile picture span inside the user popout */
