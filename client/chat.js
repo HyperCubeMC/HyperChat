@@ -1126,12 +1126,12 @@ socket.on('link preview', ({messageId, link, linkPreview}) => {
 });
 
 socket.on('mute', () => {
-  grab('#Message-Box').setAttribute("contentEditable", false)
+  grab('#Message-Box').contentEditable = false;
   alert('You are now muted!');
 });
 
 socket.on('unmute', () => {
-  grab('#Message-Box').setAttribute("contentEditable", true)
+  grab('#Message-Box').contentEditable = true;
   alert('You are now unmuted!');
 });
 
