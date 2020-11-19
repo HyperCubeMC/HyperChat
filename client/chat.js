@@ -1112,6 +1112,9 @@ socket.on('link preview', ({messageId, link, linkPreview}) => {
           embedImage.width = linkPreview.ogImage.width + 'px';
           embedImage.height = linkPreview.ogImage.height + 'px';
         }
+        embedImage.onerror = function() {
+          this.remove();
+        }
         embedContents.appendChild(embedImage);
       }
 

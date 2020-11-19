@@ -42,7 +42,10 @@ const sanitizeHtmlOptions = {
       'font-size': [/^\d+(?:px|em|%)$/]
     }
   },
-  allowedSchemes: ['http', 'https', 'ftp', 'mailto', 'data']
+  allowedSchemes: ['http', 'https', 'ftp', 'mailto', 'data'],
+  transformTags: {
+    'a': sanitizeHtml.simpleTransform('a', {target: '_blank'})
+  }
 }
 
 // Put the special users with details in the special user array

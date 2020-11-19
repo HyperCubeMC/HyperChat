@@ -569,6 +569,10 @@
   display: inline-block;
 }
 
+.embed-description {
+  margin-bottom: 0;
+}
+
 .embed-image {
   max-width: 300px;
   max-height: 300px;
