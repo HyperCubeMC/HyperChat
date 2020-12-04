@@ -1014,8 +1014,8 @@ grab('#profilePictureUpload').addEventListener('change', function() {
 });
 
 grab('#messages').addEventListener('scroll', function() {
-  if (this.scrollTop == 0 && !hasAllMessageHistory) {
-    socket.emit('request more messages', this.childElementCount);
+  if (this.scrollHeight > this.clientHeight && this.scrollTop == 0 && !hasAllMessageHistory) {
+    socket.emit('request more messages', this.querySelectorAll(':scope>.message').length);
   }
 });
 
