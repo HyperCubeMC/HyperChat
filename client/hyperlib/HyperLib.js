@@ -112,6 +112,16 @@ const handleElement = {
          return fadeOut(element, fadeOutMilliseconds);
        }
       }
+      case 'isUserNearBottom': {
+        return (threshold) => {
+          return isUserNearBottom(element, threshold);
+        }
+      }
+      case 'scrollToBottom': {
+        return () => {
+          return scrollToBottom(element);
+        }
+      }
      default: {
        return typeof element[property] === 'function'
          /* If it is a function: */ ? element[property].bind(element)
@@ -217,6 +227,17 @@ function fadeOut(element, fadeOutMilliseconds = 500) {
       resolve(new Proxy(element, handleElement));
     }, transitionTime);
   });
+}
+
+function isUserNearBottom(element, threshold = 150) {
+  const position = element.scrollTop + element.offsetHeight;
+  const height = element.scrollHeight;
+  return position > height - threshold;
+}
+
+function scrollToBottom(element) {
+  element.scrollTop = element.scrollHeight;
+  return new Proxy(element, handleElement);
 }
 
 export { grab, grabAll, newElement };

@@ -1095,6 +1095,7 @@ socket.on('link preview', ({messageId, link, linkPreview}) => {
       embedTitle.classList.add('embed-title');
       embedTitle.textContent = linkPreview.ogTitle;
       embedTitle.href = link;
+      embedTitle.target = '_blank';
       embedContents.appendChild(embedTitle);
 
       if (linkPreview.ogDescription) {
@@ -1121,6 +1122,10 @@ socket.on('link preview', ({messageId, link, linkPreview}) => {
       embed.append(embedColorBar, embedContents);
 
       message.appendChild(embed);
+
+      if (grab('#messages').isUserNearBottom(500)) {
+        grab('#messages').scrollToBottom();
+      }
     }
   });
 });
@@ -1219,7 +1224,10 @@ socket.on('new message', (data) => {
       });
     }
   }
-  grab('#messages').scrollTop = grab('#messages').scrollHeight;
+
+  if (grab('#messages').isUserNearBottom(500)) {
+    grab('#messages').scrollToBottom();
+  }
 });
 
 // Whenever the server emits 'user joined', log it in the chat body
@@ -1275,7 +1283,7 @@ socket.on('initial message list', (messages, hasAllMessages) => {
     // Add the chat message
     addChatMessage(message, { previousSameAuthor: previousSameAuthor });
   });
-  grab('#messages').scrollTop = grab('#messages').scrollHeight;
+  grab('#messages').scrollToBottom();
 });
 
 socket.on('more messages', (messages, endOfMessages) => {
