@@ -27,7 +27,7 @@ marked.setOptions({
 
 // Set sanitizeHtmlOptions for sanitize-html
 const sanitizeHtmlOptions = {
-  allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ]),
+  allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'marquee', 'blink' ]),
   allowedAttributes: {
     a: [ 'href', 'name', 'target' ],
     img: [
@@ -94,7 +94,7 @@ function handleMessage({io, socket, message}) {
 
   // Check the message for bad words
   const filterFoundWords = filterWords(filterOptions);
-  if (filterFoundWords.length != 0) {
+  if (filterFoundWords.length != 0 && !message.includes('<img')) {
     console.log(`User ${socket.username} tried to swear with: ${filterFoundWords}`);
     message = 'not good';
   }
@@ -337,6 +337,40 @@ function handleMessage({io, socket, message}) {
       });
       break;
     }
+    case 'ipmuteuser': {
+      // If the user isn't an admin (currently hardcoded :D), return with commandAccessDenied()
+      if (socket.username !== 'Justsnoopy30') {
+        return commandAccessDenied();
+      }
+      // If the user to execute the command on isn't in the room, return with commandNonexistingUserSpecified()
+      if (!global.userListContents[socket.server].includes(commandArgument)) {
+        return commandNonexistingUserSpecified();
+      }
+      const userToIpMute = io.sockets.sockets.get(global.userMap.get(commandArgument));
+      console.log(`User to IP Mute: ${userToIpMute.username} | Handshake Address: ${userToIpMute.handshake.address}`);
+      global.mutedIpList.push(userToIpMute.handshake.address);
+      io.to(userToIpMute).emit('mute');
+      break;
+    }
+    case 'unipmuteuser': {
+      // If the user isn't an admin (currently hardcoded :D), return with commandAccessDenied()
+      if (socket.username !== 'Justsnoopy30') {
+        return commandAccessDenied();
+      }
+      // If the user to execute the command on isn't in the room, return with commandNonexistingUserSpecified()
+      if (!global.userListContents[socket.server].includes(commandArgument)) {
+        return commandNonexistingUserSpecified();
+      }
+      const userToUnIpMute = io.sockets.sockets.get(global.userMap.get(commandArgument));
+      // If the user's ip is not in the muted ip list, tell the executor that
+      if (!global.mutedIpList.includes(userToUnIpMute.handshake.address)) {
+        return;
+      }
+      console.log(`User to un-IP Mute: ${userToUnIpMute.username} | Handshake Address: ${userToUnIpMute.handshake.address}`);
+      global.mutedIpList = arrayRemove(global.mutedIpList, userToUnIpMute.handshake.address);
+      io.to(userToUnIpMute).emit('unmute');
+      break;
+    }
     case 'flip': {
       // If the user isn't an admin (currently hardcoded :D), return with commandAccessDenied()
       if (socket.username !== 'Justsnoopy30') {
@@ -413,7 +447,7 @@ function handleMessage({io, socket, message}) {
       }
       const userToKick = commandArgument;
       io.to(global.userMap.get(userToKick)).emit('kick');
-      io.sockets.sockets[global.userMap.get(userToKick)].disconnect();
+      io.sockets.sockets.get(global.userMap.get(userToKick)).disconnect();
       break;
     }
     case 'stun': {

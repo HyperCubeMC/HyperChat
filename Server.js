@@ -131,8 +131,8 @@ const messageRateLimiter = new RateLimiterMemory({
 });
 
 const loginRateLimiter = new RateLimiterMemory({
-  points: 10, // 10 points
-  duration: 1 // per 1 second
+  points: 1, // 1 point
+  duration: 2 // per 2 seconds
 });
 
 // And everything starts here where a user makes a connection to the socket.io server...
@@ -146,7 +146,7 @@ io.on('connection', (socket) => {
           handleLogin({io, socket, username, password, server});
       })
       .catch(rej => {
-        socket.emit('loginDenied', {loginDeniedReason: 'Too many people are logging in at once! Try again in a few seconds.'});
+        socket.emit('loginDenied', {loginDeniedReason: 'You are logging in too fast! Try again in a few seconds.'});
         socket.disconnect();
       });
   });
@@ -159,6 +159,7 @@ io.on('connection', (socket) => {
         handleMessage({io, socket, message});
       })
       .catch(rej => {
+        console.log(rej);
         socket.emit('kick', 'spamming');
         socket.disconnect();
       });

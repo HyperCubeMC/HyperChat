@@ -301,7 +301,6 @@ const wordsToFilter = [
     "sh!+",
     "slut",
     "teets",
-    "tits",
     "boobs",
     "b00bs",
     "teez",
@@ -444,7 +443,8 @@ const wordsToFilter = [
     "wichser",
     "wop*",
     "yed",
-    "zabourah"
+    "zabourah",
+    "rape"
 ]
 const lengthThreshold = 3;
 const leetAlphabet1 = {

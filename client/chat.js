@@ -1096,13 +1096,13 @@ socket.on('link preview', ({messageId, link, linkPreview}) => {
       embedTitle.textContent = linkPreview.ogTitle;
       embedTitle.href = link;
       embedTitle.target = '_blank';
-      embedContents.appendChild(embedTitle);
+      embedContents.appendChild(embedTitle.getElement());
 
       if (linkPreview.ogDescription) {
         let embedDescription = newElement('p');
         embedDescription.classList.add('embed-description');
         embedDescription.textContent = linkPreview.ogDescription;
-        embedContents.appendChild(embedDescription);
+        embedContents.appendChild(embedDescription.getElement());
       }
 
       if (linkPreview.ogImage) {
@@ -1116,12 +1116,12 @@ socket.on('link preview', ({messageId, link, linkPreview}) => {
         embedImage.onerror = function() {
           this.remove();
         }
-        embedContents.appendChild(embedImage);
+        embedContents.appendChild(embedImage.getElement());
       }
 
-      embed.append(embedColorBar, embedContents);
+      embed.append(embedColorBar.getElement(), embedContents.getElement());
 
-      message.appendChild(embed);
+      message.appendChild(embed.getElement());
 
       if (grab('#messages').isUserNearBottom(500)) {
         grab('#messages').scrollToBottom();
