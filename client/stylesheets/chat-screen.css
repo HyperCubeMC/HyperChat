@@ -295,6 +295,7 @@
   cursor: auto;
   box-shadow: -5px 10px 18px var(--background-tertiary);
   font-size: 1rem;
+  z-index: 1;
 }
 
 /* The profile picture span inside the user popout */
