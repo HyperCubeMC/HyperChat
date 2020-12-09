@@ -704,7 +704,7 @@ const addChatMessage = (data, options) => {
   // Make a new span for the user popout username
   let userPopoutUsername = newElement('span');
   userPopoutUsername.classList.add('userPopoutUsername');
-  userPopoutUsername.textContent = username;
+  userPopoutUsername.textContent = data.username;
 
   // Make a new span for the user popout info text
   let userPopoutInfoText = newElement('span');
