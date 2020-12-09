@@ -691,6 +691,51 @@ const addChatMessage = (data, options) => {
   else {
     usernameSpan.style.color = getUsernameColor(data.username);
   }
+  
+  // Clone profile picture to use in the user popout
+  const userPopoutProfilePicture = profilePicture.cloneNode(true)
+
+  // Make a new popout for the user
+  let userPopout = newElement('div');
+  userPopout.classList.add('userPopout');
+  userPopout.css('display', 'none');
+  userPopout.append(userPopoutProfilePicture);
+
+  // Make a new span for the user popout username
+  let userPopoutUsername = newElement('span');
+  userPopoutUsername.classList.add('userPopoutUsername');
+  userPopoutUsername.textContent = username;
+
+  // Make a new span for the user popout info text
+  let userPopoutInfoText = newElement('span');
+  userPopoutInfoText.classList.add('userPopoutInfoText');
+  userPopoutInfoText.textContent = 'Nice popout, right?';
+
+  // Add the username to the popout
+  userPopout.append(userPopoutUsername);
+
+  // Add the info text to the popout
+  userPopout.append(userPopoutInfoText);
+
+  // Add a click handler to the user item to popout the user info panel
+  userItem.onclick = (event) => {
+    if (event.target == userPopout.getElement() || userPopout.getElement().contains(event.target)) {
+      return;
+    }
+    if (userPopout.css('display') == 'flex') {
+      return userPopout.css('display', 'none');
+    }
+    userPopout.css('display', 'flex');
+    createPopper(userItem.getElement(), userPopout.getElement(), {
+      placement: 'left'
+    });
+  }
+
+  document.addEventListener('click', (event) => {
+    if (event.target != userItem.getElement() && !userItem.contains(event.target)) {
+      userPopout.css('display', 'none');
+    }
+  });
 
   let userBadge;
   // If the message is special, add the badge from the badge property
