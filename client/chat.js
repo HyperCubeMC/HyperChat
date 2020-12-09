@@ -717,11 +717,8 @@ const addChatMessage = (data, options) => {
   // Add the info text to the popout
   userPopout.append(userPopoutInfoText);
 
-  // Add a click handler to the user item to popout the user info panel
+  // Add a click handler to the profile picture to popout the user info panel
   profilePicture.onclick = (event) => {
-    if (event.target == userPopout.getElement() || userPopout.getElement().contains(event.target)) {
-      return;
-    }
     if (userPopout.css('display') == 'flex') {
       return userPopout.css('display', 'none');
     }
