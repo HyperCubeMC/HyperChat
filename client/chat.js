@@ -436,7 +436,7 @@ grab('#emoji-button').addEventListener('click', () => {
       }
 
       picker.togglePicker(button);
-      grab('.emoji-picker').classList.remove('light', 'dark');
+      grab('.emoji-picker').classList.remove('light', 'dark', 'custom');
       grab('.emoji-picker').classList.add(store('theme'));
       if (picker.isPickerVisible()) {
         currentInput = grab('.emoji-picker');
