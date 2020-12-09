@@ -804,11 +804,11 @@ const addChatMessage = (data, options) => {
   // If the message is special, add the special class and append the badge
   if (data.special) {
     messageItem.classList.add('special');
-    messageItem.append(profilePicture, userPopout, usernameSpan, userBadge, timestamp, deleteButton, messageBodyDiv);
+    messageItem.append(profilePicture, usernameSpan, userBadge, timestamp, deleteButton, messageBodyDiv);
   }
   // Otherwise, just continue like normal
   else {
-    messageItem.append(profilePicture, userPopout, usernameSpan, deleteButton, timestamp, messageBodyDiv);
+    messageItem.append(profilePicture, usernameSpan, deleteButton, timestamp, messageBodyDiv);
   }
 
   addMessageElement(messageItem, { prepend: options.prepend });
