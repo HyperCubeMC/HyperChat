@@ -718,7 +718,7 @@ const addChatMessage = (data, options) => {
   userPopout.append(userPopoutInfoText);
 
   // Add a click handler to the user item to popout the user info panel
-  userItem.onclick = (event) => {
+  profilePicture.onclick = (event) => {
     if (event.target == userPopout.getElement() || userPopout.getElement().contains(event.target)) {
       return;
     }
@@ -726,13 +726,13 @@ const addChatMessage = (data, options) => {
       return userPopout.css('display', 'none');
     }
     userPopout.css('display', 'flex');
-    createPopper(userItem.getElement(), userPopout.getElement(), {
-      placement: 'left'
+    createPopper(profilePicture.getElement(), userPopout.getElement(), {
+      placement: 'right'
     });
   }
 
   document.addEventListener('click', (event) => {
-    if (event.target != userItem.getElement() && !userItem.contains(event.target)) {
+    if (event.target != profilePicture.getElement() && !profilePicture.contains(event.target)) {
       userPopout.css('display', 'none');
     }
   });
