@@ -729,7 +729,7 @@ const addChatMessage = (data, options) => {
   }
 
   document.addEventListener('click', (event) => {
-    if (event.target != profilePicture.getElement() && event.target != userPopout.getElement() && !userPopout.contains(event.target)) {
+    if (event.target != profilePicture.getElement() && !profilePicture.contains(event.target) && event.target != userPopout.getElement() && !userPopout.contains(event.target)) {
       userPopout.css('display', 'none');
     }
   });
