@@ -11,7 +11,9 @@ function handleDisconnect({io, socket}) {
     // Echo globally in the server that the user has stopped typing, since they disconnected
     socket.to(socket.server).emit('stop typing', socket.username);
     // Remove the user from the user list
-    global.userListContents[socket.server] = global.arrayRemove(global.userListContents[socket.server], socket.username);
+    global.userListContents[socket.server] = global.userListContents[socket.server].filter(function(user) {
+      return user.username != socket.username;
+    });
     // Echo globally in the server that this user has left
     socket.to(socket.server).emit('user left', socket.username);
     // Remove the username to socket id map entry for the user

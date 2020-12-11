@@ -25,7 +25,7 @@ function handleAddServer({io, socket, serverName}) {
       ServerOwner: 'TODO'
     }
     user.serverList.push(server);
-    user.save(function (error, server) {
+    user.save(function (error, user) {
       if (error) return console.error(`An error occured while trying to add the server ${serverName} to the server list of ${socket.username} in the database: ${error}`);
     });
     socket.emit('add server', server);

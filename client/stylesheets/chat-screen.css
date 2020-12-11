@@ -10,10 +10,11 @@
   color: var(--header-primary);
   /* Use minmax(0, 1fr) instead of 1fr so that elements can be prevented from overflowing their grid areas. Refer to https://stackoverflow.com/a/52787826/8584806 */
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
   gap: 1px 1px;
   grid-template-areas:
     "Top-Bar Top-Bar Top-Bar Top-Bar Top-Bar Top-Bar Top-Bar"
+    "Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area"
     "Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area"
     "Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area"
     "Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area"
@@ -72,10 +73,11 @@
     height: 100%;
     /* Use minmax(0, 1fr) instead of 1fr so that elements can be prevented from overflowing their grid areas. Refer to https://stackoverflow.com/a/52787826/8584806 */
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
     gap: 1px 1px;
     grid-template-areas:
       "Server-List-Area Top-Bar Top-Bar Top-Bar Top-Bar Top-Bar User-List"
+      "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
       "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
       "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"
       "Server-List-Area Chat-Area Chat-Area Chat-Area Chat-Area Chat-Area User-List"

@@ -92,7 +92,8 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
   username: String,
   hashedPassword: String,
-  serverList: {type: Array, default: []}
+  serverList: {type: Array, default: []},
+  statusMessage: {type: String, default: ''}
 });
 
 // Create a new schema for messages
@@ -146,6 +147,7 @@ io.on('connection', (socket) => {
           handleLogin({io, socket, username, password, server});
       })
       .catch(rej => {
+        console.log(rej);
         socket.emit('loginDenied', {loginDeniedReason: 'You are logging in too fast! Try again in a few seconds.'});
         socket.disconnect();
       });

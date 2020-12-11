@@ -558,7 +558,8 @@ const log = (message, options) => {
 }
 
 // Add a user to the user list.
-const addToUserList = (username) => {
+const addToUserList = (user) => {
+  const { username, statusMessage } = user;
   // Create the user item
   let userItem = newElement('li');
   userItem.classList.add('userInUserList')
@@ -599,7 +600,7 @@ const addToUserList = (username) => {
   // Make a new span for the user popout info text
   let userPopoutInfoText = newElement('span');
   userPopoutInfoText.classList.add('userPopoutInfoText');
-  userPopoutInfoText.textContent = 'Nice popout, right?';
+  userPopoutInfoText.textContent = statusMessage;
 
   // Add the username to the popout
   userPopout.append(userPopoutUsername);
@@ -1273,10 +1274,10 @@ socket.on('new message', (data) => {
 });
 
 // Whenever the server emits 'user joined', log it in the chat body
-socket.on('user joined', (username) => {
-  log(`${username} joined the server.`);
+socket.on('user joined', (user) => {
+  log(`${user.username} joined the server.`);
   userJoinedChatSound.play();
-  addToUserList(username);
+  addToUserList(user);
 });
 
 // Whenever the server emits 'user left', log it in the chat body
@@ -1296,6 +1297,18 @@ socket.on('typing', (username) => {
 socket.on('stop typing', (username) => {
   usersTypingArray = arrayRemove(usersTypingArray, username);
   syncUsersTyping(usersTypingArray);
+});
+
+// When the server updates a status message for a user
+socket.on('update status message', (user) => {
+  const { username, statusMessage } = user;
+  for (let userInUserList of document.querySelectorAll('#User-List .userInUserList')) {
+    if (userInUserList.dataset['username'] === username) {
+      let statusMessageElement = userInUserList.querySelector('.userPopout .userPopoutInfoText');
+      statusMessageElement.textContent = statusMessage;
+      break;
+    }
+  }
 });
 
 // If the server tells us the server switch was successful, switch server visibly

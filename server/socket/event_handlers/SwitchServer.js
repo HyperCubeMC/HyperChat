@@ -7,14 +7,7 @@
  * @license AGPL-3.0
  */
 
- // Helper function to return an array with the value specified removed from the passed array
-function arrayRemove(array, value) {
-  return array.filter(function(element) {
-    return element != value;
-  });
-}
-
-function handleSwitchServer({io, socket, server}) {
+async function handleSwitchServer({io, socket, server}) {
   // If the server isn't defined, isn't of type string, or is null, deny the server switch
   if (typeof server !== 'string' || server == null) {
     socket.emit('server switch denied', {
@@ -27,7 +20,9 @@ function handleSwitchServer({io, socket, server}) {
   // Remove the user from their old server
   socket.leave(socket.server);
   // Remove the user from the user list
-  global.userListContents[socket.server] = arrayRemove(global.userListContents[socket.server], socket.username);
+  global.userListContents[socket.server] = global.userListContents[socket.server].filter(function(user) {
+    return user.username != socket.username;
+  });
   // Echo globally in the server that this user has left
   socket.to(socket.server).emit('user left', socket.username);
   // Change the user's server to the requested server
@@ -38,14 +33,34 @@ function handleSwitchServer({io, socket, server}) {
   socket.emit('server switch success', {
     server: socket.server
   });
+  // Get user status message
+  let statusMessage = '';
+  await global.userModel.findOne({username: socket.username.toLowerCase()}, function (error, user) {
+    if (user == null) {
+      return console.warn(`User ${socket.username} was not in the database when attempting to fetch their status message!`);
+    }
+
+    if (error) {
+      return console.error(`An error occurred while attempting to fetch the status message of user ${socket.username} from the database during the socket switch server event: ${error}`);
+    }
+
+    statusMessage = user.statusMessage;
+  });
+
+  // Make user object
+  const user = {
+    username: socket.username,
+    statusMessage: statusMessage
+  }
+
   // Echo to the server that a person has connected
-  socket.to(socket.server).emit('user joined', socket.username);
+  socket.to(socket.server).emit('user joined', user);
   // Create the user list contents for the server if it doesn't exist
   if (typeof global.userListContents[socket.server] == 'undefined') {
     global.userListContents[socket.server] = [];
   }
   // Add the user to the user list contents for their server
-  global.userListContents[socket.server].push(socket.username);
+  global.userListContents[socket.server].push(user);
 
   // Send the user list contents to the user for their server
   socket.emit('user list', global.userListContents[socket.server]);

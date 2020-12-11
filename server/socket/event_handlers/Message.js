@@ -11,6 +11,7 @@ import marked from 'marked';
 import sanitizeHtml from 'sanitize-html';
 import wordFilter from 'whoolso-word-filter';
 import { wordsToFilter, lengthThreshold, leetAlphabet1, leetAlphabet2, shortWordLength, shortWordExceptions } from '../../util/FilterConstants.js';
+import setStatusMessage from './SetStatusMessage.js';
 
 const { filterWords } = wordFilter;
 
@@ -74,13 +75,13 @@ function handleMessage({io, socket, message}) {
   if (global.mutedIpList.includes(socket.handshake.address)) return;
   // Check if the message is over 100000 characters, and if it is, change it to a
   // ...predetermined message indicating that the message is too long and return
-  if (message.length > 100000) {
-    message = 'This message was removed because it was too long (over 100000 characters).';
+  if (message.length > 500000) {
+    message = 'This message was removed because it was too long (over 500000 characters).';
   }
 
   // Make mentions text fancier
-  global.userListContents[socket.server].forEach(username => {
-    message = message.replaceAll(`@${username}`, `<span class="mention-text">@${username}</span>`)
+  global.userListContents[socket.server].forEach(user => {
+    message = message.replaceAll(`@${user.username}`, `<span class="mention-text">@${user.username}</span>`)
   });
   const filterOptions = {
     wordsToFilter: wordsToFilter,
@@ -94,7 +95,7 @@ function handleMessage({io, socket, message}) {
 
   // Check the message for bad words
   const filterFoundWords = filterWords(filterOptions);
-  if (filterFoundWords.length != 0 && !message.includes('<img')) {
+  if (filterFoundWords.length != 0 && !message.includes('<img')) { // TODO: Implement proper image uploading and remove this include check that prevents images from getting detected by the filter
     console.log(`User ${socket.username} tried to swear with: ${filterFoundWords}`);
     message = 'not good';
   }
@@ -193,7 +194,7 @@ function handleMessage({io, socket, message}) {
     io.in(socket.server).emit('new message', {
       username: 'HyperChat',
       messageId: messageId,
-      message: 'The user specified in the command is not in the room.',
+      message: 'The user specified in the command is not in the server.',
       timestamp: timestamp,
       special: true,
       badge: 'Server'
@@ -202,9 +203,10 @@ function handleMessage({io, socket, message}) {
     const messageDocument = new global.messageModel({
       username: 'HyperChat',
       messageId: messageId,
-      message: 'The user specified in the command is not in the room.',
+      message: 'The user specified in the command is not in the server.',
       server: socket.server,
       timestamp: timestamp,
+      special: true,
       badge: 'Server'
     });
     // Add a new message to the database
@@ -236,6 +238,7 @@ function handleMessage({io, socket, message}) {
       message: 'Access Denied.',
       server: socket.server,
       timestamp: timestamp,
+      special: true,
       badge: 'Server'
     });
     // Add a new message to the database
@@ -267,6 +270,7 @@ function handleMessage({io, socket, message}) {
       message: 'Invalid command.',
       server: socket.server,
       timestamp: timestamp,
+      special: true,
       badge: 'Server'
     });
     // Add a new message to the database
@@ -275,8 +279,63 @@ function handleMessage({io, socket, message}) {
     });
   }
 
-  // Special admin commands
+  // Special admin and user commands
   switch (command) {
+    case 'status': {
+      const statusMessage = commandArgument;
+      // Generate a new message id
+      const messageId = generateMessageId();
+      // Make a timestamp for the message
+      const timestamp = Date.now();
+      // Check if the status message isn't provided and respond accordingly
+      if (statusMessage == null) {
+        io.in(socket.server).emit('new message', {
+          username: 'HyperChat',
+          messageId: messageId,
+          message: 'You must specify a status message to set!',
+          timestamp: timestamp,
+          special: true,
+          badge: 'Server'
+        });
+        const messageDocument = new global.messageModel({
+          username: 'HyperChat',
+          messageId: messageId,
+          message: 'You must specify a status message to set!',
+          server: socket.server,
+          timestamp: timestamp,
+          special: true,
+          badge: 'Server'
+        });
+        messageDocument.save(function (err, message) {
+          if (err) console.error(err);
+        });
+        return;
+      }
+
+      setStatusMessage({io, socket, statusMessage}); // TODO: Move all the rest of this logic into the SetStatusMessage file
+
+      io.in(socket.server).emit('new message', {
+        username: 'HyperChat',
+        messageId: messageId,
+        message: 'Status message set!',
+        timestamp: timestamp,
+        special: true,
+        badge: 'Server'
+      });
+      const messageDocument = new global.messageModel({
+        username: 'HyperChat',
+        messageId: messageId,
+        message: 'Status message set!',
+        server: socket.server,
+        timestamp: timestamp,
+        special: true,
+        badge: 'Server'
+      });
+      messageDocument.save(function (err, message) {
+        if (err) console.error(err);
+      });
+      break;
+    }
     case 'mute': {
       // If the user isn't an admin (currently hardcoded :D), return with commandAccessDenied()
       if (socket.username !== 'Justsnoopy30') {

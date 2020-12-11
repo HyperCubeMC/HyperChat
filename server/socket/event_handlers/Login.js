@@ -125,7 +125,7 @@ function handleLogin({io, socket, username, password, server}) {
         }
       });
       // Function to allow a user in
-      function allowLogin() {
+      async function allowLogin() {
         // Store login info in the local session once they are authenticated
         socket.username = username;
         socket.password = password;
@@ -136,14 +136,30 @@ function handleLogin({io, socket, username, password, server}) {
         socket.authenticated = true;
         // Tell the user that their login has been authorized
         socket.emit('login authorized');
+        // Get user status message
+        let statusMessage = '';
+        await global.userModel.findOne({username: socket.username.toLowerCase()}, function (error, user) {
+          if (user == null) {
+            return console.warn(`User ${socket.username} was not in the database when attempting to fetch their status message during the socket login event!`);
+          }
+
+          if (error) return console.error(`An error occurred while attempting to fetch the status message of user ${socket.username} from the database during the socket login event: ${error}`);
+
+          statusMessage = user.statusMessage;
+        });
+        // Define user object
+        const user = {
+          username: socket.username,
+          statusMessage: statusMessage
+        }
         // Echo to the server that a person has connected
-        socket.to(socket.server).emit('user joined', socket.username);
+        socket.to(socket.server).emit('user joined', user);
         // Create the user list contents for the server if it doesn't exist
         if (typeof global.userListContents[socket.server] == 'undefined') {
           global.userListContents[socket.server] = [];
         }
         // Add the user to the user list contents for their server
-        global.userListContents[socket.server].push(socket.username);
+        global.userListContents[socket.server].push(user);
         // Send the user list contents to the user for their server
         socket.emit('user list', global.userListContents[socket.server]);
 

@@ -27,7 +27,7 @@ function handleRemoveServer({io, socket, serverName}) {
     user.serverList = user.serverList.filter(function(element) {
       return element.ServerName != serverName;
     });
-    user.save(function (error, server) {
+    user.save(function (error, user) {
       if (error) return console.error(`An error occured while trying to remove the server ${serverName} from the server list of ${socket.username} in the database: ${error}`);
     });
     socket.emit('remove server', server);
