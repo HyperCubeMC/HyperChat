@@ -288,6 +288,7 @@
 .userPopout {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   background-color: var(--background-tertiary);
   color: var(--header-primary);
   width: 250px;

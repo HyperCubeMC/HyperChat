@@ -7,7 +7,7 @@
  */
 
 function handleTyping({io, socket}) {
-  io.in(socket.server).emit('typing', socket.username);
+  socket.to(socket.server).emit('typing', socket.username);
 }
 
 // Export the handleTyping function as the default export

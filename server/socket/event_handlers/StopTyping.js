@@ -7,7 +7,7 @@
  */
 
 function handleStopTyping({io, socket}) {
-  io.in(socket.server).emit('stop typing', socket.username);
+  socket.to(socket.server).emit('stop typing', socket.username);
 }
 
 // Export the handleStopTyping function as the default export
