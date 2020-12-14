@@ -325,6 +325,8 @@
 
 /* Info text in the user popout */
 .userPopout .userPopoutInfoText {
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: grey;
   margin-left: auto;
   margin-right: auto;
