@@ -73,6 +73,14 @@ function notificationPermissionPrompt() {
   }
 } // Used to show a permission prompt to grant access to notifications
 
+// Polyfill Intl.ListFormat if necessary
+(async () => {
+  if (!('ListFormat' in Intl)) {
+    await import('./es_modules/intl-list-format/intl-list-format.js');
+    await import('./es_modules/intl-list-format/locale-data/en-US.js');
+  }
+})();
+
 let fadeTime = 150; // In ms
 let typingTimerLength = 1000; // In ms
 let colors = [
@@ -692,7 +700,7 @@ const addChatMessage = (data, options) => {
   else {
     usernameSpan.style.color = getUsernameColor(data.username);
   }
-  
+
   // Clone profile picture to use in the user popout
   const userPopoutProfilePicture = profilePicture.cloneNode(true)
 
@@ -710,7 +718,7 @@ const addChatMessage = (data, options) => {
   // Make a new span for the user popout info text
   let userPopoutInfoText = newElement('span');
   userPopoutInfoText.classList.add('userPopoutInfoText');
-  userPopoutInfoText.textContent = 'Nice popout, right?';
+  userPopoutInfoText.textContent = 'TODO: Implement status messages in chat message popouts';
 
   // Add the username to the popout
   userPopout.append(userPopoutUsername);
