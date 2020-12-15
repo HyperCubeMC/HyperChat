@@ -111,15 +111,17 @@ let usersTypingArray = [];
 let hasAllMessageHistory = false;
 let defaultServer = 'General'; // Server to use when current server is not set yet
 let socket; // Socket.io, placeholder variable until assigned later below.
+let supportsWebM = document.createElement('audio').canPlayType('audio/webm') != "";
 
 // Initialize sounds for the chat app.
-const chatMessageSound = new Audio('./assets/ChatMessageSound.webm');
-const userLeftChatSound = new Audio('./assets/UserLeftChat.webm');
-const userJoinedChatSound = new Audio('./assets/UserJoinedChat.webm');
-const lostConnectionSound = new Audio('./assets/LostConnection.webm');
-const regainedConnectionSound = new Audio('./assets/RegainedConnection.webm');
-const stunSound = new Audio('./assets/Stun.webm');
-const kickSound = new Audio('./assets/Kick.webm');
+let audioExtension = supportsWebM ? ".webm" : ".mp3";
+const chatMessageSound = new Audio(`./assets/ChatMessageSound${audioExtension}`);
+const userLeftChatSound = new Audio(`./assets/UserLeftChat${audioExtension}`);
+const userJoinedChatSound = new Audio(`./assets/UserJoinedChat${audioExtension}`);
+const lostConnectionSound = new Audio(`./assets/LostConnection${audioExtension}`);
+const regainedConnectionSound = new Audio(`./assets/RegainedConnection${audioExtension}`);
+const stunSound = new Audio(`./assets/Stun${audioExtension}`);
+const kickSound = new Audio(`./assets/Kick${audioExtension}`);
 
 const sequences = {
   konami: 'up up down down left right left right b a',
