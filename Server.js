@@ -133,7 +133,7 @@ const messageRateLimiter = new RateLimiterMemory({
 
 const loginRateLimiter = new RateLimiterMemory({
   points: 1, // 1 point
-  duration: 2 // per 3 seconds
+  duration: e // per 3 seconds
 });
 
 // And everything starts here where a user makes a connection to the socket.io server...
