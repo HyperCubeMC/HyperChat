@@ -339,13 +339,25 @@ onVisibilityChange(function(visible) {
 });
 
 function showSettingsScreen() {
-  grab('#Chat-Screen').fadeOut();
-  grab('#settingsScreen').fadeIn();
+  grab('#settingsScreen').css('opacity', '0');
+  grab('#settingsScreen').show();
+  setTimeout(() => {
+    grab('#settingsScreen').css('opacity', '1');
+  }, 1);
+  setTimeout(() => {
+    grab('#Chat-Screen').hide();
+  }, 500);
 }
 
 function hideSettingsScreen() {
-  grab('#settingsScreen').fadeOut();
-  grab('#Chat-Screen').fadeIn();
+  grab('#settingsScreen').css('opacity', '1');
+  grab('#Chat-Screen').show();
+  setTimeout(() => {
+    grab('#settingsScreen').css('opacity', '0');
+  }, 1);
+  setTimeout(() => {
+    grab('#settingsScreen').hide();
+  }, 500);
   grab('#settingsScreen').removeEventListener('click', showSettingsScreen);
 }
 

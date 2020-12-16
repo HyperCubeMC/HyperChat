@@ -19,7 +19,7 @@ async function handleUploadProfilePicture({io, socket, profilePicture}) {
 
   const buffer = Buffer.from(profilePicture);
 
-  const convertedBuffer = await sharp(buffer).webp().toBuffer().catch(error => {
+  const convertedBuffer = await sharp(buffer, { pages: -1 }).webp().toBuffer().catch(error => {
     console.error(`An error occurred while attempting to convert the uploaded profile picture for ${socket.username}: ${error}`);
   });
 
