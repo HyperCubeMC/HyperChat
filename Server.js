@@ -92,7 +92,7 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
   username: String,
   hashedPassword: String,
-  serverList: {type: Array, default: []},
+  serverList: {type: Array, default: [{ServerName: 'General', ServerOwner: 'TODO'}]},
   statusMessage: {type: String, default: ''}
 });
 
