@@ -127,13 +127,13 @@ global.serverModel = mongoose.model('serverModel', serverSchema, 'servers');
 
 // Setup rate limiters
 const messageRateLimiter = new RateLimiterMemory({
-  points: 3, // 3 points
-  duration: 1 // per second
+  points: 2, // 2 points
+  duration: 3 // per 3 seconds
 });
 
 const loginRateLimiter = new RateLimiterMemory({
   points: 1, // 1 point
-  duration: 2 // per 2 seconds
+  duration: 2 // per 3 seconds
 });
 
 // And everything starts here where a user makes a connection to the socket.io server...
@@ -142,9 +142,9 @@ io.on('connection', (socket) => {
 
   // When the client emits 'login', this listens and executes
   socket.on('login', ({ username, password, server }) => {
-    messageRateLimiter.consume(socket.handshake.address)
+    loginRateLimiter.consume(socket.handshake.address)
       .then(rateLimiterRes => {
-          handleLogin({io, socket, username, password, server});
+        handleLogin({io, socket, username, password, server});
       })
       .catch(rej => {
         console.log(rej);
