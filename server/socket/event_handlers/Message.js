@@ -28,7 +28,7 @@ marked.setOptions({
 
 // Set sanitizeHtmlOptions for sanitize-html
 const sanitizeHtmlOptions = {
-  allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'marquee', 'blink' ]),
+  allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'marquee', 'blink', 'del' ]),
   allowedAttributes: {
     a: [ 'href', 'name', 'target' ],
     img: [
