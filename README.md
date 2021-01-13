@@ -18,11 +18,11 @@ CERT:
 ## Local Installation
 1. Clone the repo
 2. Install dependencies with npm
-3. Create a .env file in the root directory of HyperChat, with the following variables set:
-CERT_PATH (TLS certificate path)
-KEY_PATH (TLS key path)
-MONGODB_CONNECTION_URI (Connection URI to your local mongodb server)
-PORT (Port to listen on for the web app)
+3. Create a .env file in the root directory of HyperChat, with the following variables set:  
+CERT_PATH (TLS certificate path)  
+KEY_PATH (TLS key path)  
+MONGODB_CONNECTION_URI (Connection URI to your local mongodb server)  
+PORT (Port to listen on for the web app)  
 4. Start the server with `./StartWebApp.sh` and visit the web app on localhost, with the port you set in the .env file. 
 
 ## Contact
