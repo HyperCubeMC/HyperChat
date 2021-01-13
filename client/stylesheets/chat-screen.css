@@ -124,12 +124,16 @@
   padding: 1%;
 }
 
-#Top-Bar div {
-  transition: all .2s ease-in-out;
+#Top-Bar div svg {
+  transition: transform .2s ease-in-out;
 }
 
-#Top-Bar div:hover {
+#Top-Bar div svg:hover {
   transform: scale(1.1);
+}
+
+#Top-Bar div svg:active {
+  opacity: 0.5;
 }
 
 #Bottom-Area {

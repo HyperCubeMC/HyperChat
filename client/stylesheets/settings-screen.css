@@ -40,18 +40,16 @@
   cursor: pointer;
 }
 
-#settingsTopBar {
-  grid-area: Top-Bar;
-  display: flex;
-  padding: 1%;
+#settingsTopBar div svg {
+  transition: transform .2s ease-in-out;
 }
 
-#settingsTopBar div {
-  transition: all .2s ease-in-out;
-}
-
-#settingsTopBar div:hover {
+#settingsTopBar div svg:hover {
   transform: scale(1.1);
+}
+
+#settingsTopBar div svg:active {
+  opacity: 0.5;
 }
 
 #custom-theme-picker {
