@@ -20,6 +20,10 @@ function handleAddServer({io, socket, serverName}) {
     if (error) {
       return console.error(`An error occured while trying to fetch user ${socket.username} from the database while handling the socket Add Server event: ${error}`);
     }
+    if (user.serverList.some(server => server.ServerName === serverName)) {
+      return; // The user already has the server in their server list, so return
+      // TODO: Add user feedback
+    }
     const server = {
       ServerName: serverName,
       ServerOwner: 'TODO'
