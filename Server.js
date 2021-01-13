@@ -32,10 +32,11 @@ process.title = 'HyperChat';
 // Setup dotenv
 dotenv.config();
 
-// Options for the web server including the TLS Certificate and allowing http1
+// Options for the web server including the TLS Certificate, allowing http1, and the origins we can handle
 const options = {
   cert: fs.readFileSync(process.env.CERT_PATH),
   key: fs.readFileSync(process.env.KEY_PATH),
+  origins: ['https://hyperchat.cf'],
   allowHTTP1: true
 }
 

@@ -21,6 +21,13 @@ function handleRequest (req, res) {
     return;
   }
 
+  // Tell the client to make a new tcp connection if they are connecting to the wrong server over a reused connection from another proxied site
+  if (!(req.headers[':authority'] === 'hyperchat.cf' || req.headers[':authority'] === `localhost:${process.env.PORT}`)) {
+    res.writeHead(421);
+    res.end();
+    return;
+  }
+
   // Define the request url variable
   let reqURL;
 
