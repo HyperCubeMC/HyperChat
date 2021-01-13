@@ -40,6 +40,20 @@
   cursor: pointer;
 }
 
+#settingsTopBar {
+  grid-area: Top-Bar;
+  display: flex;
+  padding: 1%;
+}
+
+#settingsTopBar div {
+  transition: all .2s ease-in-out;
+}
+
+#settingsTopBar div:hover {
+  transform: scale(1.1);
+}
+
 #custom-theme-picker {
   display: none;
 }
