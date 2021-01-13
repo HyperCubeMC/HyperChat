@@ -21,13 +21,6 @@ function handleRequest (req, res) {
     return;
   }
 
-  // Tell the client to make a new tcp connection if they are connecting to the wrong server over a reused connection from another proxied site
-  if (!(req.headers[':authority'] === 'hyperchat.cf' || req.headers[':authority'] === `localhost:${process.env.PORT}`)) {
-    res.writeHead(421);
-    res.end();
-    return;
-  }
-
   // Define the request url variable
   let reqURL;
 
@@ -66,7 +59,7 @@ function handleRequest (req, res) {
         // If the path is a user profile picture, and the profile picture for the user
         // does not exist, then serve the generic profile picture
         if (reqURL.pathname.startsWith('/cdn/UserProfilePictures/')) {
-          fs.readFile('./client/cdn/UserProfilePictures/generic.webp', function (error, content) {
+          fs.readFile('./client/cdn/Defaults/UserProfilePictures/generic.webp', function (error, content) {
             res.writeHead(200, {
               'Content-Type': contentType,
               'Content-Length': Buffer.byteLength(content),
@@ -76,7 +69,7 @@ function handleRequest (req, res) {
             return;
           });
         } else if (reqURL.pathname.startsWith('/cdn/ServerIcons/')) {
-          fs.readFile('./client/cdn/ServerIcons/generic.webp', function (error, content) {
+          fs.readFile('./client/cdn/Defaults/ServerIcons/generic.webp', function (error, content) {
             res.writeHead(200, {
               'Content-Type': contentType,
               'Content-Length': Buffer.byteLength(content),
