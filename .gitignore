@@ -1,4 +1,5 @@
 node_modules/
 .vscode
 .env
-client/cdn
+client/cdn/UserProfilePictures/*
+client/cdn/ServerIcons/*
