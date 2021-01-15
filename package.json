@@ -5,9 +5,9 @@
   "main": "Server.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon Server.js",
-    "eslint": "./node_modules/.bin/eslint",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eslint": "./node_modules/.bin/eslint"
   },
   "repository": {
     "type": "git",
