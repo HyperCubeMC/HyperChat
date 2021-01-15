@@ -8,7 +8,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon Server.js",
     "eslint": "./node_modules/.bin/eslint",
-    "jsdoc": "./node_modules/.bin/jsdoc -c ./MagicHelper/jsdoc.config.json"
   },
   "repository": {
     "type": "git",
@@ -39,7 +38,6 @@
     "whoolso-word-filter": "^1.0.8"
   },
   "devDependencies": {
-    "eslint": "^7.17.0",
-    "jsdoc": "^3.6.6"
+    "eslint": "^7.17.0"
   }
 }
