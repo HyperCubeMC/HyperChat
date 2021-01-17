@@ -2,7 +2,7 @@
  * Module to handle the socket login event.
  * @module Socket Login Event Handler
  * @author Justsnoopy30 <justsnoopy30@hypercubemc.tk>
- * @copyright Justsnoopy30 2020
+ * @copyright Justsnoopy30 2021
  * @license AGPL-3.0
  */
 
@@ -221,11 +221,11 @@ function handleLogin({io, socket, username, password, server}) {
           }
         });
 
-        // Map the user's username to a unique socket id
-        global.userMap.set(socket.username, socket.id);
+        // Add the user's socket id to their connections array
+        global.userConnectionsMap.insert(socket.username, socket.id);
 
         // If they're muted, tell them they are muted
-        if (global.mutedList.includes(socket.username) || global.mutedIpList.includes(socket.handshake.address)) {
+        if (global.mutedList.includes(socket.username) || global.mutedIpList.includes(socket.handshake.headers['cf-connecting-ip'] || socket.handshake.address)) {
           socket.emit('mute');
         }
 

@@ -2,7 +2,7 @@
  * Module to handle the socket message event.
  * @module Socket Message Event Handler
  * @author Justsnoopy30 <justsnoopy30@hypercubemc.tk>
- * @copyright Justsnoopy30 2020
+ * @copyright Justsnoopy30 2021
  * @license AGPL-3.0
  */
 
@@ -12,6 +12,7 @@ import sanitizeHtml from 'sanitize-html';
 import wordFilter from 'whoolso-word-filter';
 import { wordsToFilter, lengthThreshold, leetAlphabet1, leetAlphabet2, shortWordLength, shortWordExceptions } from '../../util/FilterConstants.js';
 import setStatusMessage from './SetStatusMessage.js';
+import arrayRemove from '../../util/ArrayRemove.js';
 
 const { filterWords } = wordFilter;
 
@@ -72,7 +73,7 @@ function handleMessage({io, socket, message}) {
   if (!validateMessage(message)) return;
   // If the muted list or muted ip list includes the user trying to send the message, stop right there
   if (global.mutedList.includes(socket.username)) return;
-  if (global.mutedIpList.includes(socket.handshake.address)) return;
+  if (global.mutedIpList.includes(socket.handshake.headers['cf-connecting-ip'] || socket.handshake.address)) return;
   // Check if the message is over 100000 characters, and if it is, change it to a
   // ...predetermined message indicating that the message is too long and return
   if (message.length > 500000) {
@@ -347,7 +348,9 @@ function handleMessage({io, socket, message}) {
       }
       const userToMute = commandArgument;
       global.mutedList.push(userToMute);
-      io.to(global.userMap.get(userToMute)).emit('mute');
+      global.userConnectionsMap.get(userToMute).forEach(socketID => {
+        io.to(socketID).emit('mute');
+      });
       break;
     }
     case 'unmute': {
@@ -360,8 +363,10 @@ function handleMessage({io, socket, message}) {
         return commandNonexistingUserSpecified();
       }
       const userToUnmute = commandArgument;
-      global.mutedList = global.arrayRemove(global.mutedList, userToUnmute);
-      io.to(global.userMap.get(userToUnmute)).emit('unmute');
+      global.mutedList = arrayRemove(global.mutedList, userToUnmute);
+      global.userConnectionsMap.get(userToUnmute).forEach(socketID => {
+        io.to(socketID).emit('unmute');
+      });
       break;
     }
     case 'ipmute': {
@@ -371,13 +376,13 @@ function handleMessage({io, socket, message}) {
       }
       const ipToMute = commandArgument;
       global.mutedIpList.push(ipToMute);
-      io.sockets.sockets.forEach((connectedSocket) => {
-        const username = connectedSocket.username;
-        console.log(`Ip to mute: ${ipToMute} | Handshake address: ${connectedSocket.handshake.address}`);
-        if (connectedSocket.handshake.address === ipToMute && global.userMap.has(username)) {
-          io.to(global.userMap.get(username)).emit('mute');
+      io.sockets.sockets.forEach(connectedSocket => {
+        const connectedSocketIP = connectedSocket.handshake.headers['cf-connecting-ip'] || connectedSocket.handshake.address;
+        if (connectedSocketIP === ipToMute) {
+          connectedSocket.emit('mute');
         }
       });
+      console.log(`Muted IP: ${ipToMute}`);
       break;
     }
     case 'unmuteip': {
@@ -386,14 +391,14 @@ function handleMessage({io, socket, message}) {
         return commandAccessDenied();
       }
       const ipToUnmute = commandArgument;
-      global.mutedIpList = global.arrayRemove(global.mutedIpList, ipToUnmute);
-      io.sockets.sockets.forEach((connectedSocket) => {
-        const username = connectedSocket.username;
-        console.log(`Ip to unmute: ${ipUnToMute} | Handshake address: ${connectedSocket.handshake.address}`);
-        if (connectedSocket.handshake.address === ipToUnmute && global.userMap.has(username)) {
-          io.to(global.userMap.get(username)).emit('unmute');
+      global.mutedIpList = arrayRemove(global.mutedIpList, ipToUnmute);
+      io.sockets.sockets.forEach(connectedSocket => {
+        const connectedSocketIP = connectedSocket.handshake.headers['cf-connecting-ip'] || connectedSocket.handshake.address;
+        if (connectedSocketIP === ipToUnmute) {
+          connectedSocket.emit('unmute');
         }
       });
+      console.log(`Unmuted IP: ${ipToUnmute}`);
       break;
     }
     case 'ipmuteuser': {
@@ -405,10 +410,15 @@ function handleMessage({io, socket, message}) {
       if (!global.userListContents[socket.server].some(user => user.username === commandArgument)) {
         return commandNonexistingUserSpecified();
       }
-      const userToIpMute = io.sockets.sockets.get(global.userMap.get(commandArgument));
-      console.log(`User to IP Mute: ${userToIpMute.username} | Handshake Address: ${userToIpMute.handshake.address}`);
-      global.mutedIpList.push(userToIpMute.handshake.address);
-      io.to(userToIpMute).emit('mute');
+      const usernameToIpMute = commandArgument;
+      io.sockets.sockets.forEach(connectedSocket => {
+        const connectedSocketIP = connectedSocket.handshake.headers['cf-connecting-ip'] || connectedSocket.handshake.address;
+        if (connectedSocket.username === usernameToIpMute) {
+          console.log(`User to IP Mute: ${usernameToIpMute} | Handshake Address: ${connectedSocketIP}`);
+          global.mutedIpList.push(connectedSocketIP);
+          connectedSocket.emit('mute');
+        }
+      });
       break;
     }
     case 'unipmuteuser': {
@@ -420,14 +430,15 @@ function handleMessage({io, socket, message}) {
       if (!global.userListContents[socket.server].some(user => user.username === commandArgument)) {
         return commandNonexistingUserSpecified();
       }
-      const userToUnIpMute = io.sockets.sockets.get(global.userMap.get(commandArgument));
-      // If the user's ip is not in the muted ip list, tell the executor that
-      if (!global.mutedIpList.includes(userToUnIpMute.handshake.address)) {
-        return;
-      }
-      console.log(`User to un-IP Mute: ${userToUnIpMute.username} | Handshake Address: ${userToUnIpMute.handshake.address}`);
-      global.mutedIpList = arrayRemove(global.mutedIpList, userToUnIpMute.handshake.address);
-      io.to(userToUnIpMute).emit('unmute');
+      const usernameToUnIpMute = commandArgument;
+      io.sockets.sockets.forEach(connectedSocket => {
+        const connectedSocketIP = connectedSocket.handshake.headers['cf-connecting-ip'] || connectedSocket.handshake.address;
+        if (connectedSocket.username === usernameToUnIpMute) {
+          console.log(`User to un-IP Mute: ${usernameToUnIpMute} | Handshake Address: ${connectedSocketIP}`);
+          global.mutedIpList.push(connectedSocketIP);
+          connectedSocket.emit('unmute');
+        }
+      });
       break;
     }
     case 'flip': {
@@ -440,7 +451,11 @@ function handleMessage({io, socket, message}) {
         return commandNonexistingUserSpecified();
       }
       const userToFlip = commandArgument;
-      io.to(global.userMap.get(userToFlip)).emit('flip');
+      io.sockets.sockets.forEach(connectedSocket => {
+        if (connectedSocket.username === userToFlip) {
+          connectedSocket.emit('flip');
+        }
+      });
       break;
     }
     case 'unflip': {
@@ -453,7 +468,11 @@ function handleMessage({io, socket, message}) {
         return commandNonexistingUserSpecified();
       }
       const userToUnflip = commandArgument;
-      io.to(global.userMap.get(userToUnflip)).emit('unflip');
+      io.sockets.sockets.forEach(connectedSocket => {
+        if (connectedSocket.username === userToUnflip) {
+          connectedSocket.emit('unflip');
+        }
+      });
       break;
     }
     case 'stupidify': {
@@ -466,7 +485,11 @@ function handleMessage({io, socket, message}) {
         return commandNonexistingUserSpecified();
       }
       const userToStupidify = commandArgument;
-      io.to(global.userMap.get(userToStupidify)).emit('stupidify');
+      io.sockets.sockets.forEach(connectedSocket => {
+        if (connectedSocket.username === userToStupidify) {
+          connectedSocket.emit('stupidify');
+        }
+      });
       break;
     }
     case 'smash': {
@@ -479,7 +502,11 @@ function handleMessage({io, socket, message}) {
         return commandNonexistingUserSpecified();
       }
       const userToSmash = commandArgument;
-      io.to(global.userMap.get(userToSmash)).emit('smash');
+      io.sockets.sockets.forEach(connectedSocket => {
+        if (connectedSocket.username === userToSmash) {
+          connectedSocket.emit('smash');
+        }
+      });
       break;
     }
     case 'unsmash': {
@@ -492,7 +519,11 @@ function handleMessage({io, socket, message}) {
         return commandNonexistingUserSpecified();
       }
       const userToUnsmash = commandArgument;
-      io.to(global.userMap.get(userToUnsmash)).emit('unsmash');
+      io.sockets.sockets.forEach(connectedSocket => {
+        if (connectedSocket.username === userToUnsmash) {
+          connectedSocket.emit('unsmash');
+        }
+      });
       break;
     }
     case 'kick': {
@@ -505,8 +536,13 @@ function handleMessage({io, socket, message}) {
         return commandNonexistingUserSpecified();
       }
       const userToKick = commandArgument;
-      io.to(global.userMap.get(userToKick)).emit('kick');
-      io.sockets.sockets.get(global.userMap.get(userToKick)).disconnect();
+      io.sockets.sockets.forEach(connectedSocket => {
+        if (connectedSocket.username === userToKick) {
+          connectedSocket.emit('kick');
+          connectedSocket.disconnect();
+        }
+      });
+      console.log(`Kicked ${userToKick}`);
       break;
     }
     case 'stun': {
@@ -519,7 +555,11 @@ function handleMessage({io, socket, message}) {
         return commandNonexistingUserSpecified();
       }
       const userToStun = commandArgument;
-      io.to(global.userMap.get(userToStun)).emit('stun');
+      io.sockets.sockets.forEach(connectedSocket => {
+        if (connectedSocket.username === userToStun) {
+          connectedSocket.emit('stun');
+        }
+      });
       break;
     }
     default: {

@@ -2,7 +2,7 @@
  * Module to handle the socket request link preview event.
  * @module Socket Request Link Preview Event Handler
  * @author Justsnoopy30 <justsnoopy30@hypercubemc.tk>
- * @copyright Justsnoopy30 2020
+ * @copyright Justsnoopy30 2021
  * @license AGPL-3.0
  */
 

@@ -2,7 +2,7 @@
  * Web server request and response handler module.
  * @module Request Handler
  * @author Justsnoopy30 <justsnoopy30@hypercubemc.tk>
- * @copyright Justsnoopy30 2020
+ * @copyright Justsnoopy30 2021
  * @license AGPL-3.0
  */
 
@@ -10,10 +10,10 @@
 import path from 'path';
 import fs from 'fs';
 import etag from 'etag';
-import mimeTypes from '../WebMimeTypes.js'
+import mimeTypes from './WebMimeTypes.js';
 
 // The web server request and response handler
-function handleRequest (req, res) {
+function handleRequest(req, res) {
   // Stop Poison Null Byte attacks
   if (req.url.indexOf('\0') !== -1 || req.url.indexOf('%00') !== -1) {
     res.writeHead(400);
@@ -39,7 +39,12 @@ function handleRequest (req, res) {
 
   // If the URL is simply a slash or home url, send the chat app html page
   if (reqURL.pathname == '/')
-    reqURL.pathname = '/chat.html';
+    reqURL.pathname = '/resources/chat.html';
+  // Provide chat.js and service-worker.js in the root directory so that the client's service worker can use the scope of the entire app
+  if (reqURL.pathname == '/chat.js')
+    reqURL.pathname = '/resources/chat.js';
+  if (reqURL.pathname == '/service-worker.js')
+    reqURL.pathname = '/resources/service-worker.js';
 
   // Set the path to the requested resource based on the URL
   const pathname = path.join(process.cwd() + '/client', reqURL.pathname);

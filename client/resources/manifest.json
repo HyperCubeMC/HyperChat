@@ -1,6 +1,7 @@
 {
     "name": "HyperChat",
     "short_name": "HyperChat",
+    "description": "A Chat App for Developers and Gamers",
     "icons": [
         {
             "src": "./assets/android-chrome-192x192.png",

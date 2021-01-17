@@ -7,7 +7,7 @@ self.addEventListener('install', function(event) {
       // Setting {cache: 'reload'} in the new request will ensure that the response
       // isn't fulfilled from the HTTP cache; i.e., it will be from the network.
       // Here we add the offline page to the cache for usage offline
-      await cache.add(new Request('./errors/offline.html', {cache: 'reload'}));
+      await cache.add(new Request('/resources/offline/offline.html', {cache: 'reload'}));
     }
   })());
 });
@@ -30,7 +30,7 @@ self.addEventListener('fetch', (event) => {
   if (!navigator.onLine) {
     event.respondWith(async function() {
       const cache = await caches.open('HyperChat-Cache');
-      const offlineResponse = await cache.match('./errors/offline.html');
+      const offlineResponse = await cache.match('/resources/offline/offline.html');
       return offlineResponse;
     }());
     return;

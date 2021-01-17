@@ -5,6 +5,7 @@ import { Server as SocketIOServer } from 'socket.io';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import rateLimiterFlexible from 'rate-limiter-flexible';
+import replaceAll from 'string.prototype.replaceall';
 import handleRequest from './server/webserver/RequestHandler.js';
 import handleLogin from './server/socket/event_handlers/Login.js';
 import handleMessage from './server/socket/event_handlers/Message.js';
@@ -18,7 +19,7 @@ import handleRequestMoreMessages from './server/socket/event_handlers/RequestMor
 import handleAddServer from './server/socket/event_handlers/AddServer.js';
 import handleRemoveServer from './server/socket/event_handlers/RemoveServer.js';
 import handleRequestLinkPreview from './server/socket/event_handlers/RequestLinkPreview.js';
-import replaceAll from 'string.prototype.replaceall';
+import ArrayMap from './server/util/ArrayMap.js';
 
 // Polyfill replaceAll
 replaceAll.shim();
@@ -36,7 +37,7 @@ dotenv.config();
 const options = {
   cert: fs.readFileSync(process.env.CERT_PATH),
   key: fs.readFileSync(process.env.KEY_PATH),
-  origins: ['https://hyperchat.cf'],
+  origins: ['https://hyperchat.dev'],
   allowHTTP1: true
 }
 
@@ -61,18 +62,8 @@ global.mutedIpList = [];
 // Setup the user list contents as a shared global variable
 global.userListContents = [];
 
-// Setup the user list contents as a shared global variable
-global.serverListContents = [];
-
-// Helper function to return an array with the value specified removed from the passed array
-global.arrayRemove = (array, value) => {
-  return array.filter(function(element) {
-    return element != value;
-  });
-}
-
-// Define the shared global user map which is used to map usernames to unique socket id's
-global.userMap = new Map();
+// Define the global user ArrayMap which is used to map usernames to an array of unique socket ids connected
+global.userConnectionsMap = new ArrayMap();
 
 // Get the mongodb connection string from dotenv
 const mongodbConnectionUri = process.env.MONGODB_CONNECTION_URI;
@@ -143,7 +134,7 @@ io.on('connection', (socket) => {
 
   // When the client emits 'login', this listens and executes
   socket.on('login', ({ username, password, server }) => {
-    loginRateLimiter.consume(socket.handshake.address)
+    loginRateLimiter.consume(socket.handshake.headers['cf-connecting-ip'] || socket.handshake.address)
       .then(rateLimiterRes => {
         handleLogin({io, socket, username, password, server});
       })
@@ -216,6 +207,7 @@ io.on('connection', (socket) => {
     handleRemoveServer({io, socket, serverName});
   });
 
+  // When the client emits 'request limit preview', fetch a link preview for the link and send it back
   socket.on('request link preview', (messageId, link) => {
     if (!socket.authenticated) return;
     handleRequestLinkPreview({io, socket, messageId, link});

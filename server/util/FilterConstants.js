@@ -2,7 +2,7 @@
  * Configuration and options for the swear filter, Profanity warning: Do not read this file unless you would like to be exposed to some very nasty words used in the filter
  * @module Filter Constants
  * @author Justsnoopy30 <justsnoopy30@hypercubemc.tk>
- * @copyright Justsnoopy30 2020
+ * @copyright Justsnoopy30 2021
  * @license AGPL-3.0
  */
 

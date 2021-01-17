@@ -2,7 +2,7 @@
  * Module to handle the socket disconnect event.
  * @module Socket Disconnect Event Handler
  * @author Justsnoopy30 <justsnoopy30@hypercubemc.tk>
- * @copyright Justsnoopy30 2020
+ * @copyright Justsnoopy30 2021
  * @license AGPL-3.0
  */
 
@@ -14,10 +14,10 @@ function handleDisconnect({io, socket}) {
     global.userListContents[socket.server] = global.userListContents[socket.server].filter(function(user) {
       return user.username != socket.username;
     });
-    // Echo globally in the server that this user has left
+    // Echo globally to the server that this user has left
     socket.to(socket.server).emit('user left', socket.username);
-    // Remove the username to socket id map entry for the user
-    global.userMap.delete(socket.username);
+    // Remove the connection's socket id from the user's connection array
+    global.userConnectionsMap.remove(socket.username, socket.id);
   }
 }
 

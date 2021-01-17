@@ -3,12 +3,12 @@
  * Used to create and select DOM elements, perform actions on them, and manage them.
  * @module HyperSelect
  * @author Justsnoopy30 <justsnoopy30@hypercubemc.tk>
- * @copyright Justsnoopy30 2020
+ * @copyright Justsnoopy30 2021
  * @license AGPL-3.0
  */
 
 // Import dependencies
-import debug from '/es_modules/debug/debug.js';
+import debug from '/resources/es_modules/debug/debug.js';
 
 // Set debug logger
 const logDebug = debug('HyperLib:debug');

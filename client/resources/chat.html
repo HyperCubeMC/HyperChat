@@ -7,41 +7,41 @@
     <meta name="description" content="A fast, secure, and open-source chat app designed for developers and gamers, developed by Justsnoopy30.">
     <title>HyperChat</title>
     <!-- Load bootstrap styles asyncronously-->
-    <link rel="preload" href="./node_modules/bootstrap/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/resources/node_modules/bootstrap/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <!-- Load main stylesheets -->
-    <link rel="stylesheet" href="./stylesheets/common.css">
-    <link rel="stylesheet" href="./stylesheets/login-screen.css">
-    <link rel="stylesheet" href="./stylesheets/chat-screen.css">
-    <link rel="stylesheet" href="./stylesheets/settings-screen.css">
-    <link rel="stylesheet" href="./stylesheets/reconnecting-screen.css">
+    <link rel="stylesheet" href="/resources/stylesheets/common.css">
+    <link rel="stylesheet" href="/resources/stylesheets/login-screen.css">
+    <link rel="stylesheet" href="/resources/stylesheets/chat-screen.css">
+    <link rel="stylesheet" href="/resources/stylesheets/settings-screen.css">
+    <link rel="stylesheet" href="/resources/stylesheets/reconnecting-screen.css">
     <!-- App logos for different browsers and devices -->
-    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png">
-    <link rel="mask-icon" href="./assets/safari-pinned-tab.svg" color="#00adff">
-    <link rel="shortcut icon" href="./assets/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/resources/assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/resources/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/resources/assets/favicon-16x16.png">
+    <link rel="mask-icon" href="/resources/assets/safari-pinned-tab.svg" color="#00adff">
+    <link rel="shortcut icon" href="/resources/assets/favicon.ico">
     <meta name="msapplication-TileColor" content="#00adff">
     <meta name="theme-color" content="#00adff">
     <!-- Preload Assets -->
-    <link rel="manifest" href="./manifest.json">
-    <link rel="preload" href="./assets/SettingsIcon.svg" as="image">
-    <link rel="preload" href="./assets/NotificationBell.svg" as="image">
-    <link rel="preload" href="./assets/UserListIcon.svg" as="image">
-    <link rel="preload" href="./assets/ServerListIcon.svg" as="image">
-    <link rel="preload" href="./assets/Reconnecting.svg" as="image">
-    <link rel="preload" href="./assets/ChatMessageSound.webm" as="audio">
-    <link rel="preload" href="./assets/UserJoinedChat.webm" as="audio">
-    <link rel="preload" href="./assets/UserLeftChat.webm" as="audio">
-    <link rel="preload" href="./assets/Kick.webm" as="audio">
-    <link rel="preload" href="./assets/LostConnection.webm" as="audio">
-    <link rel="preload" href="./assets/RegainedConnection.webm" as="audio">
-    <link rel="preload" href="./assets/Stun.webm" as="audio">
+    <link rel="manifest" href="/resources/manifest.json">
+    <link rel="preload" href="/resources/assets/SettingsIcon.svg" as="image">
+    <link rel="preload" href="/resources/assets/NotificationBell.svg" as="image">
+    <link rel="preload" href="/resources/assets/UserListIcon.svg" as="image">
+    <link rel="preload" href="/resources/assets/ServerListIcon.svg" as="image">
+    <link rel="preload" href="/resources/assets/Reconnecting.svg" as="image">
+    <link rel="preload" href="/resources/assets/ChatMessageSound.webm" as="audio">
+    <link rel="preload" href="/resources/assets/UserJoinedChat.webm" as="audio">
+    <link rel="preload" href="/resources/assets/UserLeftChat.webm" as="audio">
+    <link rel="preload" href="/resources/assets/Kick.webm" as="audio">
+    <link rel="preload" href="/resources/assets/LostConnection.webm" as="audio">
+    <link rel="preload" href="/resources/assets/RegainedConnection.webm" as="audio">
+    <link rel="preload" href="/resources/assets/Stun.webm" as="audio">
     <!-- Fix Electron Support (before scripts) -->
     <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
     <!-- Load scripts -->
-    <script src="./node_modules/socket.io/client-dist/socket.io.min.js" defer></script>
-    <script src="./node_modules/@iconfu/svg-inject/dist/svg-inject.min.js" defer></script>
-    <script type="module" src="./chat.js" defer></script>
+    <script src="/resources/node_modules/socket.io/client-dist/socket.io.min.js" defer></script>
+    <script src="/resources/node_modules/@iconfu/svg-inject/dist/svg-inject.min.js" defer></script>
+    <script type="module" src="/chat.js" defer></script>
     <!-- Fix Electron Support (after scripts) -->
     <script>if (window.module) module = window.module;</script>
     <script>
@@ -66,16 +66,16 @@
     <section id="Chat-Screen" data-original-display="grid">
       <div id="Top-Bar">
         <div id="serverListIconWrapper">
-          <img id="serverListIcon" src="./assets/ServerListIcon.svg" title="Server List Icon" alt="Server List Icon" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
+          <img id="serverListIcon" src="/resources/assets/ServerListIcon.svg" title="Server List Icon" alt="Server List Icon" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
         </div>
         <div id="notificationBellWrapper">
-          <img id="notificationBell" src="./assets/NotificationBell.svg" title="Notification Bell" alt="Notification Bell" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
+          <img id="notificationBell" src="/resources/assets/NotificationBell.svg" title="Notification Bell" alt="Notification Bell" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
         </div>
         <div class="settingsIconWrapper" id="settingsIconWrapperInChat">
-          <img class="settingsIcon" src="./assets/SettingsIcon.svg" title="Settings Icon" alt="Settings Icon" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
+          <img class="settingsIcon" src="/resources/assets/SettingsIcon.svg" title="Settings Icon" alt="Settings Icon" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
         </div>
         <div id="userListIconWrapper">
-          <img id="userListIcon" src="./assets/UserListIcon.svg" title="User List Icon" alt="User List Icon" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
+          <img id="userListIcon" src="/resources/assets/UserListIcon.svg" title="User List Icon" alt="User List Icon" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
         </div>
       </div>
       <div id="Server-List-Area">
@@ -103,11 +103,11 @@
       <div id="settingsArea">
         <div id="settingsTopBar">
             <a id="settingsTopBarText" href="#">
-              <img id="settingsTopBarImage" src="./assets/favicon.ico" width="30" height="30" alt="" draggable="false">
+              <img id="settingsTopBarImage" src="/resources/assets/favicon.ico" width="30" height="30" alt="" draggable="false">
               HyperChat Settings
             </a>
           <div class="settingsIconWrapper" id="settingsIconWrapperInSettings">
-            <img class="settingsIcon" src="./assets/SettingsIcon.svg" title="Settings Icon" alt="Settings Icon" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
+            <img class="settingsIcon" src="/resources/assets/SettingsIcon.svg" title="Settings Icon" alt="Settings Icon" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
           </div>
         </div>
         <div class="form-check form-control-lg">
@@ -136,7 +136,7 @@
           <input type="color" value="#ffffff" id="custom-theme-header-primary">
         </div>
         <div id="profile-picture-upload-container">
-          <image id="profilePicturePreview" src="./cdn/UserProfilePictures/generic.webp"></image>
+          <image id="profilePicturePreview" src="/cdn/UserProfilePictures/generic.webp"></image>
         </div>
         <input id="profilePictureUpload" type="file" name="profile_picture" placeholder="Profile Picture" required="" capture>
       </div>

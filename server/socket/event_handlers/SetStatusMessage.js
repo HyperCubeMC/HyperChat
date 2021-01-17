@@ -2,7 +2,7 @@
  * Util Module to handle setting a status message for a user (handled on the server right now, no event emitted by client)
  * @module Set Status Message
  * @author Justsnoopy30 <justsnoopy30@hypercubemc.tk>
- * @copyright Justsnoopy30 2020
+ * @copyright Justsnoopy30 2021
  * @license AGPL-3.0
  */
 

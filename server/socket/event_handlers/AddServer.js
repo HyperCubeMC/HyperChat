@@ -2,7 +2,7 @@
  * Module to handle the socket add server event.
  * @module Socket Add Server Event Handler
  * @author Justsnoopy30 <justsnoopy30@hypercubemc.tk>
- * @copyright Justsnoopy30 2020
+ * @copyright Justsnoopy30 2021
  * @license AGPL-3.0
  */
 

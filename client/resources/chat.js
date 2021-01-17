@@ -1,9 +1,9 @@
 // Import dependencies
 import 'https://polyfill.io/v3/polyfill.min.js';
-import { grab, grabAll, newElement } from './hyperlib/HyperLib.js';
-import { createPopper } from './node_modules/@popperjs/core/dist/esm/popper.js';
-import store from './es_modules/store2/store2.js';
-import cheet from './es_modules/cheet.js/cheet.js';
+import { grab, grabAll, newElement } from '/resources/hyperlib/HyperLib.js';
+import { createPopper } from '/resources/node_modules/@popperjs/core/dist/esm/popper.js';
+import store from '/resources/es_modules/store2/store2.js';
+import cheet from '/resources/es_modules/cheet.js/cheet.js';
 
 let notificationPermission = 'default';
 // Check if the browser supports service workers and make sure it supports the features I'm using
@@ -28,8 +28,8 @@ if ('serviceWorker' in navigator && 'register' in navigator.serviceWorker && 'co
   // Else, the service worker is not controlling the site and needs to be registered
   else {
     // Register the Service Worker
-    navigator.serviceWorker.register('./service-worker.js', {
-      scope: './'
+    navigator.serviceWorker.register('/service-worker.js', {
+      scope: '/'
     }).then(function(registration) {
       // The service worker registration succeeded, so log it in console
       console.log('Service worker registration succeeded:', registration);
@@ -76,8 +76,8 @@ function notificationPermissionPrompt() {
 // Polyfill Intl.ListFormat if necessary
 (async () => {
   if (!('ListFormat' in Intl)) {
-    await import('./es_modules/intl-list-format/intl-list-format.js');
-    await import('./es_modules/intl-list-format/locale-data/en-US.js');
+    await import('/resources/es_modules/intl-list-format/intl-list-format.js');
+    await import('/resources/es_modules/intl-list-format/locale-data/en-US.js');
   }
 })();
 
@@ -115,13 +115,13 @@ let supportsWebM = document.createElement('audio').canPlayType('audio/webm') != 
 
 // Initialize sounds for the chat app.
 let audioExtension = supportsWebM ? ".webm" : ".mp3";
-const chatMessageSound = new Audio(`./assets/ChatMessageSound${audioExtension}`);
-const userLeftChatSound = new Audio(`./assets/UserLeftChat${audioExtension}`);
-const userJoinedChatSound = new Audio(`./assets/UserJoinedChat${audioExtension}`);
-const lostConnectionSound = new Audio(`./assets/LostConnection${audioExtension}`);
-const regainedConnectionSound = new Audio(`./assets/RegainedConnection${audioExtension}`);
-const stunSound = new Audio(`./assets/Stun${audioExtension}`);
-const kickSound = new Audio(`./assets/Kick${audioExtension}`);
+const chatMessageSound = new Audio(`/resources/assets/ChatMessageSound${audioExtension}`);
+const userLeftChatSound = new Audio(`/resources/assets/UserLeftChat${audioExtension}`);
+const userJoinedChatSound = new Audio(`/resources/assets/UserJoinedChat${audioExtension}`);
+const lostConnectionSound = new Audio(`/resources/assets/LostConnection${audioExtension}`);
+const regainedConnectionSound = new Audio(`/resources/assets/RegainedConnection${audioExtension}`);
+const stunSound = new Audio(`/resources/assets/Stun${audioExtension}`);
+const kickSound = new Audio(`/resources/assets/Kick${audioExtension}`);
 
 const sequences = {
   konami: 'up up down down left right left right b a',
@@ -432,7 +432,7 @@ function decodeHtml(html) {
 // Lazy load the emoji picker when the button is clicked
 grab('#emoji-button').addEventListener('click', () => {
   // Import the emoji button asyncronously with a dynamic import
-  import('./node_modules/@joeattardi/emoji-button/dist/index.js').then(({EmojiButton}) => {
+  import('/resources/node_modules/@joeattardi/emoji-button/dist/index.js').then(({EmojiButton}) => {
     // Setup the emoji button
 
     // Set textPosition as a placeholder variable for the user's cursor position in the
@@ -530,7 +530,7 @@ const addToServerList = (server) => {
 
   let serverIconForServerList = newElement('img');
   serverIconForServerList.classList.add('serverIconInServerList');
-  serverIconForServerList.src = `./cdn/ServerIcons/${server.ServerName}.webp`;
+  serverIconForServerList.src = `/cdn/ServerIcons/${server.ServerName}.webp`;
   serverIconForServerList.title = server.ServerName;
   serverIconForServerList.alt = server.ServerName;
   serverIconForServerList.draggable = false;
@@ -543,7 +543,7 @@ const addToServerList = (server) => {
 
   let deleteServerIconForServerList = newElement('img');
   deleteServerIconForServerList.classList.add('deleteServerIconInServerList');
-  deleteServerIconForServerList.src = './assets/DeleteMessageIcon.svg';
+  deleteServerIconForServerList.src = '/resources/assets/DeleteMessageIcon.svg';
   deleteServerIconForServerList.title = 'Delete Server';
   deleteServerIconForServerList.alt = 'Delete Server';
   deleteServerIconForServerList.draggable = false;
@@ -807,7 +807,7 @@ const addChatMessage = (data, options) => {
   // Make a new img for the delete message icon
   let deleteIcon = newElement('img');
   deleteIcon.classList.add('deleteMessageIcon');
-  deleteIcon.src = '/assets/DeleteMessageIcon.svg';
+  deleteIcon.src = '/resources/assets/DeleteMessageIcon.svg';
   deleteIcon.draggable = false;
   deleteIcon.onload = () => SVGInject(deleteIcon.getElement());
 
@@ -1098,7 +1098,7 @@ socket.on('login authorized', () => {
       prepend: true
     });
   }
-  grab('#profilePicturePreview').src = `./cdn/UserProfilePictures/${username.toLowerCase()}.webp`;
+  grab('#profilePicturePreview').src = `/cdn/UserProfilePictures/${username.toLowerCase()}.webp`;
 });
 
 // If the login has been denied...
@@ -1278,7 +1278,7 @@ socket.on('new message', (data) => {
       navigator.serviceWorker.ready.then((registration) => {
         registration.showNotification(data.username, {
           body: notificationMessage,
-          icon: './assets/favicon.ico',
+          icon: '/resources/assets/favicon.ico',
           vibrate: [200, 100, 200, 100, 200, 100, 200],
           tag: 'pingNotification',
           actions: [

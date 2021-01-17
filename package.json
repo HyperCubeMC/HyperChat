@@ -38,6 +38,6 @@
     "whoolso-word-filter": "^1.0.8"
   },
   "devDependencies": {
-    "eslint": "^7.17.0"
+    "eslint": "^7.18.0"
   }
 }

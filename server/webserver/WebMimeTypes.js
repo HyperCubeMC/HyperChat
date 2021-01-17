@@ -2,13 +2,12 @@
  * Web Mime Types module.
  * @module Web Mime Types
  * @author Justsnoopy30 <justsnoopy30@hypercubemc.tk>
- * @copyright Justsnoopy30 2020
+ * @copyright Justsnoopy30 2021
  * @license AGPL-3.0
  */
 
 // Define mime types based on file extension in the mimeType object
 const mimeTypes = {
-  '': 'text/html',
   '.aac': 'audio/aac',
   '.apng': 'image/apng',
   '.avi': 'video/x-msvideo',
