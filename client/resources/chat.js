@@ -112,6 +112,7 @@ let hasAllMessageHistory = false;
 let defaultServer = 'General'; // Server to use when current server is not set yet
 let socket; // Socket.io, placeholder variable until assigned later below.
 let supportsWebM = document.createElement('audio').canPlayType('audio/webm') != "";
+const highlightWorker = new Worker('/resources/workers/Highlighter.js'); // Web worker for highlighting code blocks in messages
 
 // Initialize sounds for the chat app.
 let audioExtension = supportsWebM ? ".webm" : ".mp3";
@@ -135,6 +136,12 @@ cheet.done(function (seq) {
   }
 });
 
+// Setup code block highlighter for messages
+highlightWorker.onmessage = (event) => {
+  const { messageId, code } = event.data;
+  updateMessageCodeBlock(messageId, code);
+}
+
 function isElectron() {
   if (typeof navigator === 'object' && typeof navigator.userAgent === 'string' && navigator.userAgent.indexOf('Electron') >= 0) {
     return true;
@@ -145,7 +152,7 @@ function isElectron() {
 }
 
 if (isElectron()) {
-  socket = io('https://hyperchat.cf');
+  socket = io('https://hyperchat.dev');
 }
 else {
   socket = io();
@@ -675,6 +682,21 @@ const syncUserList = (userListContents) => {
   }
 }
 
+// Replaces a code block in a message with given html
+function updateMessageCodeBlock(messageId, code) {
+  for (let message of document.querySelectorAll('#messages .message')) {
+    if (message.dataset['messageid'] === messageId) {
+      message.querySelector('.messageBody code').innerHTML = code;
+      break;
+    }
+  }
+}
+
+// Highlights code in code blocks in a message
+function highlightMessage(messageId, code) {
+  highlightWorker.postMessage({messageId, code});
+}
+
 // Adds the visual chat message to the message list
 const addChatMessage = (data, options) => {
   // Make sure option properties are set
@@ -832,6 +854,11 @@ const addChatMessage = (data, options) => {
   // Otherwise, just continue like normal
   else {
     messageItem.append(profilePicture, userPopout, usernameSpan, deleteButton, timestamp, messageBodyDiv);
+  }
+
+  // Asynchronously highlight code in a code block in the message if there is one - TODO: Highlight ALL code blocks in the message
+  if (messageBodyDiv.querySelector('code') != null) {
+    highlightMessage(data.messageId, messageBodyDiv.textContent);
   }
 
   addMessageElement(messageItem, { prepend: options.prepend });

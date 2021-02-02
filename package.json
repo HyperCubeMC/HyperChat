@@ -20,6 +20,7 @@
   "author": "Justsnoopy30",
   "license": "AGPL-3.0",
   "dependencies": {
+    "@highlightjs/cdn-assets": "^10.5.0",
     "@iconfu/svg-inject": "^1.2.3",
     "@joeattardi/emoji-button": "^4.6.0",
     "@popperjs/core": "^2.6.0",
@@ -27,17 +28,17 @@
     "bootstrap": "^5.0.0-beta1",
     "dotenv": "^8.2.0",
     "etag": "^1.8.1",
-    "marked": "^1.2.7",
-    "mongoose": "^5.11.12",
+    "marked": "^1.2.8",
+    "mongoose": "^5.11.14",
     "open-graph-scraper": "^4.7.1",
     "rate-limiter-flexible": "^2.2.1",
-    "sanitize-html": "^2.3.0",
-    "sharp": "^0.27.0",
+    "sanitize-html": "^2.3.2",
+    "sharp": "^0.27.1",
     "socket.io": "^3.1.0",
     "string.prototype.replaceall": "^1.0.4",
     "whoolso-word-filter": "^1.0.8"
   },
   "devDependencies": {
-    "eslint": "^7.18.0"
+    "eslint": "^7.19.0"
   }
 }

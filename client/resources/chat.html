@@ -6,14 +6,15 @@
     <meta name="title" content="HyperChat - A Chat App for Developers and Gamers">
     <meta name="description" content="A fast, secure, and open-source chat app designed for developers and gamers, developed by Justsnoopy30.">
     <title>HyperChat</title>
-    <!-- Load bootstrap styles asyncronously-->
-    <link rel="preload" href="/resources/node_modules/bootstrap/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <!-- Load main stylesheets -->
     <link rel="stylesheet" href="/resources/stylesheets/common.css">
     <link rel="stylesheet" href="/resources/stylesheets/login-screen.css">
     <link rel="stylesheet" href="/resources/stylesheets/chat-screen.css">
     <link rel="stylesheet" href="/resources/stylesheets/settings-screen.css">
     <link rel="stylesheet" href="/resources/stylesheets/reconnecting-screen.css">
+    <!-- Load extra styles asyncronously -->
+    <link rel="preload" href="/resources/node_modules/bootstrap/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/resources/node_modules/@highlightjs/cdn-assets/styles/solarized-dark.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <!-- App logos for different browsers and devices -->
     <link rel="apple-touch-icon" sizes="180x180" href="/resources/assets/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/resources/assets/favicon-32x32.png">
