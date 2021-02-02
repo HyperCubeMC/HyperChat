@@ -41,7 +41,8 @@ const sanitizeHtmlOptions = {
     '*': {
       'color': [/^#(0x)?[0-9a-f]+$/i, /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/],
       'text-align': [/^left$/, /^right$/, /^center$/],
-      'font-size': [/^\d+(?:px|em|%)$/]
+      'font-size': [/^\d+(?:px|em|%)$/],
+      'font-family': [/a-zA-Z_-,\"\'- /] // TODO: FIXME - DOES NOT WORK
     },
     'p': {
       'font-size': [/^\d+rem$/]

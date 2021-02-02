@@ -21,7 +21,7 @@
 }
 
 #reconnectingIcon {
-  background-image: url("/assets/Reconnecting.svg");
+  background-image: url("/resources/assets/Reconnecting.svg");
   background-repeat: no-repeat;
   background-size: 100% 100%;
   width: 30%;
