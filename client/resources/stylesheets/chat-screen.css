@@ -174,6 +174,7 @@
   resize: none;
   border-radius: 8px;
   line-height: normal;
+  white-space: pre-line;
 }
 
 #User-Is-Typing-Area {
@@ -410,6 +411,7 @@
 .messageBody {
   overflow: auto;
   word-break: break-word;
+  white-space: pre-line;
   max-height: 10em;
 }
 

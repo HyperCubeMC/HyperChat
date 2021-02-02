@@ -71,8 +71,6 @@ function generateMessageId() {
 }
 
 function handleMessage({io, socket, message}) {
-  // Trim extra break tags before validating
-  message = message.replace(/\s*(<br ?\/>\s*)+/g, "<br>").replace(/^<br>|<br>$/g, "");
   // Stop right there if the user tries to send a invalid message (null, non-string, or empty message)
   if (!validateMessage(message)) return;
   // If the muted list or muted ip list includes the user trying to send the message, stop right there
