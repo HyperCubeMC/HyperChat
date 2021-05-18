@@ -5,7 +5,6 @@ import { Server as SocketIOServer } from 'socket.io';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import rateLimiterFlexible from 'rate-limiter-flexible';
-import replaceAll from 'string.prototype.replaceall';
 import handleRequest from './server/webserver/RequestHandler.js';
 import handleLogin from './server/socket/event_handlers/Login.js';
 import handleMessage from './server/socket/event_handlers/Message.js';
@@ -20,9 +19,6 @@ import handleAddServer from './server/socket/event_handlers/AddServer.js';
 import handleRemoveServer from './server/socket/event_handlers/RemoveServer.js';
 import handleRequestLinkPreview from './server/socket/event_handlers/RequestLinkPreview.js';
 import ArrayMap from './server/util/ArrayMap.js';
-
-// Polyfill replaceAll
-replaceAll.shim();
 
 // Finish importing rate-limiter flexible
 const { RateLimiterMemory } = rateLimiterFlexible;

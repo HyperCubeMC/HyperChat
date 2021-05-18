@@ -20,25 +20,25 @@
   "author": "Justsnoopy30",
   "license": "AGPL-3.0",
   "dependencies": {
-    "@highlightjs/cdn-assets": "^10.6.0",
+    "@highlightjs/cdn-assets": "^10.7.2",
     "@iconfu/svg-inject": "^1.2.3",
     "@joeattardi/emoji-button": "^4.6.0",
-    "@popperjs/core": "^2.7.0",
-    "argon2": "^0.27.1",
-    "bootstrap": "^5.0.0-beta1",
-    "dotenv": "^8.2.0",
+    "@popperjs/core": "^2.9.2",
+    "argon2": "^0.27.2",
+    "bootstrap": "^5.0.1",
+    "dotenv": "^9.0.2",
     "etag": "^1.8.1",
-    "marked": "^2.0.0",
-    "mongoose": "^5.11.17",
-    "open-graph-scraper": "^4.7.1",
-    "rate-limiter-flexible": "^2.2.1",
-    "sanitize-html": "^2.3.2",
-    "sharp": "^0.27.1",
-    "socket.io": "^3.1.1",
-    "string.prototype.replaceall": "^1.0.4",
+    "marked": "^2.0.3",
+    "mongoose": "^5.12.9",
+    "open-graph-scraper": "^4.8.2",
+    "rate-limiter-flexible": "^2.2.2",
+    "sanitize-html": "^2.3.3",
+    "sharp": "^0.28.2",
+    "socket.io": "^4.1.2",
+    "string.prototype.replaceall": "^1.0.5",
     "whoolso-word-filter": "^1.0.8"
   },
   "devDependencies": {
-    "eslint": "^7.20.0"
+    "eslint": "^7.26.0"
   }
 }
