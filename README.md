@@ -27,7 +27,7 @@ PORT (Port to listen on for the web app)
 
 ## Contact
 You can contact me on Discord with my username and tag: Justsnoopy30#0001  
-Or, you can join the Discord server for my projects with this link: https://discord.gg/GDXgtqZ
+Or, you can join the Discord server for my projects with this invite: https://discord.gg/9nJDfss
 
 ## Licensing Note
 All code is licensed under AGPL-3.0 except for external libraries and assets licensed under their own license.
