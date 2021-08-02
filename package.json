@@ -11,11 +11,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/hypercubemc-github/HyperChat.git"
+    "url": "https://github.com/HyperCubeMC/HyperChat.git"
   },
-  "homepage": "https://hyperchat.cf",
+  "homepage": "https://hyperchat.dev",
   "bugs": {
-    "url": "https://github.com/hypercubemc-github/HyperChat/issues"
+    "url": "https://github.com/HyperCubeMC/HyperChat/issues"
   },
   "author": "Justsnoopy30",
   "license": "AGPL-3.0",
