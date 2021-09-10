@@ -35,7 +35,7 @@ async function handleSwitchServer({io, socket, server}) {
   });
   // Get user status message
   let statusMessage = '';
-  await global.userModel.findOne({username: socket.username.toLowerCase()}, function (error, user) {
+  global.userModel.findOne({username: socket.username.toLowerCase()}, function (error, user) {
     if (user == null) {
       return console.warn(`User ${socket.username} was not in the database when attempting to fetch their status message!`);
     }

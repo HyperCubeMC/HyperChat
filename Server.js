@@ -65,7 +65,7 @@ global.userConnectionsMap = new ArrayMap();
 const mongodbConnectionUri = process.env.MONGODB_CONNECTION_URI;
 
 // Connect to the MongoDB database using Mongoose - tlsInsecure is used since the connection uri uses localhost
-mongoose.connect(mongodbConnectionUri, {useNewUrlParser: true, useUnifiedTopology: true, tlsInsecure: true}).then(function(db) {
+mongoose.connect(mongodbConnectionUri, {tlsInsecure: true}).then(function(db) {
   console.log('Connection to MongoDB successful!');
 }).catch(function(error) {
   console.error(`Connection error upon trying to connect to MongoDB: ${error}`);

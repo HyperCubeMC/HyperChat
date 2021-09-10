@@ -44,6 +44,7 @@ function handleLogin({io, socket, username, password, server}) {
   }
 
   let userHashedPassword;
+  let statusMessage = '';
 
   // Execute all this if the user has supplied credentials that could potentially be valid
   if (username.length <= 16 && password.length <= 16 && server.length <= 16 && username.length > 0 && password.length > 0 && server.length > 0) {
@@ -106,6 +107,7 @@ function handleLogin({io, socket, username, password, server}) {
             }
             getUserVerification().then(userVerification => {
               if (userVerification == 'match') {
+                statusMessage = user.statusMessage;
                 allowLogin();
               }
               else if (userVerification == 'noMatch') {
@@ -136,17 +138,6 @@ function handleLogin({io, socket, username, password, server}) {
         socket.authenticated = true;
         // Tell the user that their login has been authorized
         socket.emit('login authorized');
-        // Get user status message
-        let statusMessage = '';
-        await global.userModel.findOne({username: socket.username.toLowerCase()}, function (error, user) {
-          if (user == null) {
-            return console.warn(`User ${socket.username} was not in the database when attempting to fetch their status message during the socket login event!`);
-          }
-
-          if (error) return console.error(`An error occurred while attempting to fetch the status message of user ${socket.username} from the database during the socket login event: ${error}`);
-
-          statusMessage = user.statusMessage;
-        });
         // Define user object
         const user = {
           username: socket.username,
