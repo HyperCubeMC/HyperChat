@@ -22,7 +22,7 @@
   "dependencies": {
     "@highlightjs/cdn-assets": "^11.2.0",
     "@iconfu/svg-inject": "^1.2.3",
-    "@joeattardi/emoji-button": "^4.6.0",
+    "@joeattardi/emoji-button": "^4.6.2",
     "@popperjs/core": "^2.10.1",
     "argon2": "^0.28.2",
     "bootstrap": "^5.1.1",
