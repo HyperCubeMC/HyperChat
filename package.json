@@ -28,7 +28,7 @@
     "bootstrap": "^5.1.1",
     "dotenv": "^10.0.0",
     "etag": "^1.8.1",
-    "marked": "^3.0.3",
+    "marked": "^4.0.10",
     "mongoose": "^6.0.5",
     "open-graph-scraper": "^4.9.2",
     "rate-limiter-flexible": "^2.2.4",
