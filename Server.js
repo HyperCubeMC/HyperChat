@@ -162,7 +162,7 @@ io.on('connection', (socket) => {
         handleMessage({io, socket, message});
       })
       .catch(rej => {
-        console.log(rej);
+        console.log(`Kicked ${socket.username} for spamming: ${rej}`);
         socket.emit('kick', 'spamming');
         socket.disconnect();
       });
