@@ -20,25 +20,25 @@
   "author": "Justsnoopy30",
   "license": "AGPL-3.0",
   "dependencies": {
-    "@highlightjs/cdn-assets": "^11.2.0",
+    "@highlightjs/cdn-assets": "^11.6.0",
     "@iconfu/svg-inject": "^1.2.3",
-    "@joeattardi/emoji-button": "^4.6.0",
-    "@popperjs/core": "^2.10.1",
-    "argon2": "^0.28.2",
-    "bootstrap": "^5.1.1",
-    "dotenv": "^10.0.0",
+    "@joeattardi/emoji-button": "^4.6.4",
+    "@popperjs/core": "^2.11.6",
+    "argon2": "^0.28.7",
+    "bootstrap": "^5.2.0",
+    "dotenv": "^16.0.1",
     "etag": "^1.8.1",
-    "marked": "^3.0.3",
-    "mongoose": "^6.0.5",
-    "open-graph-scraper": "^4.9.2",
-    "rate-limiter-flexible": "^2.2.4",
-    "sanitize-html": "^2.5.0",
-    "sharp": "^0.29.1",
-    "socket.io": "^4.2.0",
-    "string.prototype.replaceall": "^1.0.5",
+    "marked": "^4.0.18",
+    "mongoose": "^6.5.2",
+    "open-graph-scraper": "^4.11.1",
+    "rate-limiter-flexible": "^2.3.8",
+    "sanitize-html": "^2.7.1",
+    "sharp": "^0.30.7",
+    "socket.io": "^4.5.1",
+    "string.prototype.replaceall": "^1.0.6",
     "whoolso-word-filter": "^1.0.8"
   },
   "devDependencies": {
-    "eslint": "^7.32.0"
+    "eslint": "^8.22.0"
   }
 }

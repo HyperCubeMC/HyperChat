@@ -1,5 +1,5 @@
 // Import dependencies
-import 'https://polyfill.io/v3/polyfill.min.js';
+// import 'https://polyfill.io/v3/polyfill.min.js';
 import { grab, grabAll, newElement } from '/resources/hyperlib/HyperLib.js';
 import { createPopper } from '/resources/node_modules/@popperjs/core/dist/esm/popper.js';
 import store from '/resources/es_modules/store2/store2.js';
@@ -81,6 +81,141 @@ function notificationPermissionPrompt() {
   }
 })();
 
+// Define badger class
+/**
+ * Add notification badge (pill) to favicon in browser tab
+ * @url stackoverflow.com/questions/65719387/
+ */
+ class Badger {
+  constructor(options) {
+    Object.assign(
+      this, {
+        backgroundColor: "#f00",
+        color: "#fff",
+        size: 0.6,      // 0..1 (Scale in respect to the favicon image size)
+        position: "ne", // Position inside favicon "n", "e", "s", "w", "ne", "nw", "se", "sw"
+        radius: 8,      // Border radius
+        src: "",        // Favicon source (dafaults to the <link> icon href)
+        onChange() {},
+      },
+      options
+    );
+    // this.faviconEl = document.querySelector("link[rel=icon]");
+    this.faviconEl = document.querySelector("#favicon");
+    this.canvas = document.createElement("canvas");
+    this.src = this.src || this.faviconEl.getAttribute("href");
+    this.ctx = this.canvas.getContext("2d");
+    this.value = 0;
+  }
+
+  _drawIcon() {
+    this.ctx.clearRect(0, 0, this.faviconSize, this.faviconSize);
+    this.ctx.drawImage(this.img, 0, 0, this.faviconSize, this.faviconSize);
+  }
+
+  _drawShape() {
+    const r = this.radius;
+    const xa = this.offset.x;
+    const ya = this.offset.y;
+    const xb = this.offset.x + this.badgeSize;
+    const yb = this.offset.y + this.badgeSize;
+    this.ctx.beginPath();
+    this.ctx.moveTo(xb - r, ya);
+    this.ctx.quadraticCurveTo(xb, ya, xb, ya + r);
+    this.ctx.lineTo(xb, yb - r);
+    this.ctx.quadraticCurveTo(xb, yb, xb - r, yb);
+    this.ctx.lineTo(xa + r, yb);
+    this.ctx.quadraticCurveTo(xa, yb, xa, yb - r);
+    this.ctx.lineTo(xa, ya + r);
+    this.ctx.quadraticCurveTo(xa, ya, xa + r, ya);
+    this.ctx.fillStyle = this.backgroundColor;
+    this.ctx.fill();
+    this.ctx.closePath();
+  }
+
+  _drawVal() {
+    const margin = (this.badgeSize * 0.18) / 2;
+    this.ctx.beginPath();
+    this.ctx.textBaseline = "middle";
+    this.ctx.textAlign = "center";
+    this.ctx.font = `bold ${this.badgeSize * 0.82}px Arial`;
+    this.ctx.fillStyle = this.color;
+    this.ctx.fillText(this.value, this.badgeSize / 2 + this.offset.x, this.badgeSize / 2 + this.offset.y + margin);
+    this.ctx.closePath();
+  }
+
+  _drawFavicon() {
+    this.faviconEl.setAttribute("href", this.dataURL);
+    // For secure tab usage
+    parent.postMessage({type: "setFavicon", data: { url: this.dataURL }}, "*");
+    // const oldDynamicIcon = document.querySelector("#dynamic-favicon");
+    // if (oldDynamicIcon) document.head.removeChild(oldDynamicIcon);
+
+    // const dynamicIcon = this.faviconEl.cloneNode();
+    // dynamicIcon.id = "dynamic-favicon";
+    // dynamicIcon.href = this.dataURL;
+    // document.head.appendChild(dynamicIcon);
+  }
+
+  _draw() {
+    this._drawIcon();
+    if (this.value) this._drawShape();
+    if (this.value) this._drawVal();
+    this._drawFavicon();
+  }
+
+  _setup() {
+    this.faviconSize = this.img.naturalWidth;
+    this.badgeSize = this.faviconSize * this.size;
+    this.canvas.width = this.faviconSize;
+    this.canvas.height = this.faviconSize;
+    const sd = this.faviconSize - this.badgeSize;
+    const sd2 = sd / 2;
+    this.offset = {
+      n:  {x: sd2, y: 0 },
+      e:  {x: sd, y: sd2},
+      s:  {x: sd2, y: sd},
+      w:  {x: 0, y: sd2},
+      nw: {x: 0, y: 0},
+      ne: {x: sd, y: 0},
+      sw: {x: 0, y: sd},
+      se: {x: sd, y: sd},
+    }[this.position];
+  }
+
+  // Public functions / methods:
+
+  update() {
+    // this._value = Math.min(99, parseInt(this._value, 10));
+    this._value = Math.min(99, this._value);
+    if (this.img) {
+      this._draw();
+      if (this.onChange) this.onChange.call(this);
+    } else {
+      this.img = new Image();
+      this.img.addEventListener("load", () => {
+        this._setup();
+        this._draw();
+        if (this.onChange) this.onChange.call(this);
+      });
+      this.img.src = this.src;
+    }
+  }
+
+  get dataURL() {
+    return this.canvas.toDataURL();
+  }
+
+  get value() {
+    return this._value;
+  }
+
+  set value(val) {
+    this._value = val;
+    this.update();
+  }
+}
+
 let fadeTime = 150; // In ms
 let typingTimerLength = 1000; // In ms
 let colors = [
@@ -103,7 +238,6 @@ let loggedIn;
 let konamiActivated;
 let notificationReplyMessage;
 let initialLogin = true;
-let darkThemeSwitchState;
 let pageVisible;
 let systemTheme;
 let emojiPickerLoaded = false;
@@ -112,6 +246,8 @@ let hasAllMessageHistory = false;
 let defaultServer = 'General'; // Server to use when current server is not set yet
 let socket; // Socket.io, placeholder variable until assigned later below.
 let supportsWebM = document.createElement('audio').canPlayType('audio/webm') != "";
+let badger = new Badger();
+let whiteboardList = [];
 const highlightWorker = new Worker('/resources/workers/Highlighter.js'); // Web worker for highlighting code blocks in messages
 
 // Initialize sounds for the chat app.
@@ -132,7 +268,7 @@ cheet(sequences.konami);
 
 cheet.done(function (seq) {
   if (seq === sequences.konami) {
-    konamiActivated = true
+    konamiActivated = !konamiActivated;
   }
 });
 
@@ -226,7 +362,7 @@ if (store('custom-theme-background-primary')) {
 
 if (store('custom-theme-background-secondary')) {
   const customThemeRule = getCSSRule('.custom');
-  const secondaryBackgroundColor = store('custom-theme-background-secondary');
+  const secondaryBackgroundColor = store('custom-theme-backgrounad-secondary');
   grab('#custom-theme-background-secondary').value = secondaryBackgroundColor;
   customThemeRule.style.setProperty('--background-secondary', secondaryBackgroundColor);
 }
@@ -343,6 +479,8 @@ function onVisibilityChange(callback) {
 
 onVisibilityChange(function(visible) {
   pageVisible = visible;
+  // Reset notification counter in tab icon
+  if (visible) badger.value = 0;
 });
 
 function showSettingsScreen() {
@@ -419,6 +557,23 @@ function toggleUserList() {
     grab('#User-List').css('opacity', '0');
     grab('#User-List').css('transform', 'translateX(100%)');
     grab('#User-List').data('state', 'hidden');
+    return 'nowHidden';
+  }
+}
+
+// Shows or hides the server whiteboard
+function toggleWhiteboard() {
+  if (grab('#Server-Whiteboard').css('display') == 'none') {
+    grab('#messages').hide();
+    grab('#Bottom-Area').hide();
+    grab('#Server-Whiteboard').show();
+    recalculateWhiteboardSizes();
+    return 'nowShown';
+  }
+  else {
+    grab('#Server-Whiteboard').hide();
+    grab('#messages').show();
+    grab('#Bottom-Area').show();
     return 'nowHidden';
   }
 }
@@ -813,6 +968,11 @@ const addChatMessage = (data, options) => {
       socket.emit('request link preview', data.messageId, element.href);
     }
   });
+  let whiteboard;
+  if (messageBodyDiv.querySelector('canvas') != null && messageBodyDiv.querySelector('canvas').classList.contains('whiteboard')) {
+    whiteboard = new Whiteboard(messageBodyDiv.querySelector('canvas'));
+    whiteboardList.push(whiteboard);
+  }
 
   let messageItem = newElement('li');
   messageItem.classList.add('message');
@@ -836,6 +996,73 @@ const addChatMessage = (data, options) => {
   // Add the delete icon to the delete button
   deleteButton.append(deleteIcon);
 
+  // Reactions n' stuff
+
+  // Define picker as reaction picker button with options
+  let picker;
+
+  // Make a new span for the reaction message button
+  let reactionButton = newElement('span');
+  reactionButton.classList.add('reactToMessageButton');
+  reactionButton.onclick = (event) => {
+    import('/resources/node_modules/@joeattardi/emoji-button/dist/index.js').then(({EmojiButton}) => {
+      // Setup the reaction button
+  
+      // Set textPosition as a placeholder variable for the user's cursor position in the
+      // message box before they click the reaction button
+      // Define button as the reaction button on the page
+      const button = event.target;
+  
+      // Set the reaction button options
+      const options = {
+        style: 'twemoji',
+        position: 'left-start'
+      }
+
+      if (picker == null) picker = new EmojiButton(options);
+  
+      // When the reaction button is clicked, toggle the reaction picker
+      function toggleEmojiPicker() {
+        picker.togglePicker(button);
+        grab('.emoji-picker').classList.remove('light', 'dark', 'custom');
+        grab('.emoji-picker').classList.add(store('theme'));
+        if (picker.isPickerVisible()) {
+          currentInput = grab('.emoji-picker');
+        }
+      }
+
+      toggleEmojiPicker();
+  
+      // Add the reaction to the user's cursor position in the message box when an emoji
+      // in the reaction picker is clicked
+      picker.on('emoji', selection => {
+        // const emoji = document.createElement('img');
+        // emoji.src = selection.url;
+        // emoji.alt = selection.emoji;
+        // emoji.className = 'emoji';
+        // emoji.crossOrigin = 'anonymous';
+        socket.emit('add reaction', { url: selection.url, name: selection.emoji, messageId: data.messageId });
+      });
+  
+      // When the picker is hidden, focus the message box and change the currentInput
+      picker.on('hidden', () => {
+        // const pickerElement = document.querySelector('.emoji-picker__wrapper');
+        // pickerElement.remove();
+      });
+    });
+  }
+
+  // Make a new img for the reaction message icon
+  let reactionIcon = newElement('img');
+  reactionIcon.classList.add('reactToMessageIcon');
+  reactionIcon.src = 'https://twemoji.maxcdn.com/v/13.0.0/svg/1f60e.svg';
+  reactionIcon.draggable = false;
+  reactionIcon.crossOrigin = 'anonymous';
+  reactionIcon.onload = () => SVGInject(reactionIcon.getElement());
+
+  // Add the reaction icon to the reaction button
+  reactionButton.append(reactionIcon);
+
   // If the message mentions the user, add the mention class
   if (data.message.includes(`@${username}`)) {
     messageItem.classList.add('mention');
@@ -849,11 +1076,11 @@ const addChatMessage = (data, options) => {
   // If the message is special, add the special class and append the badge
   if (data.special) {
     messageItem.classList.add('special');
-    messageItem.append(profilePicture, userPopout, usernameSpan, userBadge, timestamp, deleteButton, messageBodyDiv);
+    messageItem.append(profilePicture, userPopout, usernameSpan, userBadge, timestamp, reactionButton, deleteButton, messageBodyDiv);
   }
   // Otherwise, just continue like normal
   else {
-    messageItem.append(profilePicture, userPopout, usernameSpan, deleteButton, timestamp, messageBodyDiv);
+    messageItem.append(profilePicture, userPopout, usernameSpan, reactionButton, deleteButton, timestamp, messageBodyDiv);
   }
 
   // Asynchronously highlight code in a code block in the message if there is one - TODO: Highlight ALL code blocks in the message
@@ -862,6 +1089,9 @@ const addChatMessage = (data, options) => {
   }
 
   addMessageElement(messageItem, { prepend: options.prepend });
+  if (whiteboard) {
+    fitCanvasToParent(whiteboard.canvas);
+  }
 }
 
 // Sync the user typing message
@@ -1036,8 +1266,8 @@ grab('#Add-Server-Name-Input').addEventListener('blur', function (event) {
 });
 
 document.addEventListener('keydown', (event) => {
-  // When the client hits ENTER on their keyboard and they're not logged in, submit their credentials
-  if (event.key == 'Enter' && !loggedIn) {
+  // When the client hits ENTER on their keyboard, they're connected to the socket, and they're not logged in, submit their credentials
+  if (event.key == 'Enter' && socket.connected && !loggedIn) {
     submitLoginInfo();
     return;
   }
@@ -1085,6 +1315,9 @@ grab('#serverListIconWrapper').addEventListener('click', toggleServerList);
 
 // Toggle user list slide-out drawer when the user list icon is tapped on mobile
 grab('#userListIconWrapper').addEventListener('click', toggleUserList);
+
+// Toggle the whiteboard when the whiteboard icon is clicked
+grab('#whiteboardIconWrapper').addEventListener('click', toggleWhiteboard);
 
 // Open profile picture uploader when the preview in settings is clicked
 grab('#profilePicturePreview').addEventListener('click', () => {
@@ -1240,23 +1473,6 @@ socket.on('unflip', () => {
   document.body.style['transform'] = 'rotate(0deg)';
 });
 
-socket.on('stupidify', () => {
-  (function(){
-    let text = 'When I looked in the mirror, the reflection showed Joe Mama. Then the mirror screamed, and shattered. '
-    Array.prototype.slice.call(document.querySelectorAll('input,textarea')).map(function (element) {
-      element.onkeypress=function(evt){
-        let charCode = typeof evt.which == 'number' ? evt.which : evt.keyCode;
-        if (charCode && charCode > 31) {
-          let start = this.selectionStart, end = this.selectionEnd;
-          this.value = this.value.slice(0, start) + text[start % text.length] + this.value.slice(end);
-          this.selectionStart = this.selectionEnd = start + 1;
-        }
-        return false;
-      }
-    });
-  }());
-});
-
 socket.on('smash', () => {
   Array.prototype.slice.call(document.querySelectorAll('div,p,span,img,a,body')).map(function (element) {
     element.style['transform'] = 'rotate(' + (Math.floor(Math.random() * 10) - 1) + 'deg)';
@@ -1279,8 +1495,22 @@ socket.on('kick', (reason) => {
   location.reload();
 });
 
+socket.on('ban', (reason) => {
+  kickSound.play();
+  if (reason == null) {
+    alert('You have been banned by an admin.');
+  } else {
+    alert(`You have been banned for ${reason}.`);
+  }
+  location.reload();
+});
+
 socket.on('stun', () => {
   stunSound.play();
+});
+
+socket.on('open', () => {
+  window.open('https://www.google.com', '_blank');
 });
 
 // Whenever the server emits 'new message', update the chat body
@@ -1295,9 +1525,11 @@ socket.on('new message', (data) => {
   }
   // Add the chat message
   addChatMessage(data, { previousSameAuthor: previousSameAuthor });
-  if (data.username !== username && data.message.includes(`@${username}`)) { // Make sure that the user was mentioned and that the message author wasn't the user themself
+  if (data.username !== username && data.message.includes(`@${username}`) && !pageVisible) { // Make sure that the user was mentioned, the message author wasn't the user themself, and the page isn't visible
     // Play chat message sound
     chatMessageSound.play();
+    // Set notification count in tab icon
+    badger.value++;
     // No html to markdown converter yet because of issues
     // Send notification if we have notification permission
     if (navigator.serviceWorker.controlled && notificationPermission === 'granted') {
@@ -1418,6 +1650,18 @@ socket.on('new server', () => {
   log('Send the first message!');
 });
 
+socket.on('add reaction', ({name, url, messageId}) => {
+  grabAll('.message').forEach(function(message) {
+    if (message.dataset['messageid'] == messageId) {
+      // const emoji = document.createElement('img');
+      // emoji.src = selection.url;
+      // emoji.alt = selection.emoji;
+      // emoji.className = 'emoji';
+      // emoji.crossOrigin = 'anonymous';
+    }
+  });
+});
+
 socket.on('disconnect', () => {
   log('You have been disconnected.');
   lostConnectionSound.play();
@@ -1444,3 +1688,133 @@ socket.io.on('reconnect', () => {
 socket.io.on('reconnect_error', () => {
   log('Attempt to reconnect has failed');
 });
+
+// White board
+// const canvas = document.getElementsByClassName('whiteboard')[0];
+// const colors = document.getElementsByClassName('color');
+// const context = whiteboard.getContext('2d');
+
+class Whiteboard {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.currentState = {
+      color: 'black'
+    }
+    this.drawing = false;
+
+
+    canvas.addEventListener('mousedown', (e) => this.onMouseDown(e), false);
+    canvas.addEventListener('mouseup', (e) => this.onMouseUp(e), false);
+    canvas.addEventListener('mouseout', (e) => this.onMouseUp(e), false);
+    canvas.addEventListener('mousemove', (e) => throttle(this.onMouseMove(e), 10), false);
+
+    // Touch support for mobile devices
+    canvas.addEventListener('touchstart', (e) => this.onMouseDown(e), false);
+    canvas.addEventListener('touchend', (e) => this.onMouseUp(e), false);
+    canvas.addEventListener('touchcancel', (e) => this.onMouseUp(e), false);
+    canvas.addEventListener('touchmove', (e) => throttle(this.onMouseMove(e), 10), false);
+  }
+  
+
+  onDrawingEvent(data) {
+    var w = this.canvas.width;
+    var h = this.canvas.height;
+    this.drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);
+  }
+
+  drawLine(x0, y0, x1, y1, color, emit) {
+    const context = this.canvas.getContext('2d');
+
+    if (color == 'black' && document.querySelector('body').classList.contains('dark')) color = 'white';
+    
+    context.beginPath();
+    context.moveTo(x0, y0);
+    context.lineTo(x1, y1);
+    context.strokeStyle = color;
+    context.lineWidth = 2;
+    context.stroke();
+    context.closePath();
+  
+    if (!emit) { return; }
+    var w = this.canvas.width;
+    var h = this.canvas.height;
+  
+    socket.emit('drawing', {
+      id: this.canvas.id,
+      x0: x0 / w,
+      y0: y0 / h,
+      x1: x1 / w,
+      y1: y1 / h,
+      color: color
+    });
+  }
+
+  onMouseDown(e) {
+    if (e.clientX == null && !e.touches.length) return;
+    this.drawing = true;
+    const rectangle = e.target.getBoundingClientRect();
+    this.currentState.x = (e.clientX || e.touches[0].clientX) - rectangle.left;
+    this.currentState.y = (e.clientY || e.touches[0].clientY) - rectangle.top;
+  }
+  
+  onMouseUp(e) {
+    if (!this.drawing) { return; }
+    if (e.clientX == null && !e.touches.length) return;
+    this.drawing = false;
+    const rectangle = e.target.getBoundingClientRect();
+    this.drawLine(this.currentState.x, this.currentState.y, (e.clientX || e.touches[0].clientX) - rectangle.left, (e.clientY || e.touches[0].clientY) - rectangle.top, this.currentState.color, true);
+  }
+  
+  onMouseMove(e) {
+    if (!this.drawing) { return; }
+    if (e.clientX == null && !e.touches.length) return;
+    const rectangle = e.target.getBoundingClientRect();
+    this.drawLine(this.currentState.x, this.currentState.y, (e.clientX || e.touches[0].clientX) - rectangle.left, (e.clientY || e.touches[0].clientY) - rectangle.top, this.currentState.color, true);
+    this.currentState.x = (e.clientX || e.touches[0].clientX) - rectangle.left;
+    this.currentState.y = (e.clientY || e.touches[0].clientY) - rectangle.top;
+  }
+  
+  onColorUpdate(e) {
+    this.currentState.color = e.target.className.split(' ')[1];
+  }
+}
+
+// for (var i = 0; i < colors.length; i++){
+//   colors[i].addEventListener('click', onColorUpdate, false);
+// }
+
+socket.on('drawing', (data) => {
+  // const canvas = document.getElementsByClassName(`whiteboard-${data.id}`)[0];
+  const whiteboard = whiteboardList.find(whiteboard => whiteboard.canvas.id === data.id);
+  if (whiteboard != null) whiteboard.onDrawingEvent(data);
+});
+
+// limit the number of events per second
+function throttle(callback, delay) {
+  var previousCall = new Date().getTime();
+  return function() {
+    var time = new Date().getTime();
+
+    if ((time - previousCall) >= delay) {
+      previousCall = time;
+      callback.apply(null, arguments);
+    }
+  };
+}
+
+whiteboardList.push(new Whiteboard(document.querySelector('#Server-Whiteboard')));
+
+window.addEventListener('resize', recalculateWhiteboardSizes, false);
+
+function fitCanvasToParent(canvas) {
+  canvas.width = canvas.parentElement.offsetWidth || canvas.parentElement.clientWidth || getComputedStyle(canvas.parentElement)['max-width'] || getComputedStyle(canvas.parentElement).width;
+  canvas.height = canvas.parentElement.offsetHeight || canvas.parentElement.clientWidth || getComputedStyle(canvas.parentElement)['max-height'] || getComputedStyle(canvas.parentElement).height;
+}
+
+function recalculateWhiteboardSizes() {
+  for (const whiteboard of whiteboardList) {
+    fitCanvasToParent(whiteboard.canvas);
+  }
+}
+
+recalculateWhiteboardSizes();

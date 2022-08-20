@@ -36,12 +36,15 @@ function handleLogin({io, socket, username, password, server}) {
   // Check the username for bad words
   const filterFoundWords = filterWords(filterOptions);
 
-  if (filterFoundWords.length != 0) {
+  if (filterFoundWords.length >= 1) {
     socket.emit('login denied', {
-      loginDeniedReason: 'Username contains bad words.'
+      loginDeniedReason: 'Username contains profanity.'
     });
     return;
   }
+
+  // Trim trailing whitespace and newlines
+  username = username.trim().replace(/^\s+|\s+$/g, '');
 
   let userHashedPassword;
   let statusMessage = '';
@@ -108,6 +111,13 @@ function handleLogin({io, socket, username, password, server}) {
             getUserVerification().then(userVerification => {
               if (userVerification == 'match') {
                 statusMessage = user.statusMessage;
+                if (global.bannedList.includes(username)) {
+                  socket.emit('login denied', {
+                    loginDeniedReason: 'You are banned'
+                  });
+                  return;
+                }
+                if (global.bannedIpList.includes(socket.handshake.headers['cf-connecting-ip'] || socket.handshake.address)) return;
                 allowLogin();
               }
               else if (userVerification == 'noMatch') {

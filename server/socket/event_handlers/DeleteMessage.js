@@ -6,6 +6,8 @@
  * @license AGPL-3.0
  */
 
+import { admins } from '../../../Server.js';
+
 function handleDeleteMessage({io, socket, messageId}) {
   // Null or wrong type check
   if (messageId == null || messageId === '' || typeof messageId !== 'string') {
@@ -18,7 +20,7 @@ function handleDeleteMessage({io, socket, messageId}) {
     if (error) {
       return console.error(`An error occured while trying to delete the message with messageId: ${messageId} in server: ${socket.server}: ${error}`);
     }
-    if (socket.username != message.username && socket.username.toLowerCase() != 'justsnoopy30') {
+    if (socket.username != message.username && !admins.includes(socket.username.toLowerCase())) {
       return;
     }
     io.in(socket.server).emit('delete message', messageId);

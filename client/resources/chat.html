@@ -14,13 +14,13 @@
     <link rel="stylesheet" href="/resources/stylesheets/reconnecting-screen.css">
     <!-- Load extra styles asyncronously -->
     <link rel="preload" href="/resources/node_modules/bootstrap/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="/resources/node_modules/@highlightjs/cdn-assets/styles/solarized-dark.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <!-- <link rel="preload" href="/resources/node_modules/@highlightjs/cdn-assets/styles/solarized-dark.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"> -->
     <!-- App logos for different browsers and devices -->
     <link rel="apple-touch-icon" sizes="180x180" href="/resources/assets/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/resources/assets/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/resources/assets/favicon-16x16.png">
+    <!-- <link rel="icon" type="image/png" sizes="32x32" href="/resources/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/resources/assets/favicon-16x16.png"> -->
     <link rel="mask-icon" href="/resources/assets/safari-pinned-tab.svg" color="#00adff">
-    <link rel="shortcut icon" href="/resources/assets/favicon.ico">
+    <link id="favicon" rel="shortcut icon" href="/resources/assets/favicon.ico">
     <meta name="msapplication-TileColor" content="#00adff">
     <meta name="theme-color" content="#00adff">
     <!-- Preload Assets -->
@@ -37,6 +37,14 @@
     <link rel="preload" href="/resources/assets/LostConnection.webm" as="audio">
     <link rel="preload" href="/resources/assets/RegainedConnection.webm" as="audio">
     <link rel="preload" href="/resources/assets/Stun.webm" as="audio">
+    <!-- Script error handling -->
+    <script>
+      window.addEventListener('error', function(e) {
+        alert("Error executing JS (report this): " + e.message);
+        
+        // console.error(e.message, e.filename, e.lineno, e.colno, e.error);
+      });
+    </script>
     <!-- Fix Electron Support (before scripts) -->
     <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
     <!-- Load scripts -->
@@ -72,6 +80,9 @@
         <div id="notificationBellWrapper">
           <img id="notificationBell" src="/resources/assets/NotificationBell.svg" title="Notification Bell" alt="Notification Bell" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
         </div>
+        <div id="whiteboardIconWrapper">
+          <img id="whiteboardIcon" src="/resources/assets/WhiteboardIcon.svg" title="Whiteboard Icon" alt="Whiteboard Icon" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
+        </div>
         <div class="settingsIconWrapper" id="settingsIconWrapperInChat">
           <img class="settingsIcon" src="/resources/assets/SettingsIcon.svg" title="Settings Icon" alt="Settings Icon" draggable="false" onload="window.addEventListener('load', () => SVGInject(this));">
         </div>
@@ -84,6 +95,7 @@
         <input id="Add-Server-Name-Input" placeholder="Enter server..." maxlength="16"></input>
       </div>
       <div id="Chat-Area">
+        <canvas id="Server-Whiteboard"></canvas>
         <ul id="messages"></ul>
         <div id="Bottom-Area">
           <div id="User-Is-Typing-Area"></div>

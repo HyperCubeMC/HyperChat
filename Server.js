@@ -18,6 +18,7 @@ import handleRequestMoreMessages from './server/socket/event_handlers/RequestMor
 import handleAddServer from './server/socket/event_handlers/AddServer.js';
 import handleRemoveServer from './server/socket/event_handlers/RemoveServer.js';
 import handleRequestLinkPreview from './server/socket/event_handlers/RequestLinkPreview.js';
+import handleAddReaction from './server/socket/event_handlers/AddReaction.js';
 import ArrayMap from './server/util/ArrayMap.js';
 
 // Finish importing rate-limiter flexible
@@ -54,6 +55,12 @@ global.mutedList = [];
 
 // Setup the muted ip list as a shared global variable
 global.mutedIpList = [];
+
+// Setup the muted list as a shared global variable
+global.bannedList = [];
+
+// Setup the muted ip list as a shared global variable
+global.bannedIpList = [];
 
 // Setup the user list contents as a shared global variable
 global.userListContents = [];
@@ -94,7 +101,8 @@ const messageSchema = new Schema({
   badge: String,
   special: {type: Boolean, required: false},
   usernameColor: {type: String, required: false},
-  badgeColor: {type: String, required: false}
+  badgeColor: {type: String, required: false},
+  reactions: {type: Array, default: []}
 });
 
 // Create a new schema for servers
@@ -115,8 +123,8 @@ global.serverModel = mongoose.model('serverModel', serverSchema, 'servers');
 
 // Setup rate limiters
 const messageRateLimiter = new RateLimiterMemory({
-  points: 2, // 2 points
-  duration: 3 // per 3 seconds
+  points: 3, // 2 points
+  duration: 5 // per 3 seconds
 });
 
 const loginRateLimiter = new RateLimiterMemory({
@@ -124,19 +132,24 @@ const loginRateLimiter = new RateLimiterMemory({
   duration: 5 // per 5 seconds
 });
 
+// Define a new array of strings of admin usernames
+export const admins = ["justsnoopy30", "nolski", "pixxi"];
+
 // And everything starts here where a user makes a connection to the socket.io server...
 io.on('connection', (socket) => {
   socket.authenticated = false;
 
   // When the client emits 'login', this listens and executes
   socket.on('login', ({ username, password, server }) => {
-    loginRateLimiter.consume(socket.handshake.headers['cf-connecting-ip'] || socket.handshake.address)
+    // loginRateLimiter.consume(socket.handshake.headers['cf-connecting-ip'] || socket.handshake.address)
+    loginRateLimiter.consume(username)
       .then(rateLimiterRes => {
         handleLogin({io, socket, username, password, server});
       })
       .catch(rej => {
-        console.log(rej);
-        socket.emit('loginDenied', {loginDeniedReason: 'You are logging in too fast! Try again in a few seconds.'});
+        console.log(`Rejected login for ${username} due to rate limiting: ${rej}`);
+        handleLogin({io, socket, username, password, server});
+        socket.emit('login denied', {loginDeniedReason: 'You are logging in too fast! Try again in a few seconds.'});
         socket.disconnect();
       });
   });
@@ -203,10 +216,20 @@ io.on('connection', (socket) => {
     handleRemoveServer({io, socket, serverName});
   });
 
-  // When the client emits 'request limit preview', fetch a link preview for the link and send it back
+  // When the client emits 'request link preview', fetch a link preview for the link and send it back
   socket.on('request link preview', (messageId, link) => {
     if (!socket.authenticated) return;
     handleRequestLinkPreview({io, socket, messageId, link});
+  });
+
+  // When the client emits 'add reaction', add a reaction to the message denoted by the messageId provided
+  socket.on('add reaction', ({ url, name, messageId }) => {
+    if (!socket.authenticated) return;
+    handleAddReaction({io, socket, url, name, messageId});
+  });
+
+  socket.on('drawing', (data) => {
+    socket.broadcast.emit('drawing', data);
   });
 
   // When the user disconnects, perform this

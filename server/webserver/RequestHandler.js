@@ -37,17 +37,26 @@ function handleRequest(req, res) {
     return;
   }
 
+  let decodedPathname = decodeURIComponent(reqURL.pathname);
+
+  // Check pathname for poison null byte attacks again after decoding
+  if (decodedPathname.indexOf('\0') !== -1 || decodedPathname.indexOf('%00') !== -1) {
+    res.writeHead(400);
+    res.end('400 Bad Request\nPoison Null Bytes are evil. Nice try.');
+    return;
+  }
+
   // If the URL is simply a slash or home url, send the chat app html page
-  if (reqURL.pathname == '/')
-    reqURL.pathname = '/resources/chat.html';
+  if (decodedPathname == '/')
+    decodedPathname = '/resources/chat.html';
   // Provide chat.js and service-worker.js in the root directory so that the client's service worker can use the scope of the entire app
-  if (reqURL.pathname == '/chat.js')
-    reqURL.pathname = '/resources/chat.js';
-  if (reqURL.pathname == '/service-worker.js')
-    reqURL.pathname = '/resources/service-worker.js';
+  if (decodedPathname == '/chat.js')
+    decodedPathname = '/resources/chat.js';
+  if (decodedPathname == '/service-worker.js')
+    decodedPathname = '/resources/service-worker.js';
 
   // Set the path to the requested resource based on the URL
-  const pathname = path.join(process.cwd() + '/client', reqURL.pathname);
+  const pathname = path.join(process.cwd() + '/client', decodedPathname);
 
   // Set the extension name variable based on the file extension in the pathname
   const extname = String(path.extname(pathname)).toLowerCase();
@@ -63,7 +72,7 @@ function handleRequest(req, res) {
       if (error.code == 'ENOENT') {
         // If the path is a user profile picture, and the profile picture for the user
         // does not exist, then serve the generic profile picture
-        if (reqURL.pathname.startsWith('/cdn/UserProfilePictures/')) {
+        if (decodedPathname.startsWith('/cdn/UserProfilePictures/')) {
           fs.readFile('./client/cdn/Defaults/UserProfilePictures/generic.webp', function (error, content) {
             res.writeHead(200, {
               'Content-Type': contentType,
@@ -73,7 +82,7 @@ function handleRequest(req, res) {
             res.end(content, 'utf-8');
             return;
           });
-        } else if (reqURL.pathname.startsWith('/cdn/ServerIcons/')) {
+        } else if (decodedPathname.startsWith('/cdn/ServerIcons/')) {
           fs.readFile('./client/cdn/Defaults/ServerIcons/generic.webp', function (error, content) {
             res.writeHead(200, {
               'Content-Type': contentType,
