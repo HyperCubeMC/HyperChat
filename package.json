@@ -30,7 +30,7 @@
     "etag": "^1.8.1",
     "marked": "^4.0.18",
     "mongoose": "^6.5.2",
-    "open-graph-scraper": "^4.11.1",
+    "open-graph-scraper": "^5.0.5",
     "rate-limiter-flexible": "^2.3.8",
     "sanitize-html": "^2.7.1",
     "sharp": "^0.30.7",
