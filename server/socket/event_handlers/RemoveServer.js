@@ -13,13 +13,11 @@ function handleRemoveServer({io, socket, serverName}) {
   if (serverName == null || serverName === '' || typeof serverName != 'string') {
     return;
   }
-  global.userModel.findOne({username: socket.username.toLowerCase()}, function (error, user) {
+  global.userModel.findOne({username: socket.username.toLowerCase()}).then(user => {
     if (user == null) {
       return console.warn(`User ${socket.username} was not in the database when handling the socket Remove Server event!`)
     }
-    if (error) {
-      return console.error(`An error occured while trying to fetch user ${socket.username} from the database while handling the socket Remove Server event: ${error}`);
-    }
+
     const server = {
       ServerName: serverName,
       ServerOwner: 'TODO'
@@ -27,10 +25,12 @@ function handleRemoveServer({io, socket, serverName}) {
     user.serverList = user.serverList.filter(function(element) {
       return element.ServerName != serverName;
     });
-    user.save(function (error, user) {
-      if (error) return console.error(`An error occured while trying to remove the server ${serverName} from the server list of ${socket.username} in the database: ${error}`);
+    user.save().catch(error => {
+      return console.error(`An error occured while trying to remove the server ${serverName} from the server list of ${socket.username} in the database: ${error}`);
     });
     socket.emit('remove server', server);
+  }).catch(error => {
+    return console.error(`An error occured while trying to fetch user ${socket.username} from the database while handling the socket Remove Server event: ${error}`);
   });
 }
 

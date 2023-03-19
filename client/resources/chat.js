@@ -216,6 +216,53 @@ function notificationPermissionPrompt() {
   }
 }
 
+// Element waiter util
+// Source: https://stackoverflow.com/a/61511955/8584806
+
+// Original: 
+/* function waitForElement(selector) {
+  return new Promise(resolve => {
+      if (document.querySelector(selector)) {
+          return resolve(document.querySelector(selector));
+      }
+
+      const observer = new MutationObserver(mutations => {
+          if (document.querySelector(selector)) {
+              resolve(document.querySelector(selector));
+              observer.disconnect();
+          }
+      });
+
+      observer.observe(document.body, {
+          childList: true,
+          subtree: true
+      });
+  });
+} */
+
+/**
+ * Note: In this modified version, the callback will be called again if fireOnRecreation is set 
+ * and the element is deleted and created again later
+ */
+function waitForElement(selector, onElementCreation, options = { fireOnRecreation: false }) {
+  if (document.querySelector(selector)) {
+    onElementCreation(document.querySelector(selector));
+    if (!options.fireOnRecreation) return;
+  }
+
+  const observer = new MutationObserver(mutations => {
+      if (document.querySelector(selector)) {
+          onElementCreation(document.querySelector(selector));
+          if (!options.fireOnRecreation) observer.disconnect();
+      }
+  });
+
+  observer.observe(document.body, {
+      childList: true,
+      subtree: true
+  });
+}
+
 let fadeTime = 150; // In ms
 let typingTimerLength = 1000; // In ms
 let colors = [
@@ -240,7 +287,6 @@ let notificationReplyMessage;
 let initialLogin = true;
 let pageVisible;
 let systemTheme;
-let emojiPickerLoaded = false;
 let usersTypingArray = [];
 let hasAllMessageHistory = false;
 let defaultServer = 'General'; // Server to use when current server is not set yet
@@ -249,6 +295,11 @@ let supportsWebM = document.createElement('audio').canPlayType('audio/webm') != 
 let badger = new Badger();
 let whiteboardList = [];
 const highlightWorker = new Worker('/resources/workers/Highlighter.js'); // Web worker for highlighting code blocks in messages
+
+// Dynamically loaded with emoji picker, initially null
+let createPopup;
+let TwemojiRenderer;
+let emojiPicker;
 
 // Initialize sounds for the chat app.
 let audioExtension = supportsWebM ? ".webm" : ".mp3";
@@ -330,6 +381,8 @@ const changeTheme = (theme) => {
   grab('#userListContents').classList.add(`${theme}ThemeScrollbar`);
   grab('#Server-List').classList.remove(`${previousTheme}ThemeScrollbar`);
   grab('#Server-List').classList.add(`${theme}ThemeScrollbar`);
+  // Note: Can break if the underlying class name change
+  if (emojiPicker != null) emojiPicker.picker.updateOptions({theme: theme});
   store('theme', theme);
 }
 
@@ -480,7 +533,10 @@ function onVisibilityChange(callback) {
 onVisibilityChange(function(visible) {
   pageVisible = visible;
   // Reset notification counter in tab icon
-  if (visible) badger.value = 0;
+  if (visible){
+    badger.value = 0;
+    socket.emit('log', `${username} acknowledged`);
+  }
 });
 
 function showSettingsScreen() {
@@ -591,72 +647,92 @@ function decodeHtml(html) {
   return txt.value;
 }
 
-// Lazy load the emoji picker when the button is clicked
-grab('#emoji-button').addEventListener('click', () => {
-  // Import the emoji button asyncronously with a dynamic import
-  import('/resources/node_modules/@joeattardi/emoji-button/dist/index.js').then(({EmojiButton}) => {
-    // Setup the emoji button
+async function loadEmojiPicker() {
+  ({ createPopup } = await import('/resources/node_modules/@picmo/popup-picker/dist/index.js'));
+  ({ TwemojiRenderer } = await import('/resources/node_modules/@picmo/renderer-twemoji/dist/index.js'));
 
-    // Set textPosition as a placeholder variable for the user's cursor position in the
-    // message box before they click the emoji button
-    let messageBoxTextPosition = false;
-
-    // Define button as the emoji button on the page
-    const button = document.querySelector('#emoji-button');
-
-    // Set the emoji button options
-    const options = {
-      style: 'twemoji',
-      position: 'left-start'
-    }
-
-    // Define picker as emoji picker button with options
-    const picker = new EmojiButton(options);
-
-    // When the emoji button is clicked, toggle the emoji picker
-    function toggleEmojiPicker() {
-      if (getSelection().rangeCount > 0 && getSelection().containsNode(document.querySelector('#Message-Box'))) {
-        messageBoxTextPosition = getSelection().getRangeAt(0);
-      }
-
-      picker.togglePicker(button);
-      grab('.emoji-picker').classList.remove('light', 'dark', 'custom');
-      grab('.emoji-picker').classList.add(store('theme'));
-      if (picker.isPickerVisible()) {
-        currentInput = grab('.emoji-picker');
-      }
-    }
-
-    button.addEventListener('click', toggleEmojiPicker);
-
-    // Add the emoji to the user's cursor position in the message box when an emoji
-    // in the emoji picker is clicked
-    picker.on('emoji', selection => {
-      const emoji = document.createElement('img');
-      emoji.src = selection.url;
-      emoji.alt = selection.emoji;
-      emoji.className = 'emoji';
-      emoji.crossOrigin = 'anonymous';
-      if (messageBoxTextPosition) {
-        messageBoxTextPosition.insertNode(emoji);
-      } else {
-        grab('#Message-Box').insertAdjacentElement('beforeend', emoji);
-      }
-    });
-
-    // When the picker is hidden, focus the message box and change the currentInput
-    picker.on('hidden', () => {
-      grab('#Message-Box').focus();
-      currentInput = grab('#Message-Box');
-    });
-
-    // If this is the first time the emoji picker has been loaded (by user clicking), open the emoji picker
-    if (!emojiPickerLoaded) {
-      toggleEmojiPicker();
-      emojiPickerLoaded = true;
-    }
+  const emojiButton = document.querySelector('#emoji-button');
+  emojiPicker = createPopup({
+    rootElement: document.querySelector('#emoji-picker-container'),
+    renderer: new TwemojiRenderer(),
+    position: 'left-start',
+    theme: store('theme')
+  }, {
+    triggerElement: emojiButton,
+    referenceElement: emojiButton
   });
-}, { once: true });
+}
+
+function updatePickerElement(element) {
+  emojiPicker.triggerElement = element;
+  emojiPicker.referenceElement = element;
+}
+
+let messageBoxTextPosition = false;
+
+// TODO: Replace any text or emojis in selections that include them
+function addEmojiToMessageBox(selection) {
+  const emoji = document.createElement('img');
+  emoji.src = selection.url;
+  emoji.alt = selection.emoji;
+  emoji.className = 'emoji';
+  emoji.crossOrigin = 'anonymous';
+  if (messageBoxTextPosition) {
+    messageBoxTextPosition.insertNode(emoji);
+    getSelection().removeAllRanges();
+
+    const emojiNode = messageBoxTextPosition.startContainer.nextSibling;
+    if (messageBoxTextPosition.startContainer != document.querySelector('#Message-Box')) {
+      messageBoxTextPosition.setStart(emojiNode.nextSibling, 0);
+      messageBoxTextPosition.setEnd(emojiNode.nextSibling, 0);
+    } else {
+      messageBoxTextPosition.setStart(messageBoxTextPosition.startContainer, messageBoxTextPosition.startOffset + 1);
+      messageBoxTextPosition.setEnd(messageBoxTextPosition.startContainer, messageBoxTextPosition.endOffset);
+    }
+
+    getSelection().addRange(messageBoxTextPosition);
+  } else {
+    grab('#Message-Box').insertAdjacentElement('beforeend', emoji);
+  }
+
+  emojiPicker.removeEventListener('emoji:select', addEmojiToMessageBox);
+}
+
+function focusMessageBox() {
+  grab('#Message-Box').focus();
+  currentInput = grab('#Message-Box');
+}
+
+// Lazy load the emoji picker when the button is clicked
+grab('#emoji-button').addEventListener('click', async () => {
+  // Load the emoji picker asynchronously with a dynamic import if it is not loaded
+  if (emojiPicker == null) await loadEmojiPicker();
+
+  // Gets the user's cursor position in the message box before they opened the emoji picker
+  if (getSelection().rangeCount > 0 && getSelection().containsNode(document.querySelector('#Message-Box'), true)) {
+    messageBoxTextPosition = getSelection().getRangeAt(0);
+  }
+
+  // Define button as the emoji button on the page
+  const button = document.querySelector('#emoji-button');
+  
+  updatePickerElement(button);
+  // setTimeout needed to prevent picker from not becoming visible properly for some reason
+  setTimeout(() => emojiPicker.toggle(), 0);
+
+  waitForElement('.picmo-picker .searchField', (searchField) => {
+    currentInput = searchField;
+  });
+
+  // Add the emoji to the user's cursor position in the message box when an emoji
+  // in the emoji picker is clicked
+  emojiPicker.removeEventListener('emoji:select', addEmojiToMessageBox);
+  emojiPicker.addEventListener('emoji:select', addEmojiToMessageBox, { once: true });
+
+  // When the picker is hidden, focus the message box and change the currentInput
+  emojiPicker.removeEventListener('picker:close', focusMessageBox);
+  emojiPicker.addEventListener('picker:close', focusMessageBox, { once: true });
+});
 
 // Submits the credentials to the server
 const submitLoginInfo = () => {
@@ -738,7 +814,9 @@ const log = (message, options) => {
   messageElement.classList.add('log')
   messageElement.textContent = message;
   addMessageElement(messageElement, options);
-  grab('#messages').scrollTop = grab('#messages').scrollHeight;
+  if (grab('#messages').isUserNearBottom(500)) {
+    grab('#messages').scrollToBottom();
+  }
 }
 
 // Add a user to the user list.
@@ -841,7 +919,10 @@ const syncUserList = (userListContents) => {
 function updateMessageCodeBlock(messageId, code) {
   for (let message of document.querySelectorAll('#messages .message')) {
     if (message.dataset['messageid'] === messageId) {
-      message.querySelector('.messageBody code').innerHTML = code;
+      // TODO: Make it work for every code block in message
+      if (message.querySelector('.messageBody pre code') != null) {
+        message.querySelector('.messageBody pre code').innerHTML = code;
+      }
       break;
     }
   }
@@ -850,6 +931,59 @@ function updateMessageCodeBlock(messageId, code) {
 // Highlights code in code blocks in a message
 function highlightMessage(messageId, code) {
   highlightWorker.postMessage({messageId, code});
+}
+
+function addReaction(message, messageId, reaction) {
+  // Can't use :has selector because the school chromebooks have outdated chrome versions and don't support it
+  // See https://caniuse.com/css-has
+  // const existingReaction = message.querySelector(`.messageReactionsGroup .messageReaction:has(.emoji[src="${reaction.emojiURL}"])`);
+  const existingReaction = message.querySelector(`.messageReactionsGroup .messageReaction .emoji[src="${reaction.emojiURL}"]`)?.parentElement;
+  if (existingReaction != null) {
+    let usersReacted = existingReaction.getAttribute('data-users-reacted') != null ? JSON.parse(existingReaction.getAttribute('data-users-reacted')) : [];
+    usersReacted.push(reaction.username);
+    existingReaction.setAttribute('data-users-reacted', JSON.stringify(usersReacted));
+    existingReaction.onclick = () => {
+      if (usersReacted.includes(username)) {
+        socket.emit('remove reaction', { messageId: messageId, emojiURL: reaction.emojiURL, unicodeFallback: reaction.unicodeFallback });
+      } else {
+        socket.emit('add reaction', { messageId: messageId, emojiURL: reaction.emojiURL, unicodeFallback: reaction.unicodeFallback })
+      }
+    }
+
+    const reactionCount = existingReaction.querySelector('.messageReactionCount');
+    reactionCount.textContent = reactionCount.textContent == "" ? "1" : parseInt(reactionCount.textContent) + 1;
+
+    if (reaction.username == username) existingReaction.classList.add('reactionMadeByOwnUser');
+  } else {
+    const reactionWrapper = document.createElement('span');
+    reactionWrapper.classList.add('messageReaction');
+    if (reaction.username == username) reactionWrapper.classList.add('reactionMadeByOwnUser');
+    let usersReacted = reactionWrapper.getAttribute('data-users-reacted') != null ? JSON.parse(reactionWrapper.getAttribute('data-users-reacted')) : [];
+    usersReacted.push(reaction.username);
+    reactionWrapper.setAttribute('data-users-reacted', JSON.stringify(usersReacted));
+    reactionWrapper.onclick = () => {
+      if (usersReacted.includes(username)) {
+        socket.emit('remove reaction', { messageId: messageId, emojiURL: reaction.emojiURL, unicodeFallback: reaction.unicodeFallback });
+      } else {
+        socket.emit('add reaction', { messageId: messageId, emojiURL: reaction.emojiURL, unicodeFallback: reaction.unicodeFallback })
+      }
+    }
+  
+    const emoji = document.createElement('img');
+    emoji.src = reaction.emojiURL;
+    emoji.alt = reaction.unicodeFallback;
+    emoji.className = 'emoji';
+    emoji.crossOrigin = 'anonymous';
+  
+    const reactionCount = document.createElement('span');
+    reactionCount.classList.add('messageReactionCount');
+    reactionCount.textContent = reactionCount.textContent == "" ? "1" : parseInt(reactionCount.textContent) + 1;
+  
+    reactionWrapper.append(emoji, reactionCount);
+  
+    const reactionsGroup = message.querySelector('.messageReactionsGroup');
+    reactionsGroup.append(reactionWrapper);
+  }
 }
 
 // Adds the visual chat message to the message list
@@ -979,17 +1113,22 @@ const addChatMessage = (data, options) => {
   messageItem.data('username', data.username);
   messageItem.data('messageid', data.messageId);
 
+  // Make a new span for the message action buttons
+  let messageActionsGroup = newElement('span');
+  messageActionsGroup.classList.add('messageActionsGroup');
+
   // Make a new span for the delete message button
   let deleteButton = newElement('span');
-  deleteButton.classList.add('deleteMessageButton');
+  deleteButton.classList.add('deleteMessageButton', 'messageAction');
   deleteButton.onclick = (event) => {
-    socket.emit('delete message', deleteButton.getParent().data('messageid'));
+    socket.emit('delete message', deleteButton.getParent().getParent().data('messageid'));
   }
 
   // Make a new img for the delete message icon
   let deleteIcon = newElement('img');
-  deleteIcon.classList.add('deleteMessageIcon');
+  deleteIcon.classList.add('deleteMessageIcon', 'messageActionIcon');
   deleteIcon.src = '/resources/assets/DeleteMessageIcon.svg';
+  deleteIcon.title = 'Delete message';
   deleteIcon.draggable = false;
   deleteIcon.onload = () => SVGInject(deleteIcon.getElement());
 
@@ -998,64 +1137,38 @@ const addChatMessage = (data, options) => {
 
   // Reactions n' stuff
 
-  // Define picker as reaction picker button with options
-  let picker;
+  function addReactionToMessage(selection) {
+    socket.emit('add reaction', { emojiURL: selection.url, unicodeFallback: selection.emoji, messageId: data.messageId });
+    emojiPicker.removeEventListener('emoji:select', addReactionToMessage);
+  }  
 
   // Make a new span for the reaction message button
   let reactionButton = newElement('span');
-  reactionButton.classList.add('reactToMessageButton');
-  reactionButton.onclick = (event) => {
-    import('/resources/node_modules/@joeattardi/emoji-button/dist/index.js').then(({EmojiButton}) => {
-      // Setup the reaction button
-  
-      // Set textPosition as a placeholder variable for the user's cursor position in the
-      // message box before they click the reaction button
-      // Define button as the reaction button on the page
-      const button = event.target;
-  
-      // Set the reaction button options
-      const options = {
-        style: 'twemoji',
-        position: 'left-start'
-      }
+  reactionButton.classList.add('reactToMessageButton', 'messageAction');
+  reactionButton.addEventListener('click', async (event) => {
+    if (emojiPicker == null) await loadEmojiPicker();
 
-      if (picker == null) picker = new EmojiButton(options);
-  
-      // When the reaction button is clicked, toggle the reaction picker
-      function toggleEmojiPicker() {
-        picker.togglePicker(button);
-        grab('.emoji-picker').classList.remove('light', 'dark', 'custom');
-        grab('.emoji-picker').classList.add(store('theme'));
-        if (picker.isPickerVisible()) {
-          currentInput = grab('.emoji-picker');
-        }
-      }
+    updatePickerElement(event.target);
+    // setTimeout needed to prevent picker from not becoming visible properly for some reason
+    setTimeout(() => emojiPicker.toggle(), 0);
 
-      toggleEmojiPicker();
-  
-      // Add the reaction to the user's cursor position in the message box when an emoji
-      // in the reaction picker is clicked
-      picker.on('emoji', selection => {
-        // const emoji = document.createElement('img');
-        // emoji.src = selection.url;
-        // emoji.alt = selection.emoji;
-        // emoji.className = 'emoji';
-        // emoji.crossOrigin = 'anonymous';
-        socket.emit('add reaction', { url: selection.url, name: selection.emoji, messageId: data.messageId });
-      });
-  
-      // When the picker is hidden, focus the message box and change the currentInput
-      picker.on('hidden', () => {
-        // const pickerElement = document.querySelector('.emoji-picker__wrapper');
-        // pickerElement.remove();
-      });
+    waitForElement('.picmo-picker .searchField', (searchField) => {
+      currentInput = searchField;
     });
-  }
+
+    emojiPicker.removeEventListener('emoji:select', addReactionToMessage);
+    emojiPicker.addEventListener('emoji:select', addReactionToMessage, { once: true });
+
+    emojiPicker.removeEventListener('picker:close', focusMessageBox);
+    emojiPicker.addEventListener('picker:close', focusMessageBox, { once: true });
+  });
 
   // Make a new img for the reaction message icon
   let reactionIcon = newElement('img');
-  reactionIcon.classList.add('reactToMessageIcon');
-  reactionIcon.src = 'https://twemoji.maxcdn.com/v/13.0.0/svg/1f60e.svg';
+  reactionIcon.classList.add('reactToMessageIcon', 'messageActionIcon');
+  reactionIcon.src = 'https://cdn.jsdelivr.net/npm/twemoji@11.3.0/2/svg/1f60e.svg';
+  reactionIcon.alt = '😎';
+  reactionIcon.title = 'Add reaction';
   reactionIcon.draggable = false;
   reactionIcon.crossOrigin = 'anonymous';
   reactionIcon.onload = () => SVGInject(reactionIcon.getElement());
@@ -1063,8 +1176,15 @@ const addChatMessage = (data, options) => {
   // Add the reaction icon to the reaction button
   reactionButton.append(reactionIcon);
 
-  // If the message mentions the user, add the mention class
-  if (data.message.includes(`@${username}`)) {
+  // Add the delete button and reaction button to the message actions group
+  messageActionsGroup.append(reactionButton, deleteButton);
+
+  // Add reactions group
+  let reactionsGroup = newElement('div');
+  reactionsGroup.classList.add('messageReactionsGroup');
+
+  // If the message mentions the user or is an @everyone, add the mention class
+  if (data.message.includes(`@${username}`) || data.message.includes('@everyone')) {
     messageItem.classList.add('mention');
   }
 
@@ -1076,22 +1196,32 @@ const addChatMessage = (data, options) => {
   // If the message is special, add the special class and append the badge
   if (data.special) {
     messageItem.classList.add('special');
-    messageItem.append(profilePicture, userPopout, usernameSpan, userBadge, timestamp, reactionButton, deleteButton, messageBodyDiv);
+    messageItem.append(profilePicture, userPopout, usernameSpan, userBadge, timestamp, messageActionsGroup, messageBodyDiv, reactionsGroup);
   }
   // Otherwise, just continue like normal
   else {
-    messageItem.append(profilePicture, userPopout, usernameSpan, reactionButton, deleteButton, timestamp, messageBodyDiv);
+    messageItem.append(profilePicture, userPopout, usernameSpan, messageActionsGroup, timestamp, messageBodyDiv, reactionsGroup);
+  }
+
+  // Add all reactions from the server
+  if (data.reactions != null) {
+    for (const reaction of data.reactions) {
+      addReaction(messageItem, data.messageId, reaction);
+    }
   }
 
   // Asynchronously highlight code in a code block in the message if there is one - TODO: Highlight ALL code blocks in the message
-  if (messageBodyDiv.querySelector('code') != null) {
-    highlightMessage(data.messageId, messageBodyDiv.textContent);
+  // TODO: This is so broken, fix later
+  if (messageBodyDiv.querySelector('pre code') != null) {
+    highlightMessage(data.messageId, messageBodyDiv.querySelector('pre code').textContent);
   }
 
   addMessageElement(messageItem, { prepend: options.prepend });
   if (whiteboard) {
     fitCanvasToParent(whiteboard.canvas);
   }
+
+  return messageItem;
 }
 
 // Sync the user typing message
@@ -1170,6 +1300,7 @@ function clearMessages() {
 
 // Function to remove all typing messages
 function clearTypingMessages() {
+  usersTypingArray = [];
   syncUsersTyping([]);
 }
 
@@ -1340,11 +1471,16 @@ grab('#profilePictureUpload').addEventListener('change', function() {
 
 grab('#messages').addEventListener('scroll', function() {
   if (this.scrollHeight > this.clientHeight && this.scrollTop == 0 && !hasAllMessageHistory) {
-    socket.emit('request more messages', this.querySelectorAll(':scope>.message').length);
+    // socket.emit('request more messages', this.querySelectorAll(':scope>.message').length);
+    socket.emit('request more messages', this.querySelectorAll('#messages > .message').length);
   }
 });
 
 // Socket events
+
+socket.on('log', (message) => {
+  log(message);
+});
 
 socket.on('login authorized', () => {
   if (initialLogin) {
@@ -1404,6 +1540,19 @@ socket.on('delete message', (messageId) => {
   });
 });
 
+socket.on('edit message', (messageId, newMessageContent) => {
+  // For all of the messages, iterate over and delete the one that matches the messageId to delete
+  grabAll('.message').forEach(function(message) {
+    if (message.dataset['messageid'] == messageId) {
+      message.querySelector('.messageBody').innerHTML = newMessageContent;
+    }
+  });
+  
+  if (grab('#messages').isUserNearBottom(50)) {
+    grab('#messages').scrollToBottom();
+  }
+});
+
 socket.on('link preview', ({messageId, link, linkPreview}) => {
   grabAll('.message').forEach(function(message) {
     if (message.dataset['messageid'] == messageId) {
@@ -1455,14 +1604,16 @@ socket.on('link preview', ({messageId, link, linkPreview}) => {
   });
 });
 
-socket.on('mute', () => {
+socket.on('mute', (message) => {
   grab('#Message-Box').contentEditable = false;
-  alert('You are now muted!');
+  if (!message) alert('You are now muted!');
+  else alert(message);
 });
 
-socket.on('unmute', () => {
+socket.on('unmute', (message) => {
   grab('#Message-Box').contentEditable = true;
-  alert('You are now unmuted!');
+  if (!message) alert('You are now unmuted!');
+  else alert(message);
 });
 
 socket.on('flip', () => {
@@ -1508,10 +1659,12 @@ socket.on('ban', (reason) => {
 socket.on('stun', () => {
   stunSound.play();
 });
-
-socket.on('open', () => {
-  window.open('https://www.google.com', '_blank');
-});
+socket.on('pm', (userWhoMessaged, message) => {
+    // const msgArray = commandArgument.prototype.split('\'');
+    // let userToMessage = msgArray[0];
+    // let messageToUser = msgArray[1];
+  log(`User ${userWhoMessaged} sent you a private message: ${message}`);
+})
 
 // Whenever the server emits 'new message', update the chat body
 socket.on('new message', (data) => {
@@ -1524,23 +1677,26 @@ socket.on('new message', (data) => {
     }
   }
   // Add the chat message
-  addChatMessage(data, { previousSameAuthor: previousSameAuthor });
-  if (data.username !== username && data.message.includes(`@${username}`) && !pageVisible) { // Make sure that the user was mentioned, the message author wasn't the user themself, and the page isn't visible
+  const messageElement = addChatMessage(data, { previousSameAuthor: previousSameAuthor });
+  if (data.username !== username && (data.message.includes(`@${username}`) || data.message.includes('@everyone')) && !pageVisible) { // Make sure that the user was mentioned, the message author wasn't the user themself, and the page isn't visible
     // Play chat message sound
     chatMessageSound.play();
     // Set notification count in tab icon
     badger.value++;
-    // No html to markdown converter yet because of issues
+    // No html to markdown converter yet because of issues - for now we just get the human-readable contents of html
     // Send notification if we have notification permission
-    if (navigator.serviceWorker.controlled && notificationPermission === 'granted') {
-      const notificationMessage = data.message;
+    if (navigator.serviceWorker.controller.state == 'activated' && notificationPermission === 'granted') {
+      const notificationMessage = messageElement.querySelector('.messageBody').innerText;
       navigator.serviceWorker.ready.then((registration) => {
         registration.showNotification(data.username, {
           body: notificationMessage,
-          icon: '/resources/assets/favicon.ico',
+          icon: `/cdn/UserProfilePictures/${data.username.toLowerCase()}.webp`,
           vibrate: [200, 100, 200, 100, 200, 100, 200],
           tag: 'pingNotification',
           actions: [
+            // Inline replies are chrome only on Android, Windows, and Chrome OS as of the time of writing
+            // Feature status: https://chromestatus.com/feature/5743740178137088
+            // Demo code: https://github.com/anitawoodruff/inline-notification-replies#example-code
             {action: 'reply', title: 'Reply', type: 'text', placeholder: 'Type your reply...'},
             {action: 'close', title: 'Close notification'}
           ]
@@ -1650,14 +1806,43 @@ socket.on('new server', () => {
   log('Send the first message!');
 });
 
-socket.on('add reaction', ({name, url, messageId}) => {
+socket.on('add reaction', ({messageId, username, emojiURL, unicodeFallback}) => {
   grabAll('.message').forEach(function(message) {
     if (message.dataset['messageid'] == messageId) {
-      // const emoji = document.createElement('img');
-      // emoji.src = selection.url;
-      // emoji.alt = selection.emoji;
-      // emoji.className = 'emoji';
-      // emoji.crossOrigin = 'anonymous';
+      addReaction(message, messageId, {username, emojiURL, unicodeFallback});
+    }
+  });
+});
+
+socket.on('remove reaction', ({messageId, username: userWhoReacted, emojiURL, unicodeFallback}) => {
+  grabAll('.message').forEach(function(message) {
+    if (message.dataset['messageid'] == messageId) {
+      // const existingReaction = message.querySelector(`.messageReactionsGroup .messageReaction:has(.emoji[src="${emojiURL}"])`);
+      const existingReaction = message.querySelector(`.messageReactionsGroup .messageReaction .emoji[src="${emojiURL}"]`)?.parentElement;
+      if (existingReaction != null) {
+        let usersReacted = existingReaction.getAttribute('data-users-reacted') != null ? JSON.parse(existingReaction.getAttribute('data-users-reacted')) : [];
+        usersReacted = usersReacted.filter(userReacted => userReacted != userWhoReacted);
+        if (usersReacted.length == 0) {
+          existingReaction.remove();
+          return;
+        }
+
+        existingReaction.setAttribute('data-users-reacted', JSON.stringify(usersReacted));
+        existingReaction.onclick = () => {
+          if (usersReacted.includes(username)) {
+            socket.emit('remove reaction', { messageId: messageId, emojiURL: emojiURL, unicodeFallback: unicodeFallback });
+          } else {
+            socket.emit('add reaction', { messageId: messageId, emojiURL: emojiURL, unicodeFallback: unicodeFallback })
+          }
+        }
+
+        const reactionCount = existingReaction.querySelector('.messageReactionCount');
+        reactionCount.textContent = reactionCount.textContent == "" ? "Error" : parseInt(reactionCount.textContent) - 1;
+
+        if (userWhoReacted == username) existingReaction.classList.remove('reactionMadeByOwnUser');
+      } else {
+        console.error(`Could not find reaction ${unicodeFallback} to remove by username ${userWhoReacted} on messageId ${messageId}`);
+      }
     }
   });
 });

@@ -12,6 +12,20 @@ function handleRequestMoreMessages({io, socket, skipMessages}) {
     if (count > (skipMessages + 50)) {
       global.messageModel.find({server: socket.server}).skip(count - (skipMessages + 50)).limit(50).then((messages) => {
         // Send the requested messages back to the client (array of messages)
+        for (const message of messages) {
+          if (message.message == null) {
+            console.log(`Deleting null message with id ${message.messageId} sent by ${message.username}`);
+            message.deleteOne();
+            messages.splice(messages.indexOf(message), 1);
+            continue;
+          }
+          // TODO: remove, temp fix for problem
+          if (message.message.includes("<script>")) {
+            console.log("found script: " + message);
+            message.deleteOne();
+            messages.splice(messages.indexOf(message));
+          }
+        }
         socket.emit('more messages', messages, false);
       }).catch((error) => {
         // Catch and show an error in console if there is one

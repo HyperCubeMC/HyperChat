@@ -20,25 +20,29 @@
   "author": "Justsnoopy30",
   "license": "AGPL-3.0",
   "dependencies": {
-    "@highlightjs/cdn-assets": "^11.6.0",
+    "@highlightjs/cdn-assets": "^11.7.0",
     "@iconfu/svg-inject": "^1.2.3",
-    "@joeattardi/emoji-button": "^4.6.4",
+    "@picmo/popup-picker": "^5.8.1",
+    "@picmo/renderer-twemoji": "^5.8.1",
     "@popperjs/core": "^2.11.6",
-    "argon2": "^0.28.7",
-    "bootstrap": "^5.2.0",
-    "dotenv": "^16.0.1",
+    "@waylaidwanderer/chatgpt-api": "github:waylaidwanderer/node-chatgpt-api",
+    "argon2": "^0.30.3",
+    "bootstrap": "^5.2.3",
+    "chatgpt": "^5.1.1",
+    "dotenv": "^16.0.3",
     "etag": "^1.8.1",
-    "marked": "^4.0.18",
-    "mongoose": "^6.5.2",
-    "open-graph-scraper": "^4.11.1",
-    "rate-limiter-flexible": "^2.3.8",
-    "sanitize-html": "^2.7.1",
-    "sharp": "^0.30.7",
-    "socket.io": "^4.5.1",
-    "string.prototype.replaceall": "^1.0.6",
+    "marked": "^4.2.12",
+    "mongoose": "^7.0.2",
+    "open-graph-scraper": "^5.2.1",
+    "picmo": "^5.8.1",
+    "rate-limiter-flexible": "^2.4.1",
+    "sanitize-html": "^2.10.0",
+    "sharp": "^0.31.3",
+    "socket.io": "^4.5.4",
+    "string.prototype.replaceall": "^1.0.7",
     "whoolso-word-filter": "^1.0.8"
   },
   "devDependencies": {
-    "eslint": "^8.22.0"
+    "eslint": "^8.36.0"
   }
 }

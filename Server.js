@@ -19,6 +19,7 @@ import handleAddServer from './server/socket/event_handlers/AddServer.js';
 import handleRemoveServer from './server/socket/event_handlers/RemoveServer.js';
 import handleRequestLinkPreview from './server/socket/event_handlers/RequestLinkPreview.js';
 import handleAddReaction from './server/socket/event_handlers/AddReaction.js';
+import handleRemoveReaction from './server/socket/event_handlers/RemoveReaction.js';
 import ArrayMap from './server/util/ArrayMap.js';
 
 // Finish importing rate-limiter flexible
@@ -68,6 +69,9 @@ global.userListContents = [];
 // Define the global user ArrayMap which is used to map usernames to an array of unique socket ids connected
 global.userConnectionsMap = new ArrayMap();
 
+//Setup the /lock command variable
+global.isLoginLocked = false;
+
 // Get the mongodb connection string from dotenv
 const mongodbConnectionUri = process.env.MONGODB_CONNECTION_URI;
 
@@ -102,7 +106,8 @@ const messageSchema = new Schema({
   special: {type: Boolean, required: false},
   usernameColor: {type: String, required: false},
   badgeColor: {type: String, required: false},
-  reactions: {type: Array, default: []}
+  reactions: {type: Array, default: []},
+  isWhisper: {type: Boolean, required: false}
 });
 
 // Create a new schema for servers
@@ -123,8 +128,8 @@ global.serverModel = mongoose.model('serverModel', serverSchema, 'servers');
 
 // Setup rate limiters
 const messageRateLimiter = new RateLimiterMemory({
-  points: 3, // 2 points
-  duration: 5 // per 3 seconds
+    points: 3, // for standard users 3 points
+    duration: 5 // per 5 seconds
 });
 
 const loginRateLimiter = new RateLimiterMemory({
@@ -138,7 +143,6 @@ export const admins = ["justsnoopy30", "nolski", "pixxi"];
 // And everything starts here where a user makes a connection to the socket.io server...
 io.on('connection', (socket) => {
   socket.authenticated = false;
-
   // When the client emits 'login', this listens and executes
   socket.on('login', ({ username, password, server }) => {
     // loginRateLimiter.consume(socket.handshake.headers['cf-connecting-ip'] || socket.handshake.address)
@@ -223,9 +227,15 @@ io.on('connection', (socket) => {
   });
 
   // When the client emits 'add reaction', add a reaction to the message denoted by the messageId provided
-  socket.on('add reaction', ({ url, name, messageId }) => {
+  socket.on('add reaction', ({ messageId, emojiURL, unicodeFallback }) => {
     if (!socket.authenticated) return;
-    handleAddReaction({io, socket, url, name, messageId});
+    handleAddReaction({io, socket, messageId, emojiURL, unicodeFallback});
+  });
+
+  // When the client emits 'remove reaction', remove a reaction from the message denoted by the messageId provided
+  socket.on('remove reaction', ({ messageId, emojiURL, unicodeFallback }) => {
+    if (!socket.authenticated) return;
+    handleRemoveReaction({io, socket, messageId, emojiURL, unicodeFallback});
   });
 
   socket.on('drawing', (data) => {

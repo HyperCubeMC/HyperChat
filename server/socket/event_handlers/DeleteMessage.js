@@ -13,18 +13,17 @@ function handleDeleteMessage({io, socket, messageId}) {
   if (messageId == null || messageId === '' || typeof messageId !== 'string') {
     return;
   }
-  global.messageModel.findOne({server: socket.server, messageId: messageId}, function (error, message) {
+  global.messageModel.findOne({server: socket.server, messageId: messageId}).then(message => {
     if (message == null) {
       return console.warn(`Requested message to delete by ${socket.username} does not exist in database! ID: ${messageId}`)
-    }
-    if (error) {
-      return console.error(`An error occured while trying to delete the message with messageId: ${messageId} in server: ${socket.server}: ${error}`);
     }
     if (socket.username != message.username && !admins.includes(socket.username.toLowerCase())) {
       return;
     }
     io.in(socket.server).emit('delete message', messageId);
-    message.remove();
+    message.deleteOne();
+  }).catch(error => {
+    console.error(`An error occured while trying to delete the message with messageId: ${messageId} in server: ${socket.server}: ${error}`);
   });
 }
 

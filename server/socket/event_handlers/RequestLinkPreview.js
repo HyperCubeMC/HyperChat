@@ -10,6 +10,7 @@ import ogs from 'open-graph-scraper';
 
 const cache = new Map();
 
+// TODO: Store in cache about pages that error
 function handleRequestLinkPreview({io, socket, messageId, link}) {
   if (!messageId || !link) return;
 
@@ -17,15 +18,16 @@ function handleRequestLinkPreview({io, socket, messageId, link}) {
     const linkPreview = cache.get(link);
     socket.emit('link preview', { messageId, link, linkPreview });
   } else {
-    ogs({ url: link }, (error, linkPreview, response) => {
-      if (!error && linkPreview.success) {
-        cache.set(link, linkPreview);
-        socket.emit('link preview', { messageId, link, linkPreview });
+    ogs({ url: link }).then((data) => {
+      const { error, result, response } = data;
+      if (!error && result.success) {
+        cache.set(link, result);
+        socket.emit('link preview', { messageId, link, linkPreview: result });
         setTimeout(function() {
           cache.delete(link);
         }, 60000);
       }
-    });
+    }).catch((error) => {});
   }
 }
 

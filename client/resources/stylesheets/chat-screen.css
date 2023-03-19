@@ -385,15 +385,103 @@
   background-color: #faa61a;
 }
 
-/* Show the delete button when a message is hovered */
-.message:hover .deleteMessageButton {
+.message:hover .messageActionsGroup {
+  visibility: visible;
+}
+
+.message .messageActionsGroup {
+  display: grid;
+  grid-auto-flow: column;
+  height: 32px;
+  border-radius: 4px;
+  align-items: center;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  visibility: hidden;
+}
+
+.message .messageActionsGroup .messageAction {
+  display: flex;
+  height: 30px;
+  width: 30px;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.message .messageActionsGroup .messageAction .messageActionIcon {
+  height: 30px;
+  width: 30px;
+}
+
+/* Show the message action buttons when a message is hovered  */
+.message:hover .messageActionsGroup {
+  visibility: visible;
+}
+
+.message .messageReactionsGroup:empty {
+  display: none;
+}
+
+/* TODO: Rework grid */
+.message .messageReactionsGroup {
+  display: grid;
+  grid-auto-flow: column;
+  height: 32px;
+  border-radius: 4px;
+  align-items: center;
+  width: min-content;
+}
+
+.message .messageReactionsGroup .messageReaction {
+  display: flex;
+  height: 30px;
+  margin-right: 5px;
+  cursor: pointer;
+
+  align-items: center;
+  border-radius: 7px;
+  padding: 5px 5px 5px 5px;
+  background-color: var(--background-tertiary);
+}
+
+.message .messageReactionsGroup .messageReaction.reactionMadeByOwnUser {
+  /* TODO: Move to variables */
+  background-color: hsla(235,85.6%,64.7%,0.15);
+  border-color: hsl(235,85.6%,64.7%);
+}
+
+.message .messageReactionsGroup .messageReaction .messageReactionCount {
+  margin-left: 3px;
+}
+
+.message .messageReactionsGroup .messageReaction:after {
+  content: attr(data-users-reacted);
+  position: absolute;
+  vertical-align: middle;
+  left: 100px;
+  width: fit-content;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  display: none;
+}
+
+.message .messageReactionsGroup .messageReaction:hover:after {
   display: inline-block;
 }
 
-/* Show the reaction button when a message is hovered */
-.message:hover .reactToMessageButton {
+/* Show the delete button when a message is hovered */
+/* .message:hover .deleteMessageButton {
   display: inline-block;
-}
+} */
+
+/* Show the reaction button when a message is hovered */
+/* .message:hover .reactToMessageButton {
+  display: inline-block;
+} */
 
 /* Change message background color on hover */
 .message:hover {
@@ -583,38 +671,6 @@
   width: 1em;
 }
 
-/* Button that deletes a message */
-.deleteMessageButton {
-  display: none;
-  height: 30px;
-  width: 30px;
-  position: absolute;
-  right: 5px;
-  cursor: pointer;
-}
-
-/* The icon for the delete message button */
-.deleteMessageIcon {
-  height: 30px;
-  width: 30px;
-}
-
-/* Button that reacts to a message */
-.reactToMessageButton {
-  display: none;
-  height: 30px;
-  width: 30px;
-  position: absolute;
-  right: 40px;
-  cursor: pointer;
-}
-
-/* The icon for the react to message button */
-.reactToMessageIcon {
-  height: 30px;
-  width: 30px;
-}
-
 /* Timestamp that shows when a message was sent */
 .timestamp {
   color: gray;
@@ -654,6 +710,9 @@
 
 .embed-description {
   margin-bottom: 0;
+  overflow: auto;
+  word-break: break-word;
+  white-space: pre-line;
 }
 
 .embed-image {

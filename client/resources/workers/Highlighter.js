@@ -1,6 +1,12 @@
+importScripts('/resources/node_modules/@highlightjs/cdn-assets/highlight.min.js');
+
 onmessage = (event) => {
   const { messageId, code } = event.data;
-  importScripts('/resources/node_modules/@highlightjs/cdn-assets/highlight.min.js');
   const highlightedCode = self.hljs.highlightAuto(code).value;
-  postMessage({messageId: messageId, code: highlightedCode});
+  console.log(highlightedCode);
+  if (highlightedCode != null) {
+    postMessage({messageId: messageId, code: highlightedCode});
+  } else {
+    console.log(`Unable to highlight the following code for message with id ${messageId}:`)
+  }
 }

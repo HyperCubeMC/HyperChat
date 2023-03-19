@@ -35,16 +35,14 @@ async function handleSwitchServer({io, socket, server}) {
   });
   // Get user status message
   let statusMessage = '';
-  global.userModel.findOne({username: socket.username.toLowerCase()}, function (error, user) {
+  global.userModel.findOne({username: socket.username.toLowerCase()}).then(user => {
     if (user == null) {
       return console.warn(`User ${socket.username} was not in the database when attempting to fetch their status message!`);
     }
 
-    if (error) {
-      return console.error(`An error occurred while attempting to fetch the status message of user ${socket.username} from the database during the socket switch server event: ${error}`);
-    }
-
     statusMessage = user.statusMessage;
+  }).catch(error => {
+    console.error(`An error occurred while attempting to fetch the status message of user ${socket.username} from the database during the socket switch server event: ${error}`);
   });
 
   // Make user object
@@ -66,7 +64,7 @@ async function handleSwitchServer({io, socket, server}) {
   socket.emit('user list', global.userListContents[socket.server]);
 
   // Count amount of servers in the database with the server name the user is in
-  global.serverModel.countDocuments({serverName: socket.server}, function(error, count) {
+  global.serverModel.countDocuments({serverName: socket.server}).then(count => {
     // Server is already in the database, so send the client the initial message list and return
     if (count > 0) {
       global.messageModel.countDocuments({server: socket.server}).then((count) => {
@@ -102,13 +100,15 @@ async function handleSwitchServer({io, socket, server}) {
       });
 
       // Save the server in the database
-      serverDocument.save(function (error, server) {
-        if (error) console.error(`An error occurred while attempting to save the server ${socket.server} created by ${socket.username} to the database: ${error}`);
+      serverDocument.save().catch(error => {
+        console.error(`An error occurred while attempting to save the server ${socket.server} created by ${socket.username} to the database: ${error}`);
       });
 
       // Tell the user this is a new server
       socket.emit('new server');
     }
+  }).catch(error => {
+    console.error(`An error occurred while attempting to count documents for server ${socket.server}: ${error}`);
   });
 
   // Create timestamp for usage logging

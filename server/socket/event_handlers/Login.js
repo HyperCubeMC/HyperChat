@@ -7,11 +7,21 @@
  */
 
 // At the start, import the needed modules
+import specialUsers from './Message.js';
 import argon2 from 'argon2';
 import wordFilter from 'whoolso-word-filter';
 import { wordsToFilter, lengthThreshold, leetAlphabet1, leetAlphabet2, shortWordLength, shortWordExceptions } from '../../util/FilterConstants.js';
 
 const { filterWords } = wordFilter;
+
+// function getUsername(input, field){
+//   var output = [];
+//   for(var i=0; i<input.length;i++){
+//     output.push(input[i][field]);
+//   }
+// }
+
+// const specialUsernames = getUsername(specialUsers, 'Username');
 
 function handleLogin({io, socket, username, password, server}) {
   // Check the client sent variables to make sure they are defined and of type string,
@@ -19,6 +29,11 @@ function handleLogin({io, socket, username, password, server}) {
   if (typeof username !== 'string' || typeof password !== 'string' || typeof server !== 'string') {
     socket.emit('login denied', {
       loginDeniedReason: 'Invalid login request.'
+    });
+    return;
+  } else if (global.isLoginLocked) {
+    socket.emit('login denied', {
+      loginDeniedReason: 'Login is currently locked due to raiding, please try again later.'
     });
     return;
   }
@@ -48,9 +63,10 @@ function handleLogin({io, socket, username, password, server}) {
 
   let userHashedPassword;
   let statusMessage = '';
+  let isValidUsername = /^[A-Za-z0-9_.-]*$/.test(username);
 
   // Execute all this if the user has supplied credentials that could potentially be valid
-  if (username.length <= 16 && password.length <= 16 && server.length <= 16 && username.length > 0 && password.length > 0 && server.length > 0) {
+  if (username.length <= 16 && password.length <= 16 && server.length <= 16 && username.length > 0 && !(username.includes('@')) && !(username.includes(" ")) && isValidUsername == true && password.length > 0 && server.length > 0) {
     // Password-hashing helper function
     const hashPassword = async (password) => {
       try {
@@ -86,7 +102,7 @@ function handleLogin({io, socket, username, password, server}) {
     // Verify the user's login attempt
     // eslint-disable-next-line no-inner-declarations
     function verifyLogin() {
-      global.userModel.countDocuments({username: username.toLowerCase()}, function(err, count) {
+      global.userModel.countDocuments({username: username.toLowerCase()}).then(count => {
         // Create an object with the user credentials
         const credentials = {
           'username': username.toLowerCase(),
@@ -99,11 +115,9 @@ function handleLogin({io, socket, username, password, server}) {
           'hashedPassword': userHashedPassword
         });
 
-        // If there's an error, show an error in the console and return
-        if (err) return console.error(err);
         // If a match is found for the username, perform credential checking and either deny or allow login
         if (count > 0) {
-          global.userModel.findOne({username: username.toLowerCase()}, function(err, user) {
+          global.userModel.findOne({username: username.toLowerCase()}).then(user => {
             async function getUserVerification() {
               const userVerification = await verifyPassword(user.hashedPassword, password);
               return userVerification;
@@ -126,15 +140,21 @@ function handleLogin({io, socket, username, password, server}) {
                 });
               }
             });
+          }).catch(error => {
+            return console.error(`An error occurred while finding a user named ${username} in the database during login verification: ${error}`);
           });
         }
         // If no match is found for the username, register the user in the database, and then call allowLogin() to let them in
         else {
-          userDocument.save(function (error, user) {
-            if (error) return console.error(`An error occurred while attempting to register user ${socket.username} in the database: ${error}`);
+          userDocument.save().then(user => {
             allowLogin();
+          }).catch(error => {
+            return console.error(`An error occurred while attempting to save the registration for user ${username} to the database: ${error}`);
           });
         }
+      }).catch(error => {
+        // If there's an error, show an error in the console and return
+        return console.error(`An error occurred while attempting to search for a user named ${username} in the database during login verification: ${error}`);
       });
       // Function to allow a user in
       async function allowLogin() {
@@ -153,37 +173,47 @@ function handleLogin({io, socket, username, password, server}) {
           username: socket.username,
           statusMessage: statusMessage
         }
-        // Echo to the server that a person has connected
-        socket.to(socket.server).emit('user joined', user);
-        // Create the user list contents for the server if it doesn't exist
-        if (typeof global.userListContents[socket.server] == 'undefined') {
-          global.userListContents[socket.server] = [];
+        // Only add to user list and broadcast the join message if there are no other simultaneous connections from the user
+        if (global.userListContents[socket.server] == null || !global.userListContents[socket.server].some(user => user.username === socket.username)) {
+          // Echo to the server that a person has connected
+          socket.to(socket.server).emit('user joined', user);
+          // Create the user list contents for the server if it doesn't exist
+          if (typeof global.userListContents[socket.server] == 'undefined') {
+            global.userListContents[socket.server] = [];
+          }
+          // Add the user to the user list contents for their server
+          global.userListContents[socket.server].push(user);
         }
-        // Add the user to the user list contents for their server
-        global.userListContents[socket.server].push(user);
+
         // Send the user list contents to the user for their server
         socket.emit('user list', global.userListContents[socket.server]);
 
-        global.userModel.findOne({username: socket.username.toLowerCase()}, function (error, user) {
+        global.userModel.findOne({username: socket.username.toLowerCase()}).then(user => {
           if (user == null) {
-            return console.warn(`User ${socket.username} was not in the database when handling the socket Login event, fetching the server list for the user!`);
-          }
-          if (error) {
-            return console.error(`An error occured while trying to fetch user ${socket.username} from the database while handling the socket Login event, fetching the server list for the user`);
+            return console.warn(`User ${socket.username} was not in the database when fetching the server list for the user during the socket Login event!`);
           }
 
           // Send the server list contents for the user to the user
           socket.emit('server list', user.serverList);
+        }).catch(error => {
+          return console.error(`An error occured while trying to fetch user ${socket.username} from the database to send the server list during the socket Login event`);
         });
 
         // Count amount of servers in the database with the server name the user is in
-        global.serverModel.countDocuments({serverName: socket.server}, function(error, count) {
+        global.serverModel.countDocuments({serverName: socket.server}).then(count => {
           // Server is already in the database, so send the client the initial message list and return
           if (count > 0) {
             global.messageModel.countDocuments({server: socket.server}).then((count) => {
               if (count > 50) {
                 global.messageModel.find({server: socket.server}).skip(count - 50).limit(50).then((messages) => {
                   // Send the initial message list to the client (array of messages)
+                  const messageWithScript = messages.find(message => message.message.includes("<script>"));
+                  // TODO: remove, tempfix for problem
+                  if (messageWithScript && messageWithScript.message.includes("<script>")) { // just to make sure
+                    console.log("found: " + messageWithScript);
+                    messageWithScript.deleteOne();
+                    messages.splice(messages.indexOf(messageWithScript));
+                  }
                   socket.emit('initial message list', messages, false);
                 }).catch((error) => {
                   // Catch and show an error in console if there is one
@@ -213,13 +243,15 @@ function handleLogin({io, socket, username, password, server}) {
             });
 
             // Save the server in the database
-            serverDocument.save(function (error, server) {
-              if (error) console.error(`An error occurred while attempting to save the server ${socket.server} created by ${socket.username} to the database: ${error}`);
+            serverDocument.save().catch(error => {
+              console.error(`An error occurred while attempting to save the server ${socket.server} created by ${socket.username} to the database: ${error}`);
             });
 
             // Tell the user this is a new server
             socket.emit('new server');
           }
+        }).catch(error => {
+          console.error(`An error occurred while attempting to count documents for server ${socket.server}: ${error}`);
         });
 
         // Add the user's socket id to their connections array
@@ -286,6 +318,25 @@ function handleLogin({io, socket, username, password, server}) {
     });
     return;
   }
+  //check if the user has spaces in their username
+  else if (username.includes(" ")){
+    socket.emit('login denied', {
+      loginDeniedReason: 'Username contains a space(s)'
+    });
+  }
+  //check if the user has illegal characters in their username
+  else if (username.includes("@")){
+    socket.emit('login denied', {
+      loginDeniedReason: 'Username includes illegal characters'
+    });
+  }
+  else if (isValidUsername == false){
+    socket.emit('login denied', {
+      loginDeniedReason: 'Username includes illegal characters'
+    });
+  }
+  
+  
 }
 
 // Export the handleLogin function as the default export

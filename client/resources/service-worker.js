@@ -63,20 +63,18 @@ self.addEventListener('message', function(event) {
 self.addEventListener('notificationclick', function(event) {
   if (!event.action) {
     event.notification.close();
-    // This looks to see if the current is already open and
+    // This looks to see if the current tab is already open and
     // focuses if it is
     event.waitUntil(self.clients.matchAll({
-      type: 'window'
-    }).then(function(clientList) {
-      for (let i = 0; i < clientList.length; i++) {
-        let client = clientList[i];
-        if (client.url === '/' && 'focus' in client) {
+      type: "window"
+    }).then((clientList) => {
+      for (const client of clientList) {
+        // TODO: Somehow find the right tab when multiple instances are open
+        if ('focus' in client)
           return client.focus();
-        }
       }
-      if (self.clients.openWindow) {
+      if (self.clients.openWindow)
         return self.clients.openWindow('/');
-      }
     }));
     return;
   }
@@ -87,7 +85,7 @@ self.addEventListener('notificationclick', function(event) {
       event.notification.close();
       break;
     case 'close':
-    console.log('Close');
+      console.log('Close');
       event.notification.close();
       break;
     default:

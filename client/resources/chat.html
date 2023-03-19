@@ -14,7 +14,8 @@
     <link rel="stylesheet" href="/resources/stylesheets/reconnecting-screen.css">
     <!-- Load extra styles asyncronously -->
     <link rel="preload" href="/resources/node_modules/bootstrap/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <!-- <link rel="preload" href="/resources/node_modules/@highlightjs/cdn-assets/styles/solarized-dark.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"> -->
+    <!-- <link rel="preload" href="/resources/node_modules/@highlightjs/cdn-assets/styles/gradient-dark.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"> -->
+    <link rel="preload" href="/resources/node_modules/@highlightjs/cdn-assets/styles/atom-one-dark.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <!-- App logos for different browsers and devices -->
     <link rel="apple-touch-icon" sizes="180x180" href="/resources/assets/apple-touch-icon.png">
     <!-- <link rel="icon" type="image/png" sizes="32x32" href="/resources/assets/favicon-32x32.png">
@@ -47,6 +48,16 @@
     </script>
     <!-- Fix Electron Support (before scripts) -->
     <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+    <!-- Import map -->
+    <script type="importmap">
+    {
+        "imports": {
+            "picmo": "/resources/node_modules/picmo/dist/index.js",
+            "@picmo/popup-picker": "/resources/node_modules/@picmo/popup-picker/dist/index.js",
+            "@picmo/renderer-twemoji": "/resources/node_modules/@picmo/renderer-twemoji/dist/index.js"
+        }
+    }
+    </script>
     <!-- Load scripts -->
     <script src="/resources/node_modules/socket.io/client-dist/socket.io.min.js" defer></script>
     <script src="/resources/node_modules/@iconfu/svg-inject/dist/svg-inject.min.js" defer></script>
@@ -102,7 +113,7 @@
           <div id="Message-Box-Area">
             <div id="Message-Box" contenteditable="true" data-placeholder="Type here"></div>
             <button id="emoji-button">
-              <img class="emoji" draggable="false" alt="😎" title="Emoji Button" src="https://twemoji.maxcdn.com/v/13.0.0/svg/1f60e.svg" crossorigin="anonymous">
+              <img class="emoji" draggable="false" alt="😎" title="Emoji Button" src="https://cdn.jsdelivr.net/npm/twemoji@11.3.0/2/svg/1f60e.svg" crossorigin="anonymous">
             </button>
           </div>
         </div>
@@ -111,6 +122,7 @@
         <h3>User List</h3>
         <ul id="userListContents"></ul>
       </div>
+      <div id="emoji-picker-container"></div>
     </section>
     <section id="settingsScreen">
       <div id="settingsArea">
