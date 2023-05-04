@@ -38,7 +38,7 @@
     "rate-limiter-flexible": "^2.4.1",
     "sanitize-html": "^2.10.0",
     "sharp": "^0.31.3",
-    "socket.io": "^4.5.4",
+    "socket.io": "^4.6.1",
     "string.prototype.replaceall": "^1.0.7",
     "whoolso-word-filter": "^1.0.8"
   },
